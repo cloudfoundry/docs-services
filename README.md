@@ -1,3 +1,7 @@
+---
+title: Extending Cloud Foundry
+---
+
 Extending Cloud Foundry
 ========
 

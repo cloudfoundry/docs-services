@@ -4,8 +4,6 @@ title: Build Tool Integration
 
 It is possible to deploy application using a couple of different JVM build tools - Maven and Gradle.
 
-> **The Gradle and Maven plugins will be updated in the coming weeks to support Cloud Foundry v2, including support for organizations, spaces, and custom buildpacks.**
-
 ## <a id='gradle'></a>Gradle ##
 
 Gradle is a build tool that automates the building, testing, publishing, and deployment of software packages, generated static websites, generated documentation, and more.

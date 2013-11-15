@@ -1,10 +1,7 @@
 ---
-title: Writing a v2 Cloud Foundry Service
+title: Writing a Cloud Foundry Service Broker
 ---
-
-**Note:** The v2 Services API is still in development. The API and this documentation is subject to change.
-
-There are two versions of the Cloud Foundry Services API. This page documents v2.
+There are two versions of the Cloud Foundry Services API. This page documents v2, which is the recommended version for writing new service brokers.
 
 ## <a id='api-changes'></a>What's New in Services API v2 ##
 
@@ -27,7 +24,17 @@ Changes to the API that are under consideration include the addition of endpoint
 
 The Cloud Foundry services API defines the contract between the Cloud Controller and the service broker. The broker is expected to implement several HTTP (or HTTPS) endpoints underneath a URI prefix. A single service can only be provided by a single broker URL, but horizontal scalability and load balancing allows for multiple redundant brokers. A broker can also offer multiple services.
 
-<%= image_tag("./svcs-api/v2services.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
+<%= image_tag("../images/svcs-api/v2services.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
+
+## <a id='api-version-header'></a>API Version Header ##
+
+
+Requests from the Cloud Controller to the broker contain a header that defines the version number of the Broker API that Cloud Controller will use. This header will be useful in future minor revisions of the API, to allow brokers to reject requests from Cloud Controllers that they do not understand. While minor API revisions will always be additive, it is possible that brokers will come to depend on a feature that was added after 2.0, so they may use this header to reject the request. Error messages from the broker in this situation should inform the operator of what the required and actual version numbers are, so that an operator can go upgrade Cloud Controller and resolve the issue. A broker should respond with a `412 Precondition Failed` message when rejecting a request.
+
+The version numbers are in the format `MAJOR.MINOR`, using semantic versioning such that 2.9 comes before 2.10. An example of this header, as of publication time is:
+
+`X-Broker-Api-Version: 2.0`
+
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -208,7 +215,7 @@ Brokers are expected to respond with `201 Created` with the response body from t
 <tr>
   <td>dashboard_url</td>
   <td>string</td>
-  <td>The URL of a web-based management user interface for the service instance. This optional URL allows space developers to visit a friendly management console for this instance. The URL should contain enough information to identify the resource being accessed ("9189kdfsk0vfnku" in the example below), and potentially the credentials to access that resource ("access_token=3hjdsnqadw487232lp" below). Cloud Controller will sign this URL so that the management console can trust that a user should be allowed to see the details of the instance. For more information, see <a href="https://docs.google.com/a/gopivotal.com/document/d/1ojU5lFgVcLf9BCKIO481xdweFAb-Y3Vj1CM6KhmqSis/edit#heading=h.z2jbskafu6z8">Authenticating a Service Using the dashboard_url</a>.</td>
+  <td>The URL of a web-based management user interface for the service instance. This optional URL allows space developers to visit a friendly management console for this instance. The URL should contain enough information to identify the resource being accessed ("9189kdfsk0vfnku" in the example below), and potentially the credentials to access that resource ("access_token=3hjdsnqadw487232lp" below). For more information, see <a href="https://docs.google.com/a/gopivotal.com/document/d/1ojU5lFgVcLf9BCKIO481xdweFAb-Y3Vj1CM6KhmqSis/edit#heading=h.z2jbskafu6z8">Authenticating a Service Using the dashboard_url</a>.</td>
 </tr>
 </tboby>
 </table>
@@ -324,8 +331,6 @@ The `:id` in the URL is the identifier returned in by the broker during a bind r
 </tbody>
 </table>
 
-## <a id='unbinding'></a>Unbinding ##
-
 A response code of `200 OK` with a body of `{}` indicates that the resource was deleted. A response code of `404 Not Found` with a body of `{}` indicates to Cloud Controller that the resource was not there in the first place, and is likely gone. _Any other_ response code indicates to Cloud Controller that the the binding could not be deleted; the user will be informed (and the binding will remain in the database).
 
 ## <a id='unprovisioning'></a>Unprovisioning ##
@@ -398,7 +403,7 @@ When a broker fails to perform any requested operation, unless it fails with a w
 
 The Cloud Controller database and a Broker are expected to store identical copies of existing instances and bindings. Potentially, these two lists may become inconsistent. For example, if a broker times out during a delete request, the Cloud Controller will be unsure of whether that resource still exists on the broker or not. Cloud Controller will implement the following orphan prevention techniques:
 
-* If a broker fails to provision or bind an instance, the Cloud Controller will immediately issue an unprovision or unbind request .
+* If a broker fails to provision or bind an instance, the Cloud Controller will immediately issue an unprovision or unbind request.
 
 * If a broker fails to unbind or unprovision an instance, the Cloud Controller will periodically retry that DELETE request until it succeeds (or generates a 404). Eventually it will give up, but this technique will help clean up resources that are remain when a broker fails to delete.
 

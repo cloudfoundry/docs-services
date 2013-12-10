@@ -335,7 +335,7 @@ The `:id` in the URL is the identifier of a previously created binding (the same
 </tbody>
 </table>
 
-A response code of `200 OK` with a body of `{}` indicates that the resource was deleted. A response code of `404 Not Found` with a body of `{}` indicates to Cloud Controller that the resource was not there in the first place, and is likely gone. _Any other_ response code indicates to Cloud Controller that the the binding could not be deleted; the user will be informed (and the binding will remain in the database).
+A response code of `200 OK` with a body of `{}` indicates that the resource was deleted. A response code of `410 Not Found` with a body of `{}` indicates to Cloud Controller that the resource was not there in the first place, and is likely gone. _Any other_ response code indicates to Cloud Controller that the the binding could not be deleted; the user will be informed (and the binding will remain in the database).
 
 ## <a id='unprovisioning'></a>Unprovisioning ##
 
@@ -369,11 +369,11 @@ The `:id` in the URL is the identifier of a previously provisioned instance (the
 </tbody>
 </table>
 
-A response code of `200 OK` with a body of `{}` indicates that the resource was deleted. A response code of `404 Not Found `with a body of `{}` indicates to Cloud Controller that the resource was not there in the first place, and is likely gone. _Any other_ response code indicates to Cloud Controller that the the service instance could not be deleted, the user will be informed (and the instance will remain in the database).
+A response code of `200 OK` with a body of `{}` indicates that the resource was deleted. A response code of `410 Not Found `with a body of `{}` indicates to Cloud Controller that the resource was not there in the first place, and is likely gone. _Any other_ response code indicates to Cloud Controller that the the service instance could not be deleted, the user will be informed (and the instance will remain in the database).
 
 ## <a id='broker-errors'></a>Broker Errors ##
 
-When a broker fails to perform any requested operation, unless it fails with a well-defined HTTP response code listed above (like 404 on delete), it should return a JSON-encoded error payload. This payload allows the broker to expose a message to end-user or operator. Any responses not matching this error format will result in the user seeing a generic internal error message.
+When a broker fails to perform any requested operation, unless it fails with a well-defined HTTP response code listed above (like 410 on delete), it should return a JSON-encoded error payload. This payload allows the broker to expose a message to end-user or operator. Any responses not matching this error format will result in the user seeing a generic internal error message.
 
 * Use HTTP status code `400 Bad Request` when the input is syntactically invalid.
 * Use HTTP status code `401 Unauthorized` when authentication is missing.
@@ -409,5 +409,5 @@ The Cloud Controller database and a Broker are expected to store identical copie
 
 * If a broker fails to provision or bind an instance, the Cloud Controller will immediately issue an unprovision or unbind request.
 
-* If a broker fails to unbind or unprovision an instance, the Cloud Controller will periodically retry that DELETE request until it succeeds (or generates a 404). Eventually it will give up, but this technique will help clean up resources that are remain when a broker fails to delete.
+* If a broker fails to unbind or unprovision an instance, the Cloud Controller will periodically retry that DELETE request until it succeeds (or generates a 410). Eventually it will give up, but this technique will help clean up resources that are remain when a broker fails to delete.
 

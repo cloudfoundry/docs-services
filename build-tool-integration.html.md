@@ -76,7 +76,7 @@ dependencyInsight - Displays the insight into a specific dependency in root proj
 help - Displays a help message
 projects - Displays the sub-projects of root project 'hello-world'.
 properties - Displays the properties of root project 'hello-world'.
-tasks - Displays the tasks runnable from root project 'hello-world' (some of the displayed tasks may belong to subprojects).
+tasks - Displays the tasks runnable from root project 'hello-world' (some of the displayed tasks may belong to sub-projects).
 
 To see all tasks and more detail, run with --all.
 

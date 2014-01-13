@@ -23,7 +23,7 @@ The intent of this page is to provide a list of metadata fields consumed by popu
 | provider | CLI string | *Deprecated* V1 provider name | provider | | |
 | version | CLI string | *Deprecated* V1 service version | version | | |
 | requires | array-of-strings | A list of permissions that the user must give up to the service, such as the ability to read application logs. | requires | | |
-| tags | array-of-strings | A list of strings that can be used by applications or front-ends to find or browse services.  Such as [“mysql”, ”database”, ”relational”] for a mysql DB service. | tags | | |
+| tags | array-of-strings | A list of strings that can be used by applications or front-ends to find or browse services. Examples: [“mysql”, ”database”, ”relational”] for a mysql DB service. | tags | | |
 | metadata.displayName | string | The name of the service to be displayed in graphical clients | extra.displayName | | X |
 | metadata.imageUrl | string | The URL to an image. | extra.imageUrl | | X <br/>max size: 178 x 76px |
 | metadata.longDescription | string | Long description | | | X |
@@ -40,7 +40,7 @@ The intent of this page is to provide a list of metadata fields consumed by popu
 | name | CLI string | A short name for the service plan to be displayed in a catalog. | name | X | X |
 | description | string | A large description for the service plan to be displayed in a catalog. | description | X | X |
 | metadata.bullets | array-of-strings | Features of this plan, to be displayed in a bulleted-list | extra.bullets | | X |
-| metadata.costs | cost object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once).  Each object must provide the following keys:<br/>`amount: { usd: float }, unit: string `<br/>This indicates the cost in USD of the service plan, and how frequently the cost is ocurred, such as “MONTHLY” or “per 1000 messages”. | extra.costs | | X |
+| metadata.costs | cost object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once). Each object must provide the following keys:<br/>`amount: { usd: float }, unit: string `<br/>This indicates the cost in USD of the service plan, and how frequently the cost is occurred, such as “MONTHLY” or “per 1000 messages”. | extra.costs | | X |
 | metadata.displayName | string | Name of the plan to be display in graphical clients. | | | |
 
 ## <a id='example-broker-response'></a>Example Broker Response Body ##
@@ -108,7 +108,7 @@ The example below contains a catalog of one service, having one service plan. Of
 ```
 {
    "metadata":{
-      "guid":"bc8748f1-fe05-444d-ab7e-9798e1f9aef6",
+    "guid":"bc8748f1-fe05-444d-ab7e-9798e1f9aef6",
       "url":"/v2/services/bc8748f1-fe05-444d-ab7e-9798e1f9aef6",
       "created_at":"2014-01-08T18:52:16+00:00",
       "updated_at":"2014-01-09T03:19:16+00:00"

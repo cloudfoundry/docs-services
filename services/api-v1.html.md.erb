@@ -11,7 +11,7 @@ Writing a service involves writing a service broker that obeys the API contract 
 Service brokers were previously called Service Gateways (GW).
 The protocol is entirely RESTful HTTP, with _bidirectional communication_. In addition to authentication there are six basic operations that take place, described in this document.
 An oversimplified example of making a broker that supports the 3 most basic operations can be found here: https://github.com/geapi/cf-service-example.
-           
+
 <%= image_tag("../images/svcs-api/v1services.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
 
 ## <a id='authentication'></a>Authentication ##
@@ -124,7 +124,7 @@ To generate a `unique_id`, try this [Online GUID Generator](http://www.guidgener
 <tr>
   <td>tags</td>
   <td>array of objects</td>
-  <td>Used by buildpacks and application libraries to parse credentials from the <a href="../../../using/deploying-apps/environment-variable.html">VCAP_SERVICES environment variable</a>. Could also be used by frontend clients to filter marketplace services.</td>
+  <td>Used by buildpacks and application libraries to parse credentials from the VCAP_SERVICES environment variable</a>. Could also be used by frontend clients to filter marketplace services.</td>
 </tr>
 <tr>
   <td>documentation_url</td>
@@ -316,7 +316,7 @@ To generate a `unique_id`, try this [Online GUID Generator](http://www.guidgener
   <td>object</td>
   <td>
     <em>Contains all the same fields as create</em><br/>
-    Also contains “service_plans_url”, a Cloud Controller URL to download the list of plans.  May also contain a full list of plans, depending on query params
+    Also contains “service_plans_url”, a Cloud Controller URL to download the list of plans. May also contain a full list of plans, depending on query params
   </td>
 </tr>
 </tbody>
@@ -326,7 +326,7 @@ To generate a `unique_id`, try this [Online GUID Generator](http://www.guidgener
 
 `DELETE /v2/services/:guid`
 
-No body or query parameters.  This request is expected to fail if there are plans, instances, or bindings attached to this service, as they must be deleted first.
+No body or query parameters. This request is expected to fail if there are plans, instances, or bindings attached to this service, as they must be deleted first.
 
 ### <a id='catalog-create-plan'></a>Creating a new plan in the catalog ###
 
@@ -364,7 +364,7 @@ No body or query parameters.  This request is expected to fail if there are plan
 <tr>
   <td>unique_id</td>
   <td>string</td>
-  <td>A new identifier that must be unique.  This ID will be passed as part of provision, bind, etc. requests.  This “primary key” is easier to work with than the combination of [label, provider, version] which also forms a “primary key”.</td>
+  <td>A new identifier that must be unique. This ID will be passed as part of provision, bind, etc. requests. This “primary key” is easier to work with than the combination of [label, provider, version] which also forms a “primary key”.</td>
 </tr>
 <tr>
   <td>public</td>

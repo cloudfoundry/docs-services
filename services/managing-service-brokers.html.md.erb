@@ -4,7 +4,7 @@ title: Managing Service Brokers
 
 This document describes how to use the `cf` or `gcf` command line tools to manage a Cloud Foundry [Service Broker](index.html). Service Brokers implement the [Service Broker API](api.html).
 
-Once you've implemented the [Catalog endpoint](api.html#catalog-mgmt), you'll want to see whether your services and plans are available to end users. Two steps are required: 
+Once you've implemented the [Catalog endpoint](api.html#catalog-mgmt), you'll want to see whether your services and plans are available to end users. Two steps are required:
 
 1. registering your broker with cloud controller
 2. making plans public.
@@ -31,13 +31,13 @@ $ gcf create-service-broker mybrokername someuser somethingsecure http://mybroke
 
 New service plans are private by default. To make plans available to end users, see [Make Plans Public](#make-plans-public). **Note**: instances of private plans can not be provisioned until either the plans are made public or are the plans are made available to an organization.
 
-`cf` allows an admin to see service plans before they are available to end users. 
+`cf` allows an admin to see service plans before they are available to end users.
 
 <pre class="terminal">
 $ cf services --marketplace
 Getting services... OK
 
-service       	version   provider   plans    	description                                           
+service       	version   provider   plans    	description
 my-service-name n/a       n/a        free-plan	My service description.
 </pre>
 
@@ -51,8 +51,6 @@ OK
 service          plans           description
 my-service-name  free-plan       My service description.
 </pre>
-
-For more information regarding end-user management of services, see [Managing Services](../../../using/services/managing-services.html)
 
 ### <a id='multiple-brokers'></a>Multiple Brokers ###
 
@@ -125,7 +123,7 @@ $ gcf update-service-broker mybrokername mynewbrokername
 
 If  incorrect basic auth credentials are provided:
 
-`cf` returns a unhelpful error: 
+`cf` returns a unhelpful error:
 
 <pre class="terminal">
 CFoundry::ServerError: 10001: The service broker API returned an error from http://github-broker.primo.cf-app.com/v2/catalog: 404 Not Found
@@ -153,7 +151,7 @@ Server error, status code: 500, error code: 10001, message: The service broker A
 
 If your `unique_id`s for service and plan are not unique, you should get an error. Currently these errors aren't helpful, but it's a known issue and will be fixed soon.
 
-`cf`: 
+`cf`:
 
 <pre class="terminal">
 CFoundry::InvalidRequest: 10004: The request is invalid
@@ -168,10 +166,7 @@ Server error, status code: 400, error code: 10004, message: The request is inval
 
 ## <a id='make-plans-public'></a>Make Plans Public ##
 
-By default new service plans are private. This means that when adding a new broker, or adding a new plan to an existing broker catalog and updating the broker, the plans won't immediately be available to end users. This provides the basis for controlling which service plans are available to end users, and to manage limited availability. This is important as in many cases Cloud Foundry admins will not have operational control of service brokers as they may be deployed and managed by other service providers.  
-
-
-Making a plan public currently involves a couple of curls but a CLI command is coming very soon (this command will be implemented in the [v6 Go-based CLI](../../../using/managing-apps/cf/go-cli.html) only). 
+By default new service plans are private. This means that when adding a new broker, or adding a new plan to an existing broker catalog and updating the broker, the plans won't immediately be available to end users. This provides the basis for controlling which service plans are available to end users, and to manage limited availability. This is important as in many cases Cloud Foundry admins will not have operational control of service brokers as they may be deployed and managed by other service providers.
 
 The first step is to get the service plan guid.
 

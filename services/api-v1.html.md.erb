@@ -12,7 +12,7 @@ Service brokers were previously called Service Gateways (GW).
 The protocol is entirely RESTful HTTP, with _bidirectional communication_. In addition to authentication there are six basic operations that take place, described in this document.
 An oversimplified example of making a broker that supports the 3 most basic operations can be found here: https://github.com/geapi/cf-service-example.
            
-<%= image_tag("../../../../images/v1services.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
+<%= image_tag("../images/svcs-api/v1services.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -24,7 +24,7 @@ Or one can directly make calls to the Cloud Controller v2 RESTful API to registe
 
 _A broker authenticates to the Cloud Controller using a UAA token_
 
-Like all API endpoints in the Cloud Controller, the broker must first obtain and then include a valid Oauth2 token from UAA.  This token must include
+Like all API endpoints in the Cloud Controller, the broker must first obtain and then include a valid Oauth2 token from UAA. This token must include
 the scope `cloud_controller.admin`, because only this scope has permission to modify the services catalog.
 
 ## <a id="catalog"></a>Catalog Management</a> ##
@@ -35,8 +35,8 @@ Normally the lifecycle is as follows:
 1. On startup, the broker communicates with UAA to get an access token with sufficient permissions to access the Cloud Controller (currently admin access).
 1. It then downloads the catalog of all available service offerings and plans from the Cloud Controller
 1. It issues POST requests to create missing offerings and plans.  Offerings include a URL to access the broker responsible for future provision/bind requests.
-1. It issues PUT requests to update existing offerings and plans that are not in sync
-1. It issues DELETE requests to remove offerings and plans it no longer wants to advertise
+1. It issues PUT requests to update existing offerings and plans that are not in sync.
+1. It issues DELETE requests to remove offerings and plans it no longer wants to advertise.
 
 All catalog management APIs are in the CloudController.
 A service is identified by the combination of `[label, provider, version]`, which must be unique.

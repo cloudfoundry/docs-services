@@ -2,7 +2,7 @@
 title: Catalog Metadata
 ---
 
-The service marketplace is defined as the aggregrate catalog of services and plans advertised to a Cloud Foundry instance by all registered brokers. Cloud controller clients (web, CLI, helper libraries, etc) have different requirements for information about these services and plans that should be displayed to end users. In this document, "client" refers to clients of cloud controller.  
+The service marketplace is defined as the aggregate catalog of services and plans advertised to a Cloud Foundry instance by all registered brokers. Cloud controller clients (web, CLI, helper libraries, etc) have different requirements for information about these services and plans that should be displayed to end users. In this document, "client" refers to clients of cloud controller.  
 
 As described in the [Service Broker API](api.html#catalog-mgmt), the only required user-facing fields are `label` and `description` for services, and `name` and `description` for service plans. Rather than attempt to anticipate all potential fields that clients will want, or add endless fields to the API spec over time, CF provides a mechanism for brokers to advertise any fields a client requires. This mechanism is the `metadata` field. 
 
@@ -42,7 +42,7 @@ The intent of this page is to provide a list of metadata fields consumed by popu
 | name | CLI string | A short name for the service plan to be displayed in a catalog. | name | X | X |
 | description | string | A large description for the service plan to be displayed in a catalog. | description | X | X |
 | metadata.bullets | array-of-strings | Features of this plan, to be displayed in a bulleted-list | extra.bullets | | X |
-| metadata.costs | cost object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once).  Each object must provide the following keys:<br/>`amount: { usd: float }, unit: string `<br/>This indicates the cost in USD of the service plan, and how frequently the cost is ocurred, such as “MONTHLY” or “per 1000 messages”. | extra.costs | | X |
+| metadata.costs | cost object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once).  Each object must provide the following keys:<br/>`amount: { usd: float }, unit: string `<br/>This indicates the cost in USD of the service plan, and how frequently the cost is occurred, such as “MONTHLY” or “per 1000 messages”. | extra.costs | | X |
 | metadata.displayName | string | Name of the plan to be display in graphical clients. | | | |
 
 ## <a id='example-broker-response'></a>Example Broker Response Body ##

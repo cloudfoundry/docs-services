@@ -37,7 +37,7 @@ brokers are upgraded.
 * Existing endpoints and fields will not be removed or renamed.
 * New optional endpoints, or new HTTP methods for existing endpoints, may be
 added to enable support for new features.
-* New fields may be added to existing request/response messages.
+* New fields may be added to existing request/response messages. 
 These fields must be optional, and should be ignored by clients and servers
 that do not understand them.
 
@@ -98,7 +98,7 @@ security is desired.
 
 ## <a id='catalog-mgmt'></a>Catalog Management ##
 
-The first endpoint that a broker must implement is the service catalog.
+The first endpoint that a broker must implement is the service catalog. 
 Cloud Controller will initially fetch this endpoint from all brokers and make
 adjustments to the user-facing service catalog stored in the Cloud Controller
 database.
@@ -126,14 +126,6 @@ no longer be visible in the marketplace catalog or be provisionable.
 Cloud Controller will then delete services that do not have associated plans
 from the database.
 
-### CLI-friendly vs web UI-friendly strings
-
-CLI and web clients have different needs with regard to service and plan names.
-A CLI-friendly string is all lowercase, with no spaces.
-Keep it short -- imagine a user having to type it as an argument for a longer
-command.
-A web friendly display name is camelcase with spaces and punctuation supported.
-
 ### Request ###
 
 ##### Route #####
@@ -145,6 +137,12 @@ A web friendly display name is camelcase with spaces and punctuation supported.
 </pre>
 
 ### Response ###
+
+CLI and web clients have different needs with regard to service and plan names.
+A CLI-friendly string is all lowercase, with no spaces.
+Keep it short -- imagine a user having to type it as an argument for a longer
+command.
+A web friendly display name is camelcase with spaces and punctuation supported.
 
 <table>
 
@@ -227,7 +225,7 @@ A web friendly display name is camelcase with spaces and punctuation supported.
 
 \* Fields with an asterisk are required.
 
-**Example response**
+##### Body #####
 
 <pre class="terminal">
 {
@@ -281,10 +279,9 @@ existing system.
 ##### Route #####
 `PUT /v2/service_instances/:id`
 
-**In this API, the `:id` of a service instance is provided by the Cloud
-Controller**.
-This ID will be used for future requests (bind and deprovision), so the broker
-must use it to correlate the resource it creates.
+_Note: the `:id` of a service instance is provided by the Cloud Controller. 
+This ID will be used for future requests (bind and deprovision), so the broker 
+must use it to correlate the resource it creates._
 
 <table>
 <thead>
@@ -371,7 +368,7 @@ provision request failed and inform the user.
 </tboby>
 </table>
 
-**Example response**
+##### Body #####
 
 <pre class="terminal">
 {
@@ -402,10 +399,10 @@ for MySQL:
 ##### Route #####
 `PUT /v2/service_instances/:instance_id/service_bindings/:id`
 
-Note that the `:id` of a service binding is provided by the Cloud Controller.
-`:instance_id` is the ID of a previously-provisioned service instance; `:id`
-will be used for future unbind requests, so the broker must use it to correlate
-the resource it creates.
+_Note: the `:id` of a service binding is provided by the Cloud Controller. 
+`:instance_id` is the ID of a previously-provisioned service instance; `:id` 
+will be used for future unbind requests, so the broker must use it to correlate 
+the resource it creates._
 
 <table>
 <thead>
@@ -485,7 +482,7 @@ will assume that the binding request failed and inform the user.
 </tbody>
 </table>
 
-**Example response**
+##### Body #####
 
 <pre class="terminal">
 	{
@@ -602,13 +599,13 @@ It does provide these query string params as useful hints for brokers:
 <tr>
   <td>service_id*</td>
   <td>string</td>
-  <td>ID of the service from the catalog.  Not required, but the broker could make use of this to locate the resource.
+  <td>ID of the service from the catalog. Not required, but the broker could make use of this to locate the resource.
 </td>
 </tr>
 <tr>
   <td>plan_id*</td>
   <td>string</td>
-  <td>ID of the plan from the catalog.  Not required, but the broker could make use of this to locate the resource.</td>
+  <td>ID of the plan from the catalog. Not required, but the broker could make use of this to locate the resource.</td>
 </tr>
 </tbody>
 </table>
@@ -657,7 +654,7 @@ payload will be shown.
 If there is no payload, a generic error message containing the HTTP response
 code will be shown.
 
-**Error response format:**
+### Response ###
 
 <table>
 <thead>

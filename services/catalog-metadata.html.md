@@ -2,21 +2,44 @@
 title: Catalog Metadata
 ---
 
-The service marketplace is defined as the aggregate catalog of services and plans advertised to a Cloud Foundry instance by all registered brokers. Cloud controller clients (web, CLI, helper libraries, etc) have different requirements for information about these services and plans that should be displayed to end users. In this document, "client" refers to clients of cloud controller.  
+The service marketplace is defined as the aggregate catalog of services and
+plans advertised to a Cloud Foundry instance by all registered brokers.
+Cloud controller clients (web, CLI, helper libraries, etc) have different
+requirements for information about these services and plans that should be
+displayed to end users.
+In this document, "client" refers to clients of cloud controller.
 
-As described in the [Service Broker API](api.html#catalog-mgmt), the only required user-facing fields are `label` and `description` for services, and `name` and `description` for service plans. Rather than attempt to anticipate all potential fields that clients will want, or add endless fields to the API spec over time, CF provides a mechanism for brokers to advertise any fields a client requires. This mechanism is the `metadata` field. 
+As described in the [Service Broker API](api.html#catalog-mgmt), the only
+required user-facing fields are `label` and `description` for services, and
+`name` and `description` for service plans.
+Rather than attempt to anticipate all potential fields that clients will want,
+or add endless fields to the API spec over time, CF provides a mechanism for
+brokers to advertise any fields a client requires.
+This mechanism is the `metadata` field.
 
-The contents of the `metadata` field are not validated by cloud controller but may be by cloud controller clients. Not all clients will make use of the value of `metadata`, and not all brokers have to provide it. If a broker does advertise the `metadata` field, client developers can choose to display some or all fields available.
+The contents of the `metadata` field are not validated by cloud controller but
+may be by cloud controller clients.
+Not all clients will make use of the value of `metadata`, and not all brokers
+have to provide it.
+If a broker does advertise the `metadata` field, client developers can choose to
+display some or all fields available.
 
-**Note**: in the [v1 broker API](api-v1.html), the `metadata` field is called `extra`.
+**Note**: in the [v1 broker API](api-v1.html), the `metadata` field is called
+`extra`.
 
-## <a id='community-driven-standards'></a>Community-driven Standards ##
+## <a id='community-driven-standards'></a>Community-Driven Standards ##
 
-The intent of this page is to provide a list of metadata fields consumed by popular clients. Client authors can add their metadata requirements to this document, so that broker authors can see what metadata they should advertise in their catalogs. **Before adding new fields, consider whether an existing one will suffice.**
+The intent of this page is to provide a list of metadata fields consumed by
+popular clients.
+Client authors can add their metadata requirements to this document, so that
+broker authors can see what metadata they should advertise in their catalogs.
+**Before adding new fields, consider whether an existing one will suffice.**
 
 ## <a id='services-metadata-fields'></a>Services Metadata Fields ##
 
-**Note**: “CLI strings” are all lowercase, no spaces. Keep it short; imagine someone having to type it as an argument for a longer CLI command.
+**Note**: “CLI strings” are all lowercase, no spaces.
+Keep it short; imagine someone having to type it as an argument for a longer CLI
+command.
 
 | Broker API Field | Type | Description | CC API Field | Pivotal CLI | Pivotal Developer Console |
 |------------------|------|-------------|--------------|-------------|---------------------------|
@@ -35,7 +58,9 @@ The intent of this page is to provide a list of metadata fields consumed by popu
 
 ## <a id='plan-metadata-fields'></a>Plan Metadata Fields ##
 
-**Note**: “CLI strings” are all lowercase, no spaces. Keep it short; imagine someone having to type it as an argument for a longer CLI command.
+**Note**: “CLI strings” are all lowercase, no spaces.
+Keep it short; imagine someone having to type it as an argument for a longer CLI
+command.
 
 | Broker API Field | Type | Description | CC API Field | Pivotal CLI | Pivotal Developer Console |
 |------------------|------|-------------|--------------|-------------|---------------------------|
@@ -47,7 +72,9 @@ The intent of this page is to provide a list of metadata fields consumed by popu
 
 ## <a id='example-broker-response'></a>Example Broker Response Body ##
 
-The example below contains a catalog of one service, having one service plan. Of course, a broker can offering a catalog of many plans, each having many plans.
+The example below contains a catalog of one service, having one service plan.
+Of course, a broker can offering a catalog of many plans, each having many
+plans.
 
 ```
 {
@@ -127,17 +154,10 @@ The example below contains a catalog of one service, having one service plan. Of
       "bindable":true,
       "unique_id":"18723",
       "extra":{
-         "providerDisplayName":"84codesAB",
-         "imageUrl":"https://d33na3ni6eqf5j.cloudfront.net/app_resources/18723/thumbs_112/img9069612145282015279.png",
-         "listing":{
-            "imageUrl":"https://d33na3ni6eqf5j.cloudfront.net/app_resources/18723/thumbs_112/img9069612145282015279.png",
-            "blurb":"Managed HA RabbitMQ servers in the cloud",
-            "long_description":"Managed, highly available, RabbitMQ clusters in the cloud"
-         },
-         "provider":{
-            "name":"84codes AB"
-         },
          "displayName":"CloudAMQP",
+         "imageUrl":"https://d33na3ni6eqf5j.cloudfront.net/app_resources/18723/thumbs_112/img9069612145282015279.png",
+         "longDescription":"Managed, highly available, RabbitMQ clusters in the cloud",
+         "providerDisplayName":"84codesAB",
          "documentationUrl":null,
          "supportUrl":null
       },
@@ -158,26 +178,32 @@ The example below contains a catalog of one service, having one service plan. Of
                "updated_at":"2014-01-09T03:19:16+00:00"
             },
             "entity":{
-               "name":"lemur",
+               "name":"bunny",
                "free":true,
-               "description":"Little Lemur",
+               "description":"Big Bunny",
                "service_guid":"bc8748f1-fe05-444d-ab7e-9798e1f9aef6",
                "extra":{
-                  "cost":0.0,
+                  "bullets":[
+                     "20 GB of messages",
+                     "20 connections"
+                  ],
                   "costs":[
                      {
                         "amount":{
-                           "usd":0.0
+                           "usd":99.0,
+                           "eur":49.0
                         },
-                        "unit":"ONE_TIME"
+                        "unit":"MONTHLY"
+                     },
+                     {
+                        "amount":{
+                           "usd":0.99,
+                           "eur":0.49
+                        },
+                        "unit":"1GB of messages over 20GB"
                      }
                   ],
-                  "bullets":[
-                     {
-                        "content":null,
-                        "tooltip":null
-                     }
-                  ]
+                  "displayName":"Big Bunny"
                },
                "unique_id":"addonOffering_1889",
                "public":true

@@ -96,7 +96,7 @@ true` key-value pair.
 
 Once made public, the service plan can be seen by all users in the list of
 available services.
-See [Managing Services](/pivotalcf/devguide/services/managing-services.html) for
+See [Managing Services](../../devguide/services/managing-services.html) for
 more information.
 
 ### <a id='make-plans-private'></a>Making Service Plans Private ###

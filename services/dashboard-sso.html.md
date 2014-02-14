@@ -5,17 +5,17 @@ title: Integrating Dashboard Single Sign-On
 ## Introduction
 
 Single sign-on (SSO) allows Cloud Foundry users to authenticate with third-party services
-using their Cloud Foundry credentials.  SSO provides a streamlined experience to users,
+using their Cloud Foundry credentials. SSO provides a streamlined experience to users,
 limiting repeated logins and multiple accounts across their managed services.
 
 In order to make this possible, CF provides API endpoints for configuration and
-verification of the user credentials.  This allows third-party services to verify user credentials
-without needing the user to login again.  The user's credentials are never directly transmitted to
-the service since the OAuth2 protocol handles authentication.  Similarly, Cloud Controller provides
+verification of the user credentials. This allows third-party services to verify user credentials
+without needing the user to login again. The user's credentials are never directly transmitted to
+the service since the OAuth2 protocol handles authentication. Similarly, Cloud Controller provides
 an endpoint to determine a user's authorization.
 
 ## The SSO interaction and points of integration
-  1. In order to integrate a dashboard with CF, service brokers will need to include the necessary
+  1. In order to integrate a dashboard with CF, service brokers need to include the necessary
     properties in their catalog. Specifically, each service implementing this feature must
     advertise a `dashboard_client` property in their JSON response from `/v2/catalog`. A valid
     response would appear as follows:
@@ -62,7 +62,6 @@ an endpoint to determine a user's authorization.
   3. At this point, users will be able to click the `Manage` link on their CF Web console,
     seamlessly allowing them to access the dashboard for the service.
     <br />
-    ![Managing a Service](../../../../images/web-ui-manage-service.png)
 
   4. At this point, the service will need to obtain an access token from UAA.  The service should
     use the standardized OAuth2 protocol to retrieve this token.  See [Resources](#resources)

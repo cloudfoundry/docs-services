@@ -96,7 +96,7 @@ true` key-value pair.
 
 Once made public, the service plan can be seen by all users in the list of
 available services.
-See [Managing Services](../../devguide/services/managing-services.html) for
+See [Managing Services](../devguide/services/managing-services.html) for
 more information.
 
 ### <a id='make-plans-private'></a>Making Service Plans Private ###
@@ -139,7 +139,7 @@ by those members only when that organization is targeted.
 If the same member targets a different organization in the same account, the
 service plan will _not_ be available.
 Users who are not members of the organization will never see the plan.
-See [Managing Services](../../devguide/services/managing-services.html) for more
+See [Managing Services](../devguide/services/managing-services.html) for more
 information.
 
 You can find the GUID of the service plan using the command described in [Making Service Plans Public](#make-plans-public):

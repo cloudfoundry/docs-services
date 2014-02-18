@@ -62,6 +62,7 @@ an endpoint to determine a user's authorization.
   3. At this point, users will be able to click the `Manage` link on their CF Web console,
     seamlessly allowing them to access the dashboard for the service.
     <br />
++   ![Managing a Service](../images/web-ui-manage-service.png)
 
   4. At this point, the service will need to obtain an access token from UAA.  The service should
     use the standardized OAuth2 protocol to retrieve this token.  See [Resources](#resources)

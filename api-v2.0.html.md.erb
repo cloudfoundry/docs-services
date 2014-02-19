@@ -11,19 +11,19 @@ title: Service Broker API v2.0
 Two major versions of the Service Broker API are currently supported by Cloud Foundry, v1 and v2. As v1 is deprecated and support will be removed in the next major version of Cloud Foundry, it is recommended that all new brokers implement v2 and current brokers are upgraded.
 
 <div style="width:50%">
-   <table>
-     <thead>
-       <tr>
-         <th>Current Version</th>
-         <th>Past Versions</th>
-       </tr>
-     </thead>
-     <tbody>
-       <tr>
-         <td><a href="api.html">2.1</a></td>
-         <td><a href="api-v2.0.html">2.0</a><br/><a href="api-v1.html">v1 (unversioned)</a></td>
-       </tr>
-     </tbody>
+  <table>
+    <thead>
+      <tr>
+        <th>Current Version</th>
+        <th>Past Versions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><a href="api.html">2.1</a></td>
+        <td><a href="api-v2.0.html">2.0</a><br/><a href="api-v1.html">v1 (unversioned)</a></td>
+      </tr>
+    </tbody>
   </table>
 </div>
 
@@ -130,13 +130,12 @@ If the database has plans which are not found in the broker catalog, and there a
 <tr>
   <td>&nbsp;&nbsp;&nbsp;tags</td>
   <td>array-of-strings</td>
-  <td>Tags provide a flexible mechanism to expose a classification, attribute, or base
-	technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services.</td>
+  <td>Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. Eg. mysql, relational, redis, key-value, caching, messaging, amqp.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;metadata</td>
   <td>object</td>
-  <td>A list of metadata for a service offering. For more information, see [Service Metadata](./catalog-metadata.html)</a>.</td>
+  <td>A list of metadata for a service offering. For more information, see <a href="catalog-metadata.html">Catalog Metadata</a>.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;requires</td>
@@ -167,7 +166,7 @@ If the database has plans which are not found in the broker catalog, and there a
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metadata</td>
   <td>object</td>
-  <td>A list of metadata for a service plan. For more information, see [Service Metadata](./catalog-metadata.html).</td>
+  <td>A list of metadata for a service plan. For more information, see <a href="catalog-metadata.html">Catalog Metadata</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -216,7 +215,6 @@ For non-data services, provisioning could just mean getting an account on an exi
 ### Request ###
 
 ##### Route #####
-
 `PUT /v2/service_instances/:id`
 
 _Note: the `:id` of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates._
@@ -299,10 +297,7 @@ When the broker receives a bind request from the Cloud Controller, it should tak
 
 `PUT /v2/service_instances/:instance_id/service_bindings/:id`
 
-_Note: the `:id` of a service binding is provided by the Cloud Controller.
-`:instance_id` is the ID of a previously-provisioned service instance; `:id` will be
-used for future unbind requests, so the broker must use it to correlate the resource
-it creates._
+_Note: the `:id` of a service binding is provided by the Cloud Controller. `:instance_id` is the ID of a previously-provisioned service instance; `:id` will be used for future unbind requests, so the broker must use it to correlate the resource it creates._
 
 ##### Body #####
 
@@ -422,13 +417,11 @@ When a broker receives an deprovision request from Cloud Controller, it should d
 
 ### Request ###
 
-##### Route ######
+##### Route #####
 
 `DELETE /v2/service_instances/:id`
 
-The `:id` in the URL is the identifier of a previously provisioned instance (the same
-`:id` passed in the provision request).  The request has **no body**, because DELETE
-requests generally do not have bodies.
+The `:id` in the URL is the identifier of a previously provisioned instance (the same `:id` passed in the provision request).  The request has **no body**, because DELETE requests generally do not have bodies.
 
 ##### Parameters #####
 

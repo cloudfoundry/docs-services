@@ -55,9 +55,6 @@ command.
 | metadata.providerDisplayName | string | The name of the upstream entity providing the actual service | extra.providerDisplayName | | X |
 | metadata.documentationUrl | string | Link to documentation page for service | extra.documentationUrl | | X |
 | metadata.supportUrl | string | Link to support for the service | extra.supportUrl | | X |
-| dashboard_client.id | string | The name of the UAA client used to authenticate the user | | | |
-| dashboard_client.secret | string | The secret used by the client to authenticate with UAA | | | |
-| dashboard\_client.redirect\_uri | string | The URL to redirect back to once UAA has authenticated the user | | | |
 
 ## <a id='plan-metadata-fields'></a>Plan Metadata Fields ##
 

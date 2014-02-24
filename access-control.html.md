@@ -196,7 +196,7 @@ $ cf curl /v2/service_plan_visibilities -X 'POST' -d '{"service_plan_guid":"1113
 
 Note: The `metadata` section of the JSON response to this command shows a service\_plan\_visibilities GUID. This GUID is used to [disable service plan visibility](#delete-plan-visibility).
 
-Members of `my-org` can now see the `plan-name-1` service plan in the list of available services when `my-org` is targeted. 
+Members of my-org can now see the plan-name-1 service plan in the list of available services when my-org is targeted. 
 
 ### <a id='delete-plan-visibility'></a>Disabling Plan Visibility ###
 

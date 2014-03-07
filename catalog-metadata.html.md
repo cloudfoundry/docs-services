@@ -50,7 +50,7 @@ command.
 | requires | array-of-strings | A list of permissions that the user must give up to the service, such as the ability to read application logs. | requires | | |
 | tags | array-of-strings | A list of strings that can be used by applications or front-ends to find or browse services.  Such as [“mysql”, ”database”, ”relational”] for a mysql DB service. | tags | | |
 | metadata.displayName | string | The name of the service to be displayed in graphical clients | extra.displayName | | X |
-| metadata.imageUrl | string | The URL to an image. | extra.imageUrl | | X <br/>max size: 178x76px |
+| metadata.imageUrl | string | The URL to an image. | extra.imageUrl | | X |
 | metadata.longDescription | string | Long description | extra.longDescription | | X |
 | metadata.providerDisplayName | string | The name of the upstream entity providing the actual service | extra.providerDisplayName | | X |
 | metadata.documentationUrl | string | Link to documentation page for service | extra.documentationUrl | | X |
@@ -65,7 +65,7 @@ command.
 | Broker API Field | Type | Description | CC API Field | Pivotal CLI | Pivotal Developer Console |
 |------------------|------|-------------|--------------|-------------|---------------------------|
 | name | CLI string | A short name for the service plan to be displayed in a catalog. | name | X | X |
-| description | string | A description of the service plan to be displayed in a catalog. | description | | X |
+| description | string | A description of the service plan to be displayed in a catalog. | description | | |
 | metadata.bullets | array-of-strings | Features of this plan, to be displayed in a bulleted-list | extra.bullets | | X |
 | metadata.costs | cost object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once).  Each object must provide the following keys:<br/>`amount: { usd: float }, unit: string `<br/>This indicates the cost in USD of the service plan, and how frequently the cost is occurred, such as “MONTHLY” or “per 1000 messages”. | extra.costs | | X |
 | metadata.displayName | string | Name of the plan to be display in graphical clients. | extra.displayName | | X |

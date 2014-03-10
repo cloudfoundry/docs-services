@@ -551,7 +551,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/se
 
 A response code of `200 OK` with a body of `{}` indicates that the resource was
 deleted.
-A response code of `410 Not Found` with a body of `{}` indicates to Cloud
+A response code of `410 Gone` with a body of `{}` indicates to Cloud
 Controller that the resource was not there in the first place, and is likely
 gone.
 _Any other_ response code indicates to Cloud Controller that the the binding
@@ -614,7 +614,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=
 
 A response code of `200 OK` with a body of `{}` indicates that the resource was
 deleted.
-A response code of `410 Not Found `with a body of `{}` indicates to Cloud
+A response code of `410 Gone` with a body of `{}` indicates to Cloud
 Controller that the resource was not there in the first place, and is likely
 gone.
 _Any other_ response code indicates to Cloud Controller that the the service

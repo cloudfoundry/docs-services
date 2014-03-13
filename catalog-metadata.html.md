@@ -80,6 +80,7 @@ plans.
 {
    "services":[
       {
+	 "id":"766fa866-a950-4b12-adff-c11fa4cf8fdc",
          "name":"cloudamqp",
          "description":"Managed HA RabbitMQ servers in the cloud",
          "requires":[
@@ -105,7 +106,8 @@ plans.
          },
          "plans":[
             {
-               "name":"bunny",
+               "id":"024f3452-67f8-40bc-a724-a20c4ea24b1c",
+	       "name":"bunny",
                "description":"A mid-sided plan",
                "metadata":{
                   "bullets":[

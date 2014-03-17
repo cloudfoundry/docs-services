@@ -2,18 +2,17 @@
 title: Managing Service Brokers
 ---
 
-This document describes how to use the [go-based v6 CLI](https://github.com/cloudfoundry/cli) to manage a Cloud Foundry [Service Broker](index.html).
-Service Brokers implement the [Service Broker API](./api.html).
-
-Once you've implemented the [Catalog endpoint](./api.html#catalog-mgmt), you'll
-want to verify your services and plans are available to end users.
-Two steps are required:
-
-1. [Register a Broker](#register-broker)
-1. [Make Plans Public](./access-control.html#make-plans-public)
+_This page assumes that you are using cf v6._
 
 In order to run any of the commands below, you must be authenticated with Cloud
 Foundry as an admin user.
+
+## <a id='quick-start'></a>Quick Start ##
+
+Given a service broker that has implemented the [Service Broker API](api.html), two steps are required to make its services available to end users.
+
+1. [Register a Broker](#register-broker)
+1. [Make Plans Public](#make-plans-public)
 
 ## <a id='register-broker'></a>Register a Broker ##
 
@@ -29,7 +28,7 @@ request; otherwise, anyone could curl your broker to delete service instances.
 $ cf create-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/
 </pre>
 
-### <a id='making-plans-public'></a>Make Plans Public ###
+### <a id='make-plans-public'></a>Make Plans Public ###
 New service plans are private by default.
 To make plans available to end users, see [Make Plans Public](./access-control.html#make-plans-public).
 Instances of a private plan can not be provisioned until either the plan is made
@@ -88,14 +87,26 @@ $ cf update-service-broker mybrokername mynewbrokername
 
 ## <a id='remove-broker'></a>Remove a Broker ##
 
-Attempting to remove a service broker will fail if there are service instances
-for any service plan in the catalog.
-When planning to shut down or delete a broker, make sure that you remove all
-service instances before you shut it down.
-Failure to do so will leave [orphaned service instances](./api.html#orphans).
+Removing a service broker will remove all services and plans in the broker's catalog from the Cloud Foundry Marketplace. 
 
 <pre class="terminal">
 $ cf delete-service-broker mybrokername
+</pre>
+
+**Note:** Attempting to remove a service broker will fail if there are service instances for any service plan in its catalog. When planning to shut down or delete a broker, make sure to remove all service instances first. Failure to do so will leave [orphaned service instances](./api.html#orphans) in the Cloud Foundry database. If a service broker has been shut down without first deleting service instances, you can remove the instances with the CLI; see [Purge a Service](#purge-service).
+
+### <a id='purge-service'></a>Purge a Service ###
+
+If a service broker has been shut down or removed without first deleting service instances from Cloud Foundry, you will be unable to remove the service broker or its services and plans from the Marketplace. In development environments, broker authors often destroy their broker deployments and need a way to clean up the Cloud Controller database. 
+
+The following command will delete a service offering, all of its plans, as well as all associated service instances and bindings from the cloud controller database, without making any API calls to a service broker. For services from v1 brokers, you must provide a provider with `-p PROVIDER`. Once all services for a broker have been purged, the broker can be removed normally.
+
+<pre class="terminal">
+$ cf purge-service-offering v1-test -p pivotal-software
+Warning: This operation assumes that the service broker responsible for this service offering is no longer available, and all service instances have been deleted, leaving orphan records in Cloud Foundry's database. All knowledge of the service will be removed from Cloud Foundry, including service instances and service bindings. No attempt will be made to contact the service broker; running this command without destroying the service broker will cause orphan service instances. After running this command you may want to run either delete-service-auth-token or delete-service-broker to complete the cleanup.
+
+Really purge service offering v1-test from Cloud Foundry? y
+OK
 </pre>
 
 ## <a id='possible-errors'></a>Possible Errors ##

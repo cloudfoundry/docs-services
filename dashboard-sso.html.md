@@ -98,6 +98,11 @@ an endpoint to determine a user's authorization.
     determining a reasonable policy as to how often to check this endpoint in order to ensure that a user
     still has the necessary permissions.
 
+## Restrictions
+
+ * UAA clients are scoped to services.  There must be a `dashboard_client` entry for each service that uses SSO integration.
+ * Each `dashboard_client id` must be unique across the CloudFoundry deployment.
+
 <a id="resources"></a>
 ## Resources
   * [OAuth2](http://oauth.net/2/)

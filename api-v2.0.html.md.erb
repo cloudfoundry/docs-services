@@ -255,7 +255,7 @@ _Note: the `:id` of a service instance is provided by the Cloud Controller. This
 
 ### Response ###
 
-Brokers are expected to respond with `201 Created` with the response body from the table below. They can also return `409 Conflict` if there is already a provisioned resource at this URL. Since this endpoint cannot be used to update resource parameters, brokers must return 409 if a conflicting request is made. Ideally, a non-conflicting request (duplicate ID and params) would return 200, but brokers may simply return 409 for a duplicate ID.  If they respond with any code besides 200 or 201, CC will assume that the provision request failed and inform the user.
+Brokers are expected to respond with `201 Created` with the response body from the table below. Because PUT on this endpoint is used for create, not update, brokers should return a `409 Conflict` if they receive a PUT for an existing resource. Optionally, if the broker receives a PUT for an existing resource, where all parameters are identical, the broker can return a `200`.  If a broker responds with any code besides `200` or `201`, cloud controller will assume that the provision request failed and inform the user.
 
 ##### Body #####
 
@@ -325,7 +325,7 @@ _Note: the `:id` of a service binding is provided by the Cloud Controller. `:ins
 
 ### Response ###
 
-Brokers are expected to respond with `200 OK` or `201 Created` with the response body from the table below. They can also return `409 Conflict` if there is already a binding with the same `id`. Since this endpoint cannot be used to update resources, a broker must return a `409` if an identical request is made. If a broker responds with a code other than `200` or `201`, Cloud Controller will assume that the binding request failed and inform the user.
+Brokers are expected to respond with `200 OK` or `201 Created` with the response body from the table below.  Because PUT on this endpoint is used for create, not update, brokers should return a `409 Conflict` if they receive a PUT for an existing resource. Optionally, if the broker receives a PUT for an existing resource, where all parameters are identical, the broker can return a `200`.  If a broker responds with a code other than `200` or `201`, Cloud Controller will assume that the binding request failed and inform the user.
 
 ##### Body #####
 

@@ -29,15 +29,18 @@ an endpoint to determine a user's authorization.
           "dashboard_client": {
             "id": "p-mysql-client",
             "secret": "p-mysql-secret",
-            "redirect_uri": "http://p-mysql.example.com/auth/create"
+            "redirect_uri": "http://p-mysql.example.com"
           }
         }
       ]
     }
     ```
 
-    The properties under the `dashboard_client` key are explained
-    [here](catalog-metadata.html#services-metadata-fields).
+    `id` is the unique identifier for the OAuth client that will be created for your service UI on the token server (UAA), and will be used by your service UI to authenticate with the token server (UAA).
+
+    `secret` is the shared secrect your service UI will use to authenticate with the token server (UAA).
+
+    `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`. 
 
   2. Whenever the catalog for this service broker is created or updated, Cloud Controller will
     create or update UAA clients for any services that advertise SSO capability. This client
@@ -55,7 +58,7 @@ an endpoint to determine a user's authorization.
         scope: cloud_controller.read cloud_controller.write openid
         resource_ids: none
         authorized_grant_types: authorization_code refresh_token
-        redirect_uri: http://p-mysql.example.com/auth/create
+        redirect_uri: http://p-mysql.example.com
         authorities: uaa.none
     ```
 
@@ -68,14 +71,11 @@ an endpoint to determine a user's authorization.
     use the standardized OAuth2 protocol to retrieve this token.  See [Resources](#resources)
     for more information regarding OAuth2 and for an example broker/service dashboard implementation.
 
-    Users will be redirected from the service dashboard to UAA to login and approve the permissions
-    requested by the service.  Upon granting the permissions, the user will be redirected back
-    to the service `redirect_uri` described above.  The service will then need to check the specific
-    user permissions for this service instance with Cloud Controller.
+    Users will be redirected from the service dashboard to the login server where they will be prompted to authorize the permissions requested by the service dashboard.  Upon authorizing the requested permissions, the user will be redirected back to the service (assuming the redirect URL matches `redirect_uri` as described above).  The service will then need to check with Cloud Controller whether the authenticated user currently has permission to manage the service instance.
 
   5. UAA is responsible for authenticating a user and providing the service with an access token
     with the requested permissions.  However, it is the responsibility of the service to verify
-    that the user making the request to manage an instance has the required permissions.  The service
+    that the user making the request to manage an instance current has access to that service instance.  The service
     can accomplish this by hitting the `/v2/service_instances/:guid/permissions` endpoint on the
     Cloud Controller.  The API request would go as follows:
 

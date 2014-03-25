@@ -95,7 +95,7 @@ plans.
             "displayName":"CloudAMQP",
             "imageUrl":"https://d33na3ni6eqf5j.cloudfront.net/app_resources/18492/thumbs_112/img9069612145282015279.png",
             "longDescription":"Managed, highly available, RabbitMQ clusters in the cloud",
-            "providerName":"84codes AB",
+            "providerDisplayName":"84codes AB",
             "documentationUrl":"http://docs.cloudfoundry.com/docs/dotcom/marketplace/services/cloudamqp.html",
             "supportUrl":"http://www.cloudamqp.com/support.html"
          },

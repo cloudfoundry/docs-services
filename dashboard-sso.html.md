@@ -75,9 +75,11 @@ an endpoint to determine a user's authorization.
 
   5. UAA is responsible for authenticating a user and providing the service with an access token
     with the requested permissions.  However, it is the responsibility of the service to verify
-    that the user making the request to manage an instance current has access to that service instance.  The service
-    can accomplish this by hitting the `/v2/service_instances/:guid/permissions` endpoint on the
-    Cloud Controller.  The API request would go as follows:
+    that the user making the request to manage an instance currently has access to that service instance.  The service
+    can accomplish this with a GET to the `/v2/service_instances/:guid/permissions` endpoint on the
+    Cloud Controller. The request must include a token for an authenticated user and the service instance guid. 
+
+    Example:
 
     ```
     curl -H 'Content-Type: application/json' \
@@ -94,9 +96,7 @@ an endpoint to determine a user's authorization.
 
     The response will indicate to the service whether this user is allowed to manage the given instance.
     A `true` value for the `manage` key indicates sufficient permissions; `false` would indicate insufficient
-    permissions.  Since administrators may change the permissions of users, the service is responsible for
-    determining a reasonable policy as to how often to check this endpoint in order to ensure that a user
-    still has the necessary permissions.
+    permissions.  Since administrators may change the permissions of users, the service should check this endpoint whenever a user uses the SSO flow to access the service's UI.
 
 ## Restrictions
 

@@ -2,53 +2,30 @@
 title: Catalog Metadata
 ---
 
-The service marketplace is defined as the aggregate catalog of services and
-plans advertised to a Cloud Foundry instance by all registered brokers.
-Cloud controller clients (web, CLI, helper libraries, etc) have different
-requirements for information about these services and plans that should be
-displayed to end users.
-In this document, "client" refers to clients of cloud controller.
+The Services Marketplace is defined as the aggregate catalog of services and plans exposed to end users of a Cloud Foundry instance. Marketplace services may come from one or many service brokers. The Marketplace is exposed to end users by cloud controller clients (web, CLI, IDEs, etc), and the Cloud Foundry community is welcome to develop their own clients. All clients are not expected to have the same requirements for information to expose about services and plans. This document discusses user-facing metadata for services and plans, and how the broker API enables broker authors to provide metadata required by different cloud controller clients.
 
-As described in the [Service Broker API](api.html#catalog-mgmt), the only
-required user-facing fields are `label` and `description` for services, and
-`name` and `description` for service plans.
-Rather than attempt to anticipate all potential fields that clients will want,
-or add endless fields to the API spec over time, CF provides a mechanism for
-brokers to advertise any fields a client requires.
-This mechanism is the `metadata` field.
+As described in the [Service Broker API](api.html#catalog-mgmt), the only required user-facing fields are `label` and `description` for services, and `name` and `description` for service plans. Rather than attempt to anticipate all potential fields that clients will want, or add endless fields to the API spec over time, the broker API provides a mechanism for brokers to advertise any fields a client requires. This mechanism is the `metadata` field.
 
-The contents of the `metadata` field are not validated by cloud controller but
-may be by cloud controller clients.
-Not all clients will make use of the value of `metadata`, and not all brokers
-have to provide it.
-If a broker does advertise the `metadata` field, client developers can choose to
-display some or all fields available.
+The contents of the `metadata` field are not validated by cloud controller but may be by cloud controller clients. Not all clients will make use of the value of `metadata`, and not all brokers have to provide it. If a broker does advertise the `metadata` field, client developers can choose to display some or all fields available.
 
-**Note**: in the [v1 broker API](api-v1.html), the `metadata` field is called
-`extra`.
+**Note**: in the [v1 broker API](api-v1.html), the `metadata` field was called `extra`.
 
 ## <a id='community-driven-standards'></a>Community-Driven Standards ##
 
-The intent of this page is to provide a list of metadata fields consumed by
-popular clients.
-Client authors can add their metadata requirements to this document, so that
-broker authors can see what metadata they should advertise in their catalogs.
-**Before adding new fields, consider whether an existing one will suffice.**
+This page provides a place to publish the metadata fields required by popular cloud controller clients. Client authors can add their metadata requirements to this document, so that broker authors can see what metadata they should advertise in their catalogs. 
 
-## <a id='services-metadata-fields'></a>Services Metadata Fields ##
+**Before adding new fields, consider whether an existing one will suffice.**
 
 **Note**: “CLI strings” are all lowercase, no spaces.
 Keep it short; imagine someone having to type it as an argument for a longer CLI
 command.
 
+## <a id='services-metadata-fields'></a>Services Metadata Fields ##
+
 | Broker API Field | Type | Description | CC API Field | Pivotal CLI | Pivotal Developer Console |
 |------------------|------|-------------|--------------|-------------|---------------------------|
 | name | CLI string | A short name for the service to be displayed in a catalog. | label | X | X |
 | description | string | A short 1-line description for the service, usually a single sentence or phrase. | description | X | X |
-| provider | CLI string | *Deprecated* V1 provider name | provider | | |
-| version | CLI string | *Deprecated* V1 service version | version | | |
-| requires | array-of-strings | A list of permissions that the user must give up to the service, such as the ability to read application logs. | requires | | |
-| tags | array-of-strings | A list of strings that can be used by applications or front-ends to find or browse services.  Such as [“mysql”, ”database”, ”relational”] for a mysql DB service. | tags | | |
 | metadata.displayName | string | The name of the service to be displayed in graphical clients | extra.displayName | | X |
 | metadata.imageUrl | string | The URL to an image. | extra.imageUrl | | X |
 | metadata.longDescription | string | Long description | extra.longDescription | | X |
@@ -57,10 +34,6 @@ command.
 | metadata.supportUrl | string | Link to support for the service | extra.supportUrl | | X |
 
 ## <a id='plan-metadata-fields'></a>Plan Metadata Fields ##
-
-**Note**: “CLI strings” are all lowercase, no spaces.
-Keep it short; imagine someone having to type it as an argument for a longer CLI
-command.
 
 | Broker API Field | Type | Description | CC API Field | Pivotal CLI | Pivotal Developer Console |
 |------------------|------|-------------|--------------|-------------|---------------------------|

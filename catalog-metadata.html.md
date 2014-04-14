@@ -45,9 +45,7 @@ command.
 
 ## <a id='example-broker-response'></a>Example Broker Response Body ##
 
-The example below contains a catalog of one service, having one service plan.
-Of course, a broker can offering a catalog of many plans, each having many
-plans.
+The example below contains a catalog of one service, having one service plan. Of course, a broker can offering a catalog of many services, each having many plans.
 
 ```
 {

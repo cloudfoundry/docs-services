@@ -42,20 +42,15 @@ added to enable support for new features.
 These fields must be optional, and should be ignored by clients and servers
 that do not understand them.
 
-### <a id='api-changes-since-v2-2'></a>Changes Since v2.2 ###
+### <a id='api-changes-since-v2-1'></a>Changes Since v2.1 ###
 
-The key change from v2.2 to v2.3 of the Services API is the addition of SSO functionality for users to access external service dashboard pages.
+The key change from v2.1 to v2.2 of the Services API is:
 
-* A service can request a dashboard client in the service broker catalog.
-* A service with a dashboard client can ask the /v2/service_instances/:guid/permissions endpoint on Cloud Controller if a user can manage a service instance.
-* A user may choose whether to allow the external service dashboard to access permissions data
-* A CF operator can enable/disable the feature via manifest parameter `cc_service_broker_client`.
-
-For details, see the <a href="dashboard-sso.html">Dashboard SSO docs</a>
+* Addition of free as an optional field for a service plan in the broker catalog.
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.3 of the services API has been supported since final build ??? of
+v2.2 of the services API has been supported since final build 164 of
 [cf-release](https://github.com/cloudfoundry/cf-release/).
 
 ## <a id='api-overview'></a>API Overview ##
@@ -90,7 +85,7 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
 such that 2.9 comes before 2.10.
 An example of this header, as of publication time is:
 
-`X-Broker-Api-Version: 2.3`
+`X-Broker-Api-Version: 2.2`
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -231,26 +226,6 @@ A web friendly display name is camelcase with spaces and punctuation supported.
   <td>boolean</td>
   <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.html">Quota Plans</a>. Default: true</td>
 </tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;dashboard_client</td>
-  <td>object</td>
-  <td>Contains the data necessary to activate the <a href="dashboard-sso.html">Dashboard SSO feature</a> for this service</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id</td>
-  <td>string</td>
-  <td>The id of the Oauth2 client that the service intends to use. The name may be taken, in which case the API will return an error to the operator</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secret</td>
-  <td>string</td>
-  <td>A secret for the dashboard client</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redirect_uri</td>
-  <td>string</td>
-  <td>A uri to the dashboard page that will be whitelisted by the UAA and allow SSO</td>
-</tr>
 </tbody>
 </table>
 
@@ -274,12 +249,7 @@ A web friendly display name is camelcase with spaces and punctuation supported.
       "name": "large",
       "description": "A large dedicated database with 10GB storage quota, 512MB of RAM, and 100 connections",
       "free": false
-    }],
-    "dashboard_client": {
-      "id": "client-id-1",
-      "secret": "secret-1",
-      "redirect_uri": "https://dashboard.service.com"
-    }
+    }]
   }]
 }
 </pre>

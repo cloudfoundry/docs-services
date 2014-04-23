@@ -77,7 +77,7 @@ Requests from the Cloud Controller to the broker contain a header that defines
 the version number of the Broker API that Cloud Controller will use.
 This header will be useful in future minor revisions of the API to allow
 brokers to reject requests from Cloud Controllers that they do not understand.
-While minor API revisions will always be additive; it is possible that brokers
+While minor API revisions will always be additive, it is possible that brokers
 will come to depend on a feature that was added after 2.0, so they may use this
 header to reject the request.
 Error messages from the broker in this situation should inform the operator of

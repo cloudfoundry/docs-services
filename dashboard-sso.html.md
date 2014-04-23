@@ -8,6 +8,9 @@ Single sign-on (SSO) allows Cloud Foundry users to authenticate with third-party
 using their Cloud Foundry credentials. SSO provides a streamlined experience to users,
 limiting repeated logins and multiple accounts across their managed services.
 
+SSO was introduced in [cf-release v169](https://github.com/cloudfoundry/cf-release/tree/v169),
+so v169 is the minimum release version needed to support the SSO feature.
+
 In order to make this possible, CF provides API endpoints for configuration and
 verification of the user credentials. This allows third-party services to verify user credentials
 without needing the user to login again. The user's credentials are never directly transmitted to
@@ -15,7 +18,23 @@ the service since the OAuth2 protocol handles authentication. Similarly, Cloud C
 an endpoint to determine a user's authorization.
 
 ## The SSO interaction and points of integration
-  1. In order to integrate a dashboard with CF, service brokers need to include the necessary
+
+  1. To enable the SSO feature, the Cloud Controller requires a UAA client with sufficient permissions to create and
+    delete clients for the service brokers that request them. This client can be configured by including the following
+    snippet in the runtime manifest:
+
+    ```
+    properties:
+      uaa:
+        clients:
+          cc_service_broker_client:
+            secret: cc-broker-secret
+            scope: cloud_controller.write,openid,cloud_controller.read
+            authorities: clients.read,clients.write,clients.admin
+            authorized-grant-types: client_credentials
+    ```
+
+  2. In order to integrate a dashboard with CF, service brokers need to include the necessary
     properties in their catalog. Specifically, each service implementing this feature must
     advertise a `dashboard_client` property in their JSON response from `/v2/catalog`. A valid
     response would appear as follows:
@@ -36,13 +55,13 @@ an endpoint to determine a user's authorization.
     }
     ```
 
-    `id` is the unique identifier for the OAuth client that will be created for your service UI on the token server (UAA), and will be used by your service UI to authenticate with the token server (UAA).
+    `id` is the unique identifier for the OAuth2 client that will be created for your service UI on the token server (UAA), and will be used by your service UI to authenticate with the token server (UAA).
 
-    `secret` is the shared secrect your service UI will use to authenticate with the token server (UAA).
+    `secret` is the shared secret your service UI will use to authenticate with the token server (UAA).
 
     `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`. 
 
-  2. Whenever the catalog for this service broker is created or updated, Cloud Controller will
+  3. Whenever the catalog for this service broker is created or updated, Cloud Controller will
     create or update UAA clients for any services that advertise SSO capability. This client
     will be used by the service to authenticate users. Operators verify the existance of
     service UAA clients using the [uaac](https://github.com/cloudfoundry/cf-uaac) tool.
@@ -62,18 +81,24 @@ an endpoint to determine a user's authorization.
         authorities: uaa.none
     ```
 
-  3. At this point, users will be able to click the `Manage` link on their CF Web console,
+  4. At this point, users will be able to click the `Manage` link on their CF Web console,
     seamlessly allowing them to access the dashboard for the service.
     <br />
 +   ![Managing a Service](../images/web-ui-manage-service.png)
 
-  4. At this point, the service will need to obtain an access token from UAA.  The service should
-    use the standardized OAuth2 protocol to retrieve this token.  See [Resources](#resources)
-    for more information regarding OAuth2 and for an example broker/service dashboard implementation.
+  5. At this point, the service will need to obtain an access token from UAA.  The service should
+    use the standardized OAuth2 protocol to retrieve this token.  Cloud Controller's info endpoint (GET `/info`) lists
+    the URLs for the OAuth2 [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and
+    [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2).
+    See [Resources](#resources) for more information regarding OAuth2 and for an example broker/service dashboard implementation.
 
-    Users will be redirected from the service dashboard to the login server where they will be prompted to authorize the permissions requested by the service dashboard.  Upon authorizing the requested permissions, the user will be redirected back to the service (assuming the redirect URL matches `redirect_uri` as described above).  The service will then need to check with Cloud Controller whether the authenticated user currently has permission to manage the service instance.
+    Users will be redirected from the service dashboard to the login server where they will be prompted to
+    authorize the permissions requested by the service dashboard.  Upon authorizing the requested permissions,
+    the user will be redirected back to the service (assuming the redirect URL matches `redirect_uri` as described above).
+    The service will then need to check with Cloud Controller whether the authenticated user currently has permission
+    to manage the service instance.
 
-  5. UAA is responsible for authenticating a user and providing the service with an access token
+  6. UAA is responsible for authenticating a user and providing the service with an access token
     with the requested permissions.  However, it is the responsibility of the service to verify
     that the user making the request to manage an instance currently has access to that service instance.  The service
     can accomplish this with a GET to the `/v2/service_instances/:guid/permissions` endpoint on the
@@ -92,7 +117,7 @@ an endpoint to determine a user's authorization.
       }
     ```
 
-    This request should use the token of the user for authorization.
+    This request should use the user's token for authorization.
 
     The response will indicate to the service whether this user is allowed to manage the given instance.
     A `true` value for the `manage` key indicates sufficient permissions; `false` would indicate insufficient
@@ -106,5 +131,5 @@ an endpoint to determine a user's authorization.
 <a id="resources"></a>
 ## Resources
   * [OAuth2](http://oauth.net/2/)
-  * [Example broker SSO implementation](https://github.com/cloudfoundry/cf-mysql-broker)
+  * [Example broker with SSO implementation](https://github.com/cloudfoundry/cf-mysql-broker)
   * [Cloud Controller API Docs](http://apidocs.cfapps.io/)

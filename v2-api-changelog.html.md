@@ -2,6 +2,9 @@
 title: v2 API Change Log
 ---
 
+## 2014-04-23 ##
+Added [service dashboard sso](dashboard-sso.html), bumped version to 2.3, included in cf-release final build 169.
+
 ## 2014-03-31 ##
 Added free field to service plans, bumped version to 2.2, included in cf-release final build 164.
 

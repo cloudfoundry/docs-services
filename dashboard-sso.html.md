@@ -8,6 +8,9 @@ Single sign-on (SSO) allows Cloud Foundry users to authenticate with third-party
 using their Cloud Foundry credentials. SSO provides a streamlined experience to users,
 limiting repeated logins and multiple accounts across their managed services.
 
+SSO was introduced in [cf-release v169](https://github.com/cloudfoundry/cf-release/tree/v169),
+so v169 is the minimum release version needed to support the SSO feature.
+
 In order to make this possible, CF provides API endpoints for configuration and
 verification of the user credentials. This allows third-party services to verify user credentials
 without needing the user to login again. The user's credentials are never directly transmitted to
@@ -114,7 +117,7 @@ an endpoint to determine a user's authorization.
       }
     ```
 
-    This request should use the token of the user for authorization.
+    This request should use the user's token for authorization.
 
     The response will indicate to the service whether this user is allowed to manage the given instance.
     A `true` value for the `manage` key indicates sufficient permissions; `false` would indicate insufficient

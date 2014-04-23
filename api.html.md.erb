@@ -11,7 +11,7 @@ title: Service Broker API
 Two major versions of the Service Broker API are currently supported by Cloud
 Foundry, v1 and v2.
 As v1 is deprecated and support will be removed in the next major version of
-Cloud Foundry, it is recommended that all new brokers implement v2 and current
+Cloud Foundry, it is recommended that all new brokers implement v2 and that current
 brokers are upgraded.
 
 <div style="width:50%">
@@ -39,7 +39,7 @@ brokers are upgraded.
 * New optional endpoints, or new HTTP methods for existing endpoints, may be
 added to enable support for new features.
 * New fields may be added to existing request/response messages.
-These fields must be optional, and should be ignored by clients and servers
+These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
 ### <a id='api-changes-since-v2-2'></a>Changes Since v2.2 ###
@@ -47,15 +47,15 @@ that do not understand them.
 The key change from v2.2 to v2.3 of the Services API is the addition of SSO functionality for users to access external service dashboard pages.
 
 * A service can request a dashboard client in the service broker catalog.
-* A service with a dashboard client can ask the /v2/service_instances/:guid/permissions endpoint on Cloud Controller if a user can manage a service instance.
-* A user may choose whether to allow the external service dashboard to access permissions data
+* A service with a dashboard client can ask the /v2/service_instances/:guid/permissions endpoint on Cloud Controller whether a user can manage a service instance.
+* A user may choose whether to allow the external service dashboard to access permissions data.
 * A CF operator can enable/disable the feature via manifest parameter `cc_service_broker_client`.
 
 For details, see the <a href="dashboard-sso.html">Dashboard SSO docs</a>
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.3 of the services API has been supported since final build ??? of
+v2.3 of the services API has been supported since [final build 169](https://github.com/cloudfoundry/cf-release/tree/v169) of
 [cf-release](https://github.com/cloudfoundry/cf-release/).
 
 ## <a id='api-overview'></a>API Overview ##
@@ -64,7 +64,7 @@ The Cloud Foundry services API defines the contract between the Cloud
 Controller and the service broker.
 The broker is expected to implement several HTTP (or HTTPS) endpoints
 underneath a URI prefix.
-One or more services can be provided by a single broker and load balancing
+One or more services can be provided by a single broker, and load balancing
 enables horizontal scalability of redundant brokers.
 Multiple Cloud Foundry instances can be supported by a single broker using
 different URL prefixes and credentials.
@@ -75,30 +75,30 @@ different URL prefixes and credentials.
 
 Requests from the Cloud Controller to the broker contain a header that defines
 the version number of the Broker API that Cloud Controller will use.
-This header will be useful in future minor revisions of the API, to allow
+This header will be useful in future minor revisions of the API to allow
 brokers to reject requests from Cloud Controllers that they do not understand.
-While minor API revisions will always be additive, it is possible that brokers
+While minor API revisions will always be additive; it is possible that brokers
 will come to depend on a feature that was added after 2.0, so they may use this
 header to reject the request.
 Error messages from the broker in this situation should inform the operator of
-what the required and actual version numbers are, so that an operator can go
+what the required and actual version numbers are so that an operator can go
 upgrade Cloud Controller and resolve the issue.
 A broker should respond with a `412 Precondition Failed` message when rejecting
 a request.
 
 The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
 such that 2.9 comes before 2.10.
-An example of this header, as of publication time is:
+An example of this header as of publication time is:
 
 `X-Broker-Api-Version: 2.3`
 
 ## <a id='authentication'></a>Authentication ##
 
 Cloud Controller (final release v145+) authenticates with the Broker using HTTP
-basic authentication (the `Authentication:` header) on every request, and will
+basic authentication (the `Authentication:` header) on every request and will
 reject any broker registrations that do not contain a username and password.
 The broker is responsible for checking the username and password and returning
-a `401 Unauthorized` message if they are invalid.
+a `401 Unauthorized` message if credentials are invalid.
 Cloud Controller supports connecting to a broker using SSL if additional
 security is desired.
 
@@ -109,7 +109,7 @@ Cloud Controller will initially fetch this endpoint from all brokers and make
 adjustments to the user-facing service catalog stored in the Cloud Controller
 database.
 If the catalog fails to initially load or validate, Cloud Controller will not
-allow the operator to add the new broker, and should give a meaningful error
+allow the operator to add the new broker and will give a meaningful error
 message.
 Cloud Controller will also update the catalog whenever a broker is updated, so
 you can use `update-service-broker` with no changes to force a catalog refresh.
@@ -117,7 +117,7 @@ you can use `update-service-broker` with no changes to force a catalog refresh.
 When Cloud Controller fetches a catalog from a broker, it will compare the
 broker's id for services and plans with the `unique_id` values for services and
 plan in the  Cloud Controller database.
-If a service or plan in the broker catalog has an id which is not present
+If a service or plan in the broker catalog has an id that is not present
 amongst the `unique_id` values in the database, a new record will be added to
 the database.
 If services or plans in the database are found with `unique_id`s that match the
@@ -126,11 +126,12 @@ the broker’s catalog.
 
 If the database has plans which are not found in the broker catalog, and there
 are no associated service instances, Cloud Controller will remove these plans
+from the database. Cloud Controller will then delete services that do not have associated plans
 from the database.
-If there are provisioned instances, the plan will be marked “inactive” and will
+If the database has plans which are not found in the broker catalog, and there
+**are** provisioned instances, the plan will be marked “inactive” and will
 no longer be visible in the marketplace catalog or be provisionable.
-Cloud Controller will then delete services that do not have associated plans
-from the database.
+
 
 ### Request ###
 
@@ -148,7 +149,7 @@ CLI and web clients have different needs with regard to service and plan names.
 A CLI-friendly string is all lowercase, with no spaces.
 Keep it short -- imagine a user having to type it as an argument for a longer
 command.
-A web friendly display name is camelcase with spaces and punctuation supported.
+A web-friendly display name is camel-cased with spaces and punctuation supported.
 
 <table>
 
@@ -638,19 +639,19 @@ A response code of `410 Gone` with a body of `{}` indicates to Cloud
 Controller that the resource was not there in the first place, and is likely
 gone.
 _Any other_ response code indicates to Cloud Controller that the the service
-instance could not be deleted, the user will be informed (and the instance will
-remain in the database).
+instance could not be deleted. The user will be informed, and the instance will
+remain in the database.
 
 We've chosen to require empty JSON in the response for future compatibility; it
 will be easier to add fields in the future if JSON is expected rather than
-support the cases when a JSON body may or may not be returned.
+to support the cases when a JSON body may or may not be returned.
 
 ## <a id='broker-errors'></a>Broker Errors ##
 
-When a broker fails to perform any requested operation, unless it fails with a
-well-defined HTTP response code listed above (like 410 on delete), it should
-return an appropriate HTTP response code (chosen to accurately reflect the
-nature of the failure), and a JSON-encoded error payload.
+Broker failures beyond the scope of the well-defined HTTP response codes listed
+above (like 410 on delete) should return an appropriate HTTP response code
+(chosen to accurately reflect the nature of the failure) as well as a JSON-encoded
+error payload.
 
 This payload allows the broker to expose a message to end-user or operator.
 If a payload is included, only the message from the description field in the
@@ -682,17 +683,16 @@ code will be shown.
 
 The Cloud Controller database and a Broker are expected to store identical
 copies of existing instances and bindings.
-Potentially, these two lists may become inconsistent.
+These two lists may potentially become inconsistent.
 For example, if a broker times out during a delete request, the Cloud
-Controller will be unsure of whether that resource still exists on the broker
-or not.
+Controller will be unsure whether that resource still exists on the broker.
 Cloud Controller will implement the following orphan prevention techniques:
 
 * If a broker fails to provision or bind an instance, the Cloud Controller will
-immediately issue an deprovision or unbind request .
+immediately issue an deprovision or unbind request.
 
 * If a broker fails to unbind or deprovision an instance, the Cloud Controller
 will periodically retry that DELETE request until it succeeds (or generates a
 410).
 Eventually it will give up, but this technique will help clean up resources
-that are remain when a broker fails to delete.
+that remain when a broker fails to delete.

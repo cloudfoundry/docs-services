@@ -47,9 +47,6 @@ that do not understand them.
 The key change from v2.2 to v2.3 of the Services API is the addition of SSO functionality for users to access external service dashboard pages.
 
 * A service can request a dashboard client in the service broker catalog.
-* A service with a dashboard client can ask the /v2/service_instances/:guid/permissions endpoint on Cloud Controller whether a user can manage a service instance.
-* A user may choose whether to allow the external service dashboard to access permissions data.
-* A CF operator can enable/disable the feature via manifest parameter `cc_service_broker_client`.
 
 For details, see the <a href="dashboard-sso.html">Dashboard SSO docs</a>
 
@@ -250,7 +247,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redirect_uri</td>
   <td>string</td>
-  <td>A uri to the dashboard page that will be whitelisted by the UAA and allow SSO</td>
+  <td>A domain for the service dashboard that will be whitelisted by the UAA to enable SSO</td>
 </tr>
 </tbody>
 </table>

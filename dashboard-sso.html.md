@@ -1,5 +1,5 @@
 ---
-title: Integrating Dashboard Single Sign-On
+title: Dashboard Single Sign-On
 ---
 
 ## Introduction

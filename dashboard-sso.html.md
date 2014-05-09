@@ -115,7 +115,7 @@ Response:
 
 The response will indicate to the service whether this user is allowed to manage the given instance. A `true` value for the `manage` key indicates sufficient permissions; `false` would indicate insufficient permissions.  Since administrators may change the permissions of users, the service should check this endpoint whenever a user uses the SSO flow to access the service's UI.
 
-### <a name="#on-scopes"></a> On Scopes
+### <a name="on-scopes"></a> On Scopes
 
 Scopes let you specify exactly what type of access you need. Scopes limit access for OAuth tokens. They do not grant any additional permission beyond that which the user already has.
 

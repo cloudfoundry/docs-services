@@ -4,19 +4,13 @@ title: Dashboard Single Sign-On
 
 ## Introduction
 
-Single sign-on (SSO) allows Cloud Foundry users to authenticate with third-party services using their Cloud Foundry credentials. SSO provides a streamlined experience to users, limiting repeated logins and multiple accounts across their managed services.
+Single sign-on (SSO) enables Cloud Foundry users to authenticate with third-party service dashboards using their Cloud Foundry credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth2 protocol handles authentication. 
 
-SSO was introduced in [cf-release v169](https://github.com/cloudfoundry/cf-release/tree/v169),
-so v169 is the minimum release version needed to support the SSO feature.
+Dashboard SSO was introduced in [cf-release v169](https://github.com/cloudfoundry/cf-release/tree/v169) so this or a newer version is required to support the feature.
 
-In order to make this possible, CF provides API endpoints for configuration and
-verification of the user credentials. This allows third-party services to verify user credentials without needing the user to login again. The user's credentials are never directly transmitted to the service since the OAuth2 protocol handles authentication. Similarly, Cloud Controller provides an endpoint to determine a user's authorization.
+## Enabling the feature in Cloud Foundry
 
-## The SSO interaction and points of integration
-
-### Registering the Dashboard
-
-1. To enable the SSO feature, the Cloud Controller requires a UAA client with sufficient permissions to create and delete clients for the service brokers that request them. This client can be configured by including the following snippet in the runtime manifest:
+To enable the SSO feature, the Cloud Controller requires a UAA client with sufficient permissions to create and delete clients for the service brokers that request them. This client can be configured by including the following snippet in the cf-release manifest:
 
   ```
   properties:
@@ -29,78 +23,103 @@ verification of the user credentials. This allows third-party services to verify
           authorized-grant-types: client_credentials
   ```
 
-1. In order to integrate a dashboard with CF, service brokers need to include the necessary properties in their catalog. Specifically, each service implementing this feature must advertise a `dashboard_client` property in their JSON response from `/v2/catalog`. A valid response would appear as follows:
+When this client is not present in the cf-release manifest, Cloud Controller cannot manage UAA clients and an operator will receive a warning when creating or updating service brokers that advertise the `dashboard_client` properties discussed below.
 
-  ```
-  {
-    "services": [
-      {
-        "id": "44b26033-1f54-4087-b7bc-da9652c2a539",
-        ...
-        "dashboard_client": {
-          "id": "p-mysql-client",
-          "secret": "p-mysql-secret",
-          "redirect_uri": "http://p-mysql.example.com"
-        }
-      }
-    ]
-  }
-  ```
+## Service Broker Responsibilities
 
-  `id` is the unique identifier for the OAuth2 client that will be created for your service UI on the token server (UAA), and will be used by your service UI to authenticate with the token server (UAA).
+### Registering the Dashboard Client
 
-  `secret` is the shared secret your service UI will use to authenticate with the token server (UAA).
+1.  A service broker must include the `dashboard_client` field in the JSON response from its [catalog endpoint](api.html#catalog-mgmt) for each service implementing this feature. A valid response would appear as follows:
 
-  `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`.
+	  ```
+	  {
+	    "services": [
+	      {
+	        "id": "44b26033-1f54-4087-b7bc-da9652c2a539",
+	        ...
+	        "dashboard_client": {
+	          "id": "p-mysql-client",
+	          "secret": "p-mysql-secret",
+	          "redirect_uri": "http://p-mysql.example.com"
+	        }
+	      }
+	    ]
+	  }
+	  ```
+	The `dashboard_client` field is a hash containing three fields:	
+	- `id` is the unique identifier for the OAuth2 client that will be created for your service dashboard on the token server (UAA), and will be used by your dashboard to authenticate with the token server (UAA).
+	- `secret` is the shared secret your dashboard will use to authenticate with the token server (UAA).
+	- `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`.
+	
+1. When a service broker which advertises the `dashboard_client` property for any of its services is [added or updated](managing-service-brokers.html), Cloud Controller will create or update UAA clients as necessary. This client will be used by the service dashboard to authenticate users.
 
-1. Whenever the catalog for this service broker is created or updated, Cloud Controller will create or update UAA clients for any services that advertise SSO capability. This client will be used by the service (dashboard UI) to authenticate users.
+### Dashboard URL
 
-### OAuth2 Login Flow for Dashboards
+A service broker should return a URL for the `dashboard_url` field in response to a [provision request](./api.html#provisioning). Cloud Controller clients should expose this URL to users. `dashboard_url` can be found in the response from Cloud Controller to create a service instance, enumerate service instances, space summary, and other endpoints. 
 
-A `dashboard_url` is provided by the broker when a service instance is [provisioned](./api.html#provisioning). At this point, users can navigate to the `dashboard_url`, seamlessly allowing them to access the dashboard for the service. The Cloud Controller provides `dashboard_url` as part of its JSON response when a user makes an API request for a service instance.
+Users can then navigate to the service dashboard at the URL provided by `dashboard_url`, initiating the OAuth2 login flow. 
 
-The service dashboard UI at this URL should initiate the OAuth2 login flow. The overall flow is described in [section 1.2](http://tools.ietf.org/html/rfc6749#section-1.2) of the OAuth2 RFC. OAuth2 expects the presence of two endpoints on the authorization server.  The URLs for the [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2) can be retrieved from Cloud Controller's info endpoint (GET `/info`).
+## Service Dashboard Responsibilities
 
-#### Dashboard UI Implementation
+### OAuth2 Flow
 
-A Dashboard UI should implement the [OAuth2 RFC 4.1 Authorization Code Grant](http://tools.ietf.org/html/rfc6749#section-4.1) type:
+When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth2 login flow. A summary of the flow can be found in [section 1.2 of the OAuth2 RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth2 expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In Cloud Foundry, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field.
 
-1. The dashboard UI should redirect the user's browser to the Authorization Endpoint providing the `client_id`, the `redirect_uri` with a domain matching the `redirect_uri` domain above, and the requested scope. Ideally, the scope should be as limited as possible, with the most limited scope for this workflow being `cloud_controller_service_permissions.read` and `openid`. For an explanation of the various scopes and the permissions associate with them, [see below](#on-scopes).
+```
+$ curl api.example-cf.com/info
+{"name":"vcap","build":"2222","support":"http://support.cloudfoundry.com","version":2,"description":"Cloud Foundry sponsored by Pivotal","authorization_endpoint":"https://login.example-cf.com","token_endpoint":"https://uaa.example-cf.com","allow_debug":true}
+```
 
-1. UAA authenticates the user, who then approves or denies the permission requested by the dashboard UI.
+More specifically, a service dashboard should implement the OAuth2 Authorization Code Grant type ([UAA docs](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC docs](http://tools.ietf.org/html/rfc6749#section-4.1)).
 
-1. Assuming the user grants access, UAA redirects the user's browser back to the dashboard UI using the `redirect_uri` provided earlier.  The `redirect_uri` includes an authorization code.
+1. When a user visits the service dashboard at the value of `dashboard_url`, the dashboard should redirect the user's browser to the Authorization Endpoint and include its `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and list of requested scopes. 
 
-1. The dashboard UI should request an access token from the Token Endpoint by including the authorization code received in the previous step.  When making the request, the dashboard UI must authenticate with UAA. The dashboard UI should include the `redirect_uri` used to obtain the authorization code for verification.
+	Scopes are permissions included in the token a dashboard client will receive from UAA, and which Cloud Controller uses to enforce access. A client should request the minimum scopes it requires. The mininum scopes required for this workflow are `cloud_controller_service_permissions.read` and `openid`. For an explanation of the scopes available to dashboard clients, see [On Scopes](#on-scopes).
 
-1. UAA authenticates the dashboard UI, validates the authorization code, and ensures that the redirection URI received matches the URI used to redirect the client in step (3).  If valid, UAA responds back with an access token and a refresh token.
+1. UAA authenticates the user by redirecting the user to the Login Server, where the user then approves or denies the scopes requested by the service dashboard. The user is presented with human readable descriptions for permissions representing each scope. After authentication, the user's browser is redirected back to the Authorization endpoint on UAA with an authentication cookie for the UAA.
 
-1. UAA is responsible for authenticating a user and providing the service with an access token with the requested permissions. However, after the user has been logged in, it is the responsibility of the service to verify that the user making the request to manage an instance currently has access to that service instance.
+1. Assuming the user grants access, UAA redirects the user's browser back to the value of `redirect_uri` the dashboard provided in its request to the Authorization Endpoint.  The `Location` header in the response includes an authorization code.
 
-  The service can accomplish this with a GET to the `/v2/service_instances/:guid/permissions` endpoint on the Cloud Controller. The request must include a token for an authenticated user and the service instance guid.
+	```
+	HTTP/1.1 302 Found
+	Location: https://p-mysql.example.com/manage/auth?code=F45jH
+	```
 
-  Example:
+1. The dashboard UI should then request an access token from the Token Endpoint by including the authorization code received in the previous step.  When making the request the dashboard must authenticate with UAA by passing the client `id` and `secret` in a basic auth header. UAA will verify that the client id matches the client it issued the code to. The dashboard should also include the `redirect_uri` used to obtain the authorization code for verification. 
 
-  ```
-  curl -H 'Content-Type: application/json' \
+1. UAA authenticates the dashboard client, validates the authorization code, and ensures that the redirect URI received matches the URI used to redirect the client when the authorization code was issues.  If valid, UAA responds back with an access token and a refresh token.
+
+### Checking User Permissions
+
+UAA is responsible for authenticating a user and providing the service with an access token with the requested permissions. However, after the user has been logged in, it is the responsibility of the service dashboard to verify that the user making the request to manage an instance currently has access to that service instance.
+
+The service can accomplish this with a GET to the `/v2/service_instances/:guid/permissions` endpoint on the Cloud Controller. The request must include a token for an authenticated user and the service instance guid. The token is the same one obtained from the UAA in response to a request to the Token Endpoint, described above.
+.
+
+Example Request:
+
+```
+curl -H 'Content-Type: application/json' \
        -H 'Authorization: bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoidWFhLWlkLTciLCJlbWFpbCI6ImVtYWlsLTdAc29tZWRvbWFpbi5jb20iLCJzY29wZSI6WyJjbG91ZF9jb250cm9sbGVyLmFkbWluIl0sImF1ZCI6WyJjbG91ZF9jb250cm9sbGVyIl0sImV4cCI6MTM5Mjc0NzIzNH0.IUsMEB95qiBazm-iyVlekBomBEuMYHTufeB3SLiGpWM' \
        http://api.cloudfoundry.com/v2/service_instances/44b26033-1f54-4087-b7bc-da9652c2a539/permissions
 
-  =>
-    {
-      "manage": true
-    }
-  ```
+```
 
-  This request should use the token obtained in step (5) for authorization.
+Response:
 
-  The response will indicate to the service whether this user is allowed to manage the given instance. A `true` value for the `manage` key indicates sufficient permissions; `false` would indicate insufficient permissions.  Since administrators may change the permissions of users, the service should check this endpoint whenever a user uses the SSO flow to access the service's UI.
+```
+{
+  "manage": true
+}
+```
 
-#### <a name="#on-scopes"></a> On scopes
+The response will indicate to the service whether this user is allowed to manage the given instance. A `true` value for the `manage` key indicates sufficient permissions; `false` would indicate insufficient permissions.  Since administrators may change the permissions of users, the service should check this endpoint whenever a user uses the SSO flow to access the service's UI.
+
+### <a name="#on-scopes"></a> On Scopes
 
 Scopes let you specify exactly what type of access you need. Scopes limit access for OAuth tokens. They do not grant any additional permission beyond that which the user already has.
 
-##### Minimum Scopes
+#### Minimum Scopes
 The following two scopes are necessary to implement the integration. Most dashboard shouldn't need more permissions than these scopes enabled.
 
 | Scope                                            | Permissions   |
@@ -108,7 +127,7 @@ The following two scopes are necessary to implement the integration. Most dashbo
 | `openid`                                         | Allows access to basic data about the user, such as email addresses |
 | `cloud_controller_service_permissions.read`      | Allows access to the CC endpoint that specifies whether the user can manage a given service instance |
 
-##### Additional scopes
+#### Additional Scopes
 Dashboards with extended capabilities may need to request these additional scopes:
 
 | Scope                                            | Permissions   |

@@ -286,10 +286,7 @@ Brokers are expected to respond with `201 Created` with the response body from t
 
 _Note: Not all services must be bindable --- some derive their value just from being provisioned. Brokers that do not provide any bindable services do not need to implement the endpoint for bind requests_
 
-When the broker receives a bind request from the Cloud Controller, it should take whatever action is necessary to generate a way for an application to utilize the already-provisioned resource. Applications should be issued different credentials when possible, so that revoking one bound application's access does not affect others. Bind can mean different things depending on the service. Here are some examples for MySQL:
-
-* New random user credentials are generated for the existing database.
-* A single set of credentials are returned for every bind to the same database.
+When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 
 ### Request ###
 
@@ -341,7 +338,7 @@ Brokers are expected to respond with `200 OK` or `201 Created` with the response
 <tr>
   <td>credentials</td>
   <td>object</td>
-  <td>A free-form hash of credentials that the bound application can use to access the service. Use of a `uri` field (such as `mysql://user:password@host:port/dbname`) is recommended when possible, but it is often useful to provide individual credentials components such as hostname, port, username, and password.</td>
+  <td>A free-form hash of credentials that the bound application can use to access the service. For more information, see <a href="binding-credentials.html">Binding Credentials</a>.</td>
 </tr>
 <tr>
   <td>syslog_drain_url</td>

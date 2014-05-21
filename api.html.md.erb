@@ -142,6 +142,23 @@ no longer be visible in the marketplace catalog or be provisionable.
 
 ### Response ###
 
+<table>
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>The expected response body is below</td>
+</tr>
+</tbody>
+</table>
+
+##### Body #####
+
 CLI and web clients have different needs with regard to service and plan names.
 A CLI-friendly string is all lowercase, with no spaces.
 Keep it short -- imagine a user having to type it as an argument for a longer
@@ -149,7 +166,6 @@ command.
 A web-friendly display name is camel-cased with spaces and punctuation supported.
 
 <table>
-
 <thead>
 <tr>
   <th>Response field</th>
@@ -253,8 +269,6 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 </table>
 
 \* Fields with an asterisk are required.
-
-##### Body #####
 
 <pre class="terminal">
 {
@@ -376,7 +390,36 @@ Controller
 
 ### Response ###
 
-Brokers are expected to respond with `201 Created` with the response body from the table below. Because PUT on this endpoint is used for create, not update, brokers should return a `409 Conflict` if they receive a PUT for an existing resource. Optionally, if the broker receives a PUT for an existing resource, where all parameters are identical, the broker can return a `200`.  If a broker responds with any code besides `200` or `201`, cloud controller will assume that the provision request failed and inform the user.
+<table>
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>201 Created</td>
+  <td>Service instance has been created. The expected response body is below.</td>
+</tr>
+<tr>
+  <td>409 Conflict</td>
+  <td>Shall be returned if the requested service instance already exists. The expected response body is "{}"</td>
+</tr>
+<tr>
+  <td>200 OK</td>
+  <td>
+    May be returned if the service instance already exists and the requested parameters are identical to the existing service instance.
+    The expected response body is below.
+  </td>
+</tr>
+</tbody>
+</table>
+
+All other status codes will be interpreted as an error and cloud controller will inform the user that the provision failed.
+
+We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
+future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 ##### Body #####
 
@@ -472,7 +515,37 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 
 ### Response ###
 
-Brokers are expected to respond with `200 OK` or `201 Created` with the response body from the table below.  Because PUT on this endpoint is used for create, not update, brokers should return a `409 Conflict` if they receive a PUT for an existing resource. Optionally, if the broker receives a PUT for an existing resource, where all parameters are identical, the broker can return a `200`.  If a broker responds with a code other than `200` or `201`, Cloud Controller will assume that the binding request failed and inform the user.
+<table>
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>201 Created</td>
+  <td>Binding has been created. The expected response body is below.</td>
+</tr>
+<tr>
+  <td>409 Conflict</td>
+  <td>Shall be returned if the requested binding already exists. The expected response body is "{}"</td>
+</tr>
+<tr>
+  <td>200 OK</td>
+  <td>
+    May be returned if the binding already exists and the requested parameters are identical to the existing binding.
+    The expected response body is below.
+  </td>
+</tr>
+</tbody>
+</table>
+
+All other status codes will be interpreted as an error and cloud controller will inform the user that the bind failed.
+Additionally, an unbind request will be sent to the broker to prevent an orphan being created on the broker.
+
+We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
+future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 ##### Body #####
 
@@ -559,18 +632,30 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/se
 
 ### Response ###
 
-A response code of `200 OK` with a body of `{}` indicates that the resource was
-deleted.
-A response code of `410 Gone` with a body of `{}` indicates to Cloud
-Controller that the resource was not there in the first place, and is likely
-gone.
-_Any other_ response code indicates to Cloud Controller that the the binding
-could not be deleted; the user will be informed (and the binding will remain in
-the database).
+<table>
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>Binding was deleted. The expected response body is "{}"</td>
+</tr>
+<tr>
+  <td>410 Gone</td>
+  <td>Shall be returned if the binding does not exist. The expected response body is "{}"</td>
+</tr>
+</tbody>
+</table>
 
-We've chosen to require empty JSON in the response for future compatibility; it
-will be easier to add fields in the future if JSON is expected rather than
-support the cases when a JSON body may or may not be returned.
+All other status codes will be interpreted as an error and cloud controller will inform the user that the unbind failed.
+The binding will remain in the cloud controller database.
+
+We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
+future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 ## <a id='deprovisioning'></a>Deprovisioning ##
 
@@ -621,18 +706,30 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=
 
 ### Response ###
 
-A response code of `200 OK` with a body of `{}` indicates that the resource was
-deleted.
-A response code of `410 Gone` with a body of `{}` indicates to Cloud
-Controller that the resource was not there in the first place, and is likely
-gone.
-_Any other_ response code indicates to Cloud Controller that the the service
-instance could not be deleted. The user will be informed, and the instance will
-remain in the database.
+<table>
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>Service instance was deleted. The expected response body is "{}"</td>
+</tr>
+<tr>
+  <td>410 Gone</td>
+  <td>Shall be returned if the service instance does not exist. The expected response body is "{}"</td>
+</tr>
+</tbody>
+</table>
 
-We've chosen to require empty JSON in the response for future compatibility; it
-will be easier to add fields in the future if JSON is expected rather than
-to support the cases when a JSON body may or may not be returned.
+All other status codes will be interpreted as an error and cloud controller will inform the user that the deprovision failed.
+The service instance will remain in the cloud controller database.
+
+We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
+future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 ## <a id='broker-errors'></a>Broker Errors ##
 

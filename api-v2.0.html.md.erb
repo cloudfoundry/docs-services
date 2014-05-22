@@ -315,14 +315,14 @@ future if JSON is expected rather than to support the cases when a JSON body may
 <tr>
   <td>dashboard_url</td>
   <td>string</td>
-  <td>The URL of a web-based management user interface for the service instance. This optional URL allows space developers to visit a friendly management console for this instance. The URL should contain enough information to identify the resource being accessed ("9189kdfsk0vfnku" in the example below), and potentially the credentials to access that resource ("access_token=3hjdsnqadw487232lp" below). For more information, see <a href="https://docs.google.com/a/gopivotal.com/document/d/1ojU5lFgVcLf9BCKIO481xdweFAb-Y3Vj1CM6KhmqSis/edit#heading=h.z2jbskafu6z8">Authenticating a Service Using the dashboard_url</a>.</td>
+  <td>The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL should contain enough information for the dashboard to identify the resource being accessed ("9189kdfsk0vfnku" in the example below). For information on how users can authenticate with service dashboards via SSO, see <a href="dashboard-sso.html">Dashboard Single Sign-On</a>.</td>
 </tr>
 </tboby>
 </table>
 
 <pre class="terminal">
 {
- "dashboard_url": "http://mongomgmthost/databases/9189kdfsk0vfnku?access_token=3hjdsnqadw487232lp"
+ "dashboard_url": "http://mongomgmthost/databases/9189kdfsk0vfnku"
 }
 </pre>
 

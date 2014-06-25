@@ -453,17 +453,17 @@ being provisioned.
 Brokers that do not provide any bindable services do not need to implement the
 endpoint for bind requests_
 
-When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html). 
+When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 
 ### Request ###
 
 ##### Route #####
 `PUT /v2/service_instances/:instance_id/service_bindings/:id`
 
-**Note**: The `:id` of a service binding is provided by the Cloud Controller.
-`:instance_id` is the ID of a previously-provisioned service instance; `:id`
+<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller.
+<code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code>
 will be used for future unbind requests, so the broker must use it to correlate
-the resource it creates.
+the resource it creates.</p>
 
 ##### Body #####
 

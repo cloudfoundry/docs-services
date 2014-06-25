@@ -427,10 +427,10 @@ When the broker receives a bind request from the Cloud Controller, it should ret
 ##### Route #####
 `PUT /v2/service_instances/:instance_id/service_bindings/:id`
 
-**Note**: The `:id` of a service binding is provided by the Cloud Controller.
-`:instance_id` is the ID of a previously-provisioned service instance; `:id`
+<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller.
+<code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code>
 will be used for future unbind requests, so the broker must use it to correlate
-the resource it creates.
+the resource it creates.</p>
 
 ##### Body #####
 

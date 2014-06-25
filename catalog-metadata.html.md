@@ -8,17 +8,17 @@ As described in the [Service Broker API](api.html#catalog-mgmt), the only requir
 
 The contents of the `metadata` field are not validated by cloud controller but may be by cloud controller clients. Not all clients will make use of the value of `metadata`, and not all brokers have to provide it. If a broker does advertise the `metadata` field, client developers can choose to display some or all fields available.
 
-**Note**: in the [v1 broker API](api-v1.html), the `metadata` field was called `extra`.
+<p class="note"><strong>Note</strong>: In the <a href="api-v1.html">v1 broker API</a>, the <code>metadata</code> field was called <code>extra</code>.</p>
 
 ## <a id='community-driven-standards'></a>Community-Driven Standards ##
 
-This page provides a place to publish the metadata fields required by popular cloud controller clients. Client authors can add their metadata requirements to this document, so that broker authors can see what metadata they should advertise in their catalogs. 
+This page provides a place to publish the metadata fields required by popular cloud controller clients. Client authors can add their metadata requirements to this document, so that broker authors can see what metadata they should advertise in their catalogs.
 
 **Before adding new fields, consider whether an existing one will suffice.**
 
-**Note**: “CLI strings” are all lowercase, no spaces.
+<p class="note"><strong>Note</strong>: “CLI strings” are all lowercase, no spaces.
 Keep it short; imagine someone having to type it as an argument for a longer CLI
-command.
+command.</p>
 
 ## <a id='services-metadata-fields'></a>Services Metadata Fields ##
 

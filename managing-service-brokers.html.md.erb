@@ -87,17 +87,17 @@ $ cf update-service-broker mybrokername mynewbrokername
 
 ## <a id='remove-broker'></a>Remove a Broker ##
 
-Removing a service broker will remove all services and plans in the broker's catalog from the Cloud Foundry Marketplace. 
+Removing a service broker will remove all services and plans in the broker's catalog from the Cloud Foundry Marketplace.
 
 <pre class="terminal">
 $ cf delete-service-broker mybrokername
 </pre>
 
-**Note:** Attempting to remove a service broker will fail if there are service instances for any service plan in its catalog. When planning to shut down or delete a broker, make sure to remove all service instances first. Failure to do so will leave [orphaned service instances](./api.html#orphans) in the Cloud Foundry database. If a service broker has been shut down without first deleting service instances, you can remove the instances with the CLI; see [Purge a Service](#purge-service).
+<p class="note"><strong>Note</strong>: Attempting to remove a service broker will fail if there are service instances for any service plan in its catalog. When planning to shut down or delete a broker, make sure to remove all service instances first. Failure to do so will leave <a href="./api.html#orphans">orphaned service instances</a> in the Cloud Foundry database. If a service broker has been shut down without first deleting service instances, you can remove the instances with the CLI; see <a href="#purge-service">Purge a Service</a>.
 
 ### <a id='purge-service'></a>Purge a Service ###
 
-If a service broker has been shut down or removed without first deleting service instances from Cloud Foundry, you will be unable to remove the service broker or its services and plans from the Marketplace. In development environments, broker authors often destroy their broker deployments and need a way to clean up the Cloud Controller database. 
+If a service broker has been shut down or removed without first deleting service instances from Cloud Foundry, you will be unable to remove the service broker or its services and plans from the Marketplace. In development environments, broker authors often destroy their broker deployments and need a way to clean up the Cloud Controller database.
 
 The following command will delete a service offering, all of its plans, as well as all associated service instances and bindings from the cloud controller database, without making any API calls to a service broker. For services from v1 brokers, you must provide a provider with `-p PROVIDER`. Once all services for a broker have been purged, the broker can be removed normally.
 
@@ -109,7 +109,7 @@ Really purge service offering v1-test from Cloud Foundry? y
 OK
 </pre>
 
-`purge-service-offering` requires cf-release v160 and edge of cf CLI 6.0.2.  
+`purge-service-offering` requires cf-release v160 and edge of cf CLI 6.0.2.
 
 ## <a id='possible-errors'></a>Possible Errors ##
 

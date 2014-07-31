@@ -4,7 +4,7 @@ title: Dashboard Single Sign-On
 
 ## Introduction
 
-Single sign-on (SSO) enables Cloud Foundry users to authenticate with third-party service dashboards using their Cloud Foundry credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth2 protocol handles authentication. 
+Single sign-on (SSO) enables Cloud Foundry users to authenticate with third-party service dashboards using their Cloud Foundry credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth2 protocol handles authentication.
 
 Dashboard SSO was introduced in [cf-release v169](https://github.com/cloudfoundry/cf-release/tree/v169) so this or a newer version is required to support the feature.
 
@@ -46,18 +46,18 @@ When this client is not present in the cf-release manifest, Cloud Controller can
 	    ]
 	  }
 	  ```
-	The `dashboard_client` field is a hash containing three fields:	
+	The `dashboard_client` field is a hash containing three fields:
 	- `id` is the unique identifier for the OAuth2 client that will be created for your service dashboard on the token server (UAA), and will be used by your dashboard to authenticate with the token server (UAA).
 	- `secret` is the shared secret your dashboard will use to authenticate with the token server (UAA).
 	- `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`.
-	
+
 1. When a service broker which advertises the `dashboard_client` property for any of its services is [added or updated](managing-service-brokers.html), Cloud Controller will create or update UAA clients as necessary. This client will be used by the service dashboard to authenticate users.
 
 ### Dashboard URL
 
-A service broker should return a URL for the `dashboard_url` field in response to a [provision request](./api.html#provisioning). Cloud Controller clients should expose this URL to users. `dashboard_url` can be found in the response from Cloud Controller to create a service instance, enumerate service instances, space summary, and other endpoints. 
+A service broker should return a URL for the `dashboard_url` field in response to a [provision request](./api.html#provisioning). Cloud Controller clients should expose this URL to users. `dashboard_url` can be found in the response from Cloud Controller to create a service instance, enumerate service instances, space summary, and other endpoints.
 
-Users can then navigate to the service dashboard at the URL provided by `dashboard_url`, initiating the OAuth2 login flow. 
+Users can then navigate to the service dashboard at the URL provided by `dashboard_url`, initiating the OAuth2 login flow.
 
 ## Service Dashboard Responsibilities
 
@@ -67,12 +67,13 @@ When a user navigates to the URL from `dashboard_url`, the service dashboard sho
 
 ```
 $ curl api.example-cf.com/info
-{"name":"vcap","build":"2222","support":"http://support.cloudfoundry.com","version":2,"description":"Cloud Foundry sponsored by Pivotal","authorization_endpoint":"https://login.example-cf.com","token_endpoint":"https://uaa.example-cf.com","allow_debug":true}
+{"name":"vcap","build":"2222","support":"http://support.cloudfoundry.com","version":2,"description":"Cloud Foundry sponsored by
+ Pivotal","authorization_endpoint":"https://login.example-cf.com","token_endpoint":"https://uaa.example-cf.com","allow_debug":true}
 ```
 
 More specifically, a service dashboard should implement the OAuth2 Authorization Code Grant type ([UAA docs](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC docs](http://tools.ietf.org/html/rfc6749#section-4.1)).
 
-1. When a user visits the service dashboard at the value of `dashboard_url`, the dashboard should redirect the user's browser to the Authorization Endpoint and include its `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and list of requested scopes. 
+1. When a user visits the service dashboard at the value of `dashboard_url`, the dashboard should redirect the user's browser to the Authorization Endpoint and include its `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and list of requested scopes.
 
 	Scopes are permissions included in the token a dashboard client will receive from UAA, and which Cloud Controller uses to enforce access. A client should request the minimum scopes it requires. The mininum scopes required for this workflow are `cloud_controller_service_permissions.read` and `openid`. For an explanation of the scopes available to dashboard clients, see [On Scopes](#on-scopes).
 
@@ -85,7 +86,7 @@ More specifically, a service dashboard should implement the OAuth2 Authorization
 	Location: https://p-mysql.example.com/manage/auth?code=F45jH
 	```
 
-1. The dashboard UI should then request an access token from the Token Endpoint by including the authorization code received in the previous step.  When making the request the dashboard must authenticate with UAA by passing the client `id` and `secret` in a basic auth header. UAA will verify that the client id matches the client it issued the code to. The dashboard should also include the `redirect_uri` used to obtain the authorization code for verification. 
+1. The dashboard UI should then request an access token from the Token Endpoint by including the authorization code received in the previous step.  When making the request the dashboard must authenticate with UAA by passing the client `id` and `secret` in a basic auth header. UAA will verify that the client id matches the client it issued the code to. The dashboard should also include the `redirect_uri` used to obtain the authorization code for verification.
 
 1. UAA authenticates the dashboard client, validates the authorization code, and ensures that the redirect URI received matches the URI used to redirect the client when the authorization code was issues.  If valid, UAA responds back with an access token and a refresh token.
 

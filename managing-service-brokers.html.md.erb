@@ -17,7 +17,7 @@ Given a service broker that has implemented the [Service Broker API](api.html), 
 ## <a id='register-broker'></a>Register a Broker ##
 
 Registering a broker causes cloud controller to fetch and validate the catalog
-from your broker, and save the catalog to cloud controller database.
+from your broker, and save the catalog to the cloud controller database.
 The basic auth username and password which are provided when adding a broker are
 encrypted in cloud controller database, and used by the cloud controller to
 authenticate with the broker when making all API calls.
@@ -30,7 +30,7 @@ $ cf create-service-broker mybrokername someuser somethingsecure http://mybroker
 
 ### <a id='make-plans-public'></a>Make Plans Public ###
 New service plans are private by default.
-To make plans available to end users, see [Make Plans Public](./access-control.html#make-plans-public).
+To make plans available to end users, see [Make Plans Public](./access-control.html#enable-access).
 Instances of a private plan can not be provisioned until either the plan is made
 public or is made available to an organization.
 

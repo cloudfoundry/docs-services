@@ -67,8 +67,9 @@ When a user navigates to the URL from `dashboard_url`, the service dashboard sho
 
 ```
 $ curl api.example-cf.com/info
-{"name":"vcap","build":"2222","support":"http://support.cloudfoundry.com","version":2,"description":"Cloud Foundry sponsored by
- Pivotal","authorization_endpoint":"https://login.example-cf.com","token_endpoint":"https://uaa.example-cf.com","allow_debug":true}
+{"name":"vcap","build":"2222","support":"http://support.cloudfoundry.com","version":2,
+"description":"Cloud Foundry sponsored by Pivotal","authorization_endpoint":"https://login.example-cf.com",
+"token_endpoint":"https://uaa.example-cf.com","allow_debug":true}
 ```
 
 More specifically, a service dashboard should implement the OAuth2 Authorization Code Grant type ([UAA docs](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC docs](http://tools.ietf.org/html/rfc6749#section-4.1)).
@@ -101,7 +102,7 @@ Example Request:
 
 ```
 curl -H 'Content-Type: application/json' \
-       -H 'Authorization: bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoidWFhLWlkLTciLCJlbWFpbCI6ImVtYWlsLTdAc29tZWRvbWFpbi5jb20iLCJzY29wZSI6WyJjbG91ZF9jb250cm9sbGVyLmFkbWluIl0sImF1ZCI6WyJjbG91ZF9jb250cm9sbGVyIl0sImV4cCI6MTM5Mjc0NzIzNH0.IUsMEB95qiBazm-iyVlekBomBEuMYHTufeB3SLiGpWM' \
+       -H 'Authorization: bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoid' \
        http://api.cloudfoundry.com/v2/service_instances/44b26033-1f54-4087-b7bc-da9652c2a539/permissions
 
 ```

@@ -601,7 +601,8 @@ The request provides these query string parameters as useful hints for brokers.
 
 ##### cURL #####
 <pre class="terminal">
-$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
+  service_bindings/:id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE
 </pre>
 
 ### Response ###
@@ -633,7 +634,7 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 ## <a id='deprovisioning'></a>Deprovisioning ##
 
-When a broker receives an deprovision request from Cloud Controller, it should
+When a broker receives a deprovision request from Cloud Controller, it should
 delete any resources it created during the provision.
 Usually this means that all resources are immediately reclaimed for future
 provisions.
@@ -675,7 +676,8 @@ The request provides these query string parameters as useful hints for brokers.
 
 ##### cURL #####
 <pre class="terminal">
-$ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE
+$ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=
+  service-id-here&plan_id=plan-id-here' -X DELETE
 </pre>
 
 ### Response ###

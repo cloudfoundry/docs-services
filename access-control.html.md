@@ -2,11 +2,29 @@
 title: Access Control
 ---
 
-_This page assumes that you are using cf v6_.
-
 By default, all new service plans are private. This means that when adding a new broker, or when adding a new plan to an existing broker's catalog, new service plans won't immediately be available to end users. This enables an admin to control which service plans are available to end users, and to manage limited availability.
 
-Note: the CLI commands documented below can only be run by an administrator.
+## <a id='prerequisites'></a>Prerequisites
+- CLI v6.4.0
+- Cloud Controller API v2.9.0 (cf-release v179)
+- Admin user access; the following commands can be run only by an admin user
+
+To determine your API version, curl `/v2/info` and look for `api_version`.
+
+<pre class="terminal">
+$ cf curl /v2/info
+{
+   "name": "vcap",
+   "build": "2222",
+   "support": "http://support.cloudfoundry.com",
+   "version": 2,
+   "description": "Cloud Foundry sponsored by Pivotal",
+   "authorization_endpoint": "https://login.system-domain.com",
+   "token_endpoint": "https://uaa.system-doman.com",
+   "api_version": "2.13.0",
+   "logging_endpoint": "wss://loggregator.system-domain.com:443"
+}
+</pre>
 
 ## <a id='display-access'></a>Display Access to Service Plans
 

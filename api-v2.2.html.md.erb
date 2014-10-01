@@ -377,7 +377,7 @@ Controller
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Shall be returned if the requested service instance already exists. The expected response body is "{}"</td>
+  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
 </tr>
 <tr>
   <td>200 OK</td>
@@ -503,7 +503,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Shall be returned if the requested binding already exists. The expected response body is "{}"</td>
+  <td>Should be returned if the requested binding already exists. The expected response body is "{}"</td>
 </tr>
 <tr>
   <td>200 OK</td>
@@ -620,7 +620,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/se
 </tr>
 <tr>
   <td>410 Gone</td>
-  <td>Shall be returned if the binding does not exist. The expected response body is "{}"</td>
+  <td>Should be returned if the binding does not exist. The expected response body is "{}"</td>
 </tr>
 </tbody>
 </table>
@@ -694,7 +694,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=
 </tr>
 <tr>
   <td>410 Gone</td>
-  <td>Shall be returned if the service instance does not exist. The expected response body is "{}"</td>
+  <td>Should be returned if the service instance does not exist. The expected response body is "{}"</td>
 </tr>
 </tbody>
 </table>

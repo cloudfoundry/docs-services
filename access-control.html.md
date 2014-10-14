@@ -79,6 +79,7 @@ broker: p-riakcs
 </pre>
 
 An admin can use `enable-service-access` to:
+
 - Enable access to all plans of a service for users of all orgs (access:`all`)
 - Enable access to one plan of a service for users of all orgs (access:`all`)
 - Enable access to all plans of a service for users of a specified organization (access: `limited`)
@@ -112,6 +113,7 @@ broker: p-riakcs
 </pre>
 
 An admin can use the `disable-service-access` command to:
+
 - Disable access to all plans of a service for users of all orgs (access:`all`)
 - Disable access to one plan of a service for users of all orgs (access:`all`)
 - Disable access to all plans of a service for users of select orgs (access: `limited`)

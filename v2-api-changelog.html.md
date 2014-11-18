@@ -2,8 +2,8 @@
 title: v2 API Change Log
 ---
 
-## 2014-11-11 ##
-Added support for service instance plan update, bumped version to 2.4. Included in cf-release final build 193.
+## 2014-10-31 ##
+Added support for service instance plan update, bumped version to 2.4. Included in cf-release final build 192.
 
 ## 2014-04-23 ##
 Added dashboard_client parameters to /v2/catalog in support of [service dashboard sso](dashboard-sso.html), bumped version to 2.3. Included in cf-release final build 169.

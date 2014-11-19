@@ -54,9 +54,9 @@ The key change from v2.3 to v2.4 is support for users to change the service plan
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.4 of the services API has been supported since
+v2.4 of the services API has been supported since:
 
-* [final build 192](https://github.com/cloudfoundry/cf-release/tree/v192) of [cf-release](https://github.com/cloudfoundry/cf-release/commit/2b0309bde9880f7acb039ec9676f992254ce62d9).
+* [Final build 192](https://github.com/cloudfoundry/cf-release/tree/v192) of [cf-release](https://github.com/cloudfoundry/cf-release/commit/2b0309bde9880f7acb039ec9676f992254ce62d9)
 * v2.17.0 of the [Cloud Controller API](https://github.com/cloudfoundry/cloud_controller_ng/commit/f8b31ecce5c2740d60818ac6cc8a9299120e3216)
 * v6.7 of the Cloud Foundry [Command Line Interface (CLI)](https://github.com/cloudfoundry/cli)
 
@@ -426,7 +426,7 @@ Controller
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the provision failed.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the provision failed.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
 future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
@@ -511,13 +511,13 @@ When the broker receives an update service instance request from the Cloud Contr
 <tr>
   <td>422 Unprocessable entity</td>
   <td>
-    May be returned if the service instance cannot be switched to the new plan. For example, a database service instance might not be switched to a new plan if it cuurently exceeds that plan's max storage quota. Refer to <a href="#broker-errors">broker errors</a> for the expected body.
+    May be returned if the service instance cannot be switched to the new plan. For example, a database service instance might not be switched to a new plan if it currently exceeds that plan's maximum storage quota. Refer to <a href="#broker-errors">broker errors</a> for the expected body.
   </td>
 </tr>
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the update service request failed.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the update service request failed.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
@@ -616,7 +616,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the bind failed.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the bind failed.
 Additionally, an unbind request will be sent to the broker to prevent an orphan being created on the broker.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
@@ -727,8 +727,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the unbind failed.
-The binding will remain in the cloud controller database.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the unbind failed.
+The binding will remain in the Cloud Controller database.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
 future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
@@ -802,8 +802,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the deprovision failed.
-The service instance will remain in the cloud controller database.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the deprovision failed.
+The service instance will remain in the Cloud Controller database.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
 future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.

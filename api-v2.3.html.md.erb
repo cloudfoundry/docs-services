@@ -79,7 +79,7 @@ the version number of the Broker API that Cloud Controller will use.
 This header will be useful in future minor revisions of the API to allow
 brokers to reject requests from Cloud Controllers that they do not understand.
 While minor API revisions will always be additive, it is possible that brokers
-will come to depend on a feature that was added after 2.0, so they may use this
+will come to depend on a feature that was added after 2Cloud Controller.0, so they may use this
 header to reject the request.
 Error messages from the broker in this situation should inform the operator of
 what the required and actual version numbers are so that an operator can go
@@ -420,7 +420,7 @@ Controller
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the provision failed.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the provision failed.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
 future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
@@ -545,7 +545,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the bind failed.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the bind failed.
 Additionally, an unbind request will be sent to the broker to prevent an orphan being created on the broker.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
@@ -656,8 +656,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the unbind failed.
-The binding will remain in the cloud controller database.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the unbind failed.
+The binding will remain in the Cloud Controller database.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
 future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
@@ -731,8 +731,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the deprovision failed.
-The service instance will remain in the cloud controller database.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the deprovision failed.
+The service instance will remain in the Cloud Controller database.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
 future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.

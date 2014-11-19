@@ -1,5 +1,5 @@
 ---
-title: Service Broker API v2.0
+title: Service Broker API
 ---
 
 ## <a id='changelog'></a>Document Changelog ##
@@ -8,10 +8,14 @@ title: Service Broker API v2.0
 
 ## <a id='versions'></a>Versions ##
 
-Two major versions of the Service Broker API are currently supported by Cloud Foundry, v1 and v2. As v1 is deprecated and support will be removed in the next major version of Cloud Foundry, it is recommended that all new brokers implement v2 and current brokers are upgraded.
+Two major versions of the Service Broker API are currently supported by Cloud
+Foundry, v1 and v2.
+As v1 is deprecated and support will be removed in the next major version of
+Cloud Foundry, it is recommended that all new brokers implement v2 and that current
+brokers are upgraded.
 
 <div style="width:50%">
-  <table border="1" class="nice">
+  <table>
     <thead>
       <tr>
         <th>Current Version</th>
@@ -36,53 +40,99 @@ Two major versions of the Service Broker API are currently supported by Cloud Fo
 ### <a id='change-policy'></a>Change Policy ###
 
 * Existing endpoints and fields will not be removed or renamed.
-* New optional endpoints, or new HTTP methods for existing endpoints, may be added to enable support for new features.
-* New fields may be added to existing request/response messages. These fields must be optional, and should be ignored by clients and servers that do not understand them.
+* New optional endpoints, or new HTTP methods for existing endpoints, may be
+added to enable support for new features.
+* New fields may be added to existing request/response messages.
+These fields must be optional and should be ignored by clients and servers
+that do not understand them.
 
-### <a id='api-changes-since-v1'></a>Changes Since v1 ###
+### <a id='api-changes-since-v2-2'></a>Changes Since v2.2 ###
 
-The key changes from v1 to v2 of the Services API are:
+The key change from v2.2 to v2.3 of the Services API is the addition of SSO functionality for users to access external service dashboard pages.
 
-* Terminology change --- In the v2 Services API, what used to be called a service gateway is referred to as a service broker.
-* Unidirectional RESTful HTTP messages --- The Cloud Controller initiates all communication with brokers, so a broker can run standalone.
-* Easier catalog management --- This functionality is improved, and moved from the broker to the Cloud Controller.
-* Consistent naming --- API endpoints and fields are consistently named.
-* Orphan mitigation --- Orphan service instances and bindings are prevented to the extent possible, and automatically removed, when necessary.
+* A service can request a dashboard client in the service broker catalog.
 
+For details, see the <a href="dashboard-sso.html">Dashboard SSO docs</a>
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.0 of the services API has been supported since final build 148 of [cf-release](https://github.com/cloudfoundry/cf-release/).
+v2.3 of the services API has been supported since [final build 169](https://github.com/cloudfoundry/cf-release/tree/v169) of
+[cf-release](https://github.com/cloudfoundry/cf-release/).
 
 ## <a id='api-overview'></a>API Overview ##
 
-The Cloud Foundry services API defines the contract between the Cloud Controller and the service broker. The broker is expected to implement several HTTP (or HTTPS) endpoints underneath a URI prefix. One or more services can be provided by a single broker and load balancing enables horizontal scalability of redundant brokers. Multiple Cloud Foundry instances can be supported by a single broker using different URL prefixes and credentials.
+The Cloud Foundry services API defines the contract between the Cloud
+Controller and the service broker.
+The broker is expected to implement several HTTP (or HTTPS) endpoints
+underneath a URI prefix.
+One or more services can be provided by a single broker, and load balancing
+enables horizontal scalability of redundant brokers.
+Multiple Cloud Foundry instances can be supported by a single broker using
+different URL prefixes and credentials.
 
 <%= image_tag("../images/v2services.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
 
 ## <a id='api-version-header'></a>API Version Header ##
 
+Requests from the Cloud Controller to the broker contain a header that defines
+the version number of the Broker API that Cloud Controller will use.
+This header will be useful in future minor revisions of the API to allow
+brokers to reject requests from Cloud Controllers that they do not understand.
+While minor API revisions will always be additive, it is possible that brokers
+will come to depend on a feature that was added after 2.0, so they may use this
+header to reject the request.
+Error messages from the broker in this situation should inform the operator of
+what the required and actual version numbers are so that an operator can go
+upgrade Cloud Controller and resolve the issue.
+A broker should respond with a `412 Precondition Failed` message when rejecting
+a request.
 
-Requests from the Cloud Controller to the broker contain a header that defines the version number of the Broker API that Cloud Controller will use. This header will be useful in future minor revisions of the API, to allow brokers to reject requests from Cloud Controllers that they do not understand. While minor API revisions will always be additive, it is possible that brokers will come to depend on a feature that was added after 2.0, so they may use this header to reject the request. Error messages from the broker in this situation should inform the operator of what the required and actual version numbers are, so that an operator can go upgrade Cloud Controller and resolve the issue. A broker should respond with a `412 Precondition Failed` message when rejecting a request.
+The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
+such that 2.9 comes before 2.10.
+An example of this header as of publication time is:
 
-The version numbers are in the format `MAJOR.MINOR`, using semantic versioning such that 2.9 comes before 2.10. An example of this header, as of publication time is:
-
-`X-Broker-Api-Version: 2.0`
-
+`X-Broker-Api-Version: 2.3`
 
 ## <a id='authentication'></a>Authentication ##
 
-Cloud Controller (final release v145+) authenticates with the Broker using HTTP basic authentication (the `Authentication:` header) on every request, and will reject any broker registrations that do not contain a username and password. The broker is responsible for checking the username and password and returning a `401 Unauthorized` message if they are invalid. Cloud Controller supports connecting to a broker using SSL if additional security is desired.
-
-
+Cloud Controller (final release v145+) authenticates with the Broker using HTTP
+basic authentication (the `Authentication:` header) on every request and will
+reject any broker registrations that do not contain a username and password.
+The broker is responsible for checking the username and password and returning
+a `401 Unauthorized` message if credentials are invalid.
+Cloud Controller supports connecting to a broker using SSL if additional
+security is desired.
 
 ## <a id='catalog-mgmt'></a>Catalog Management ##
 
-The first endpoint that a broker must implement is the service catalog. Cloud Controller will initially fetch this endpoint from all brokers and make adjustments to the user-facing service catalog stored in the Cloud Controller database. If the catalog fails to initially load or validate, Cloud Controller will not allow the operator to add the new broker, and should give a meaningful error message. Cloud Controller will also update the catalog whenever a broker is updated, so you can use `update-service-broker` with no changes to force a catalog refresh.
+The first endpoint that a broker must implement is the service catalog.
+Cloud Controller will initially fetch this endpoint from all brokers and make
+adjustments to the user-facing service catalog stored in the Cloud Controller
+database.
+If the catalog fails to initially load or validate, Cloud Controller will not
+allow the operator to add the new broker and will give a meaningful error
+message.
+Cloud Controller will also update the catalog whenever a broker is updated, so
+you can use `update-service-broker` with no changes to force a catalog refresh.
 
-When Cloud Controller fetches a catalog from a broker, it will compare the broker's id for services and plans with the `unique_id` values for services and plan in the  Cloud Controller database. If a service or plan in the broker catalog has an id which is not present amongst the `unique_id` values in the database, a new record will be added to the database. If services or plans in the database are found with `unique_id`s that match the broker catalog's id, Cloud Controller will update update the records to match the broker’s catalog.
+When Cloud Controller fetches a catalog from a broker, it will compare the
+broker's id for services and plans with the `unique_id` values for services and
+plan in the  Cloud Controller database.
+If a service or plan in the broker catalog has an id that is not present
+amongst the `unique_id` values in the database, a new record will be added to
+the database.
+If services or plans in the database are found with `unique_id`s that match the
+broker catalog's id, Cloud Controller will update update the records to match
+the broker’s catalog.
 
-If the database has plans which are not found in the broker catalog, and there are no associated service instances, Cloud Controller will remove these plans from the database. If there are provisioned instances, the plan will be marked “inactive” and will no longer be visible in the marketplace catalog or be provisionable. Cloud Controller will then delete services that do not have associated plans from the database.
+If the database has plans which are not found in the broker catalog, and there
+are no associated service instances, Cloud Controller will remove these plans
+from the database. Cloud Controller will then delete services that do not have associated plans
+from the database.
+If the database has plans which are not found in the broker catalog, and there
+**are** provisioned instances, the plan will be marked “inactive” and will
+no longer be visible in the marketplace catalog or be provisionable.
+
 
 ### Request ###
 
@@ -96,7 +146,7 @@ If the database has plans which are not found in the broker catalog, and there a
 
 ### Response ###
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Status Code</th>
@@ -113,8 +163,13 @@ If the database has plans which are not found in the broker catalog, and there a
 
 ##### Body #####
 
-<table border="1" class="nice">
+CLI and web clients have different needs with regard to service and plan names.
+A CLI-friendly string is all lowercase, with no spaces.
+Keep it short -- imagine a user having to type it as an argument for a longer
+command.
+A web-friendly display name is camel-cased with spaces and punctuation supported.
 
+<table>
 <thead>
 <tr>
   <th>Response field</th>
@@ -136,7 +191,7 @@ If the database has plans which are not found in the broker catalog, and there a
 <tr>
   <td>&nbsp;&nbsp;&nbsp;name*</td>
   <td>string</td>
-  <td>The CLI-friendly name of the service that will appear in the catalog.</td>
+  <td>The CLI-friendly name of the service that will appear in the catalog. All lowercase, no spaces.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;description*</td>
@@ -156,7 +211,7 @@ If the database has plans which are not found in the broker catalog, and there a
 <tr>
   <td>&nbsp;&nbsp;&nbsp;metadata</td>
   <td>object</td>
-  <td>A list of metadata for a service offering. For more information, see <a href="catalog-metadata.html">Catalog Metadata</a>.</td>
+  <td>A list of metadata for a service offering. For more information, see <a href="catalog-metadata.html">Service Metadata</a>.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;requires</td>
@@ -177,7 +232,7 @@ If the database has plans which are not found in the broker catalog, and there a
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name*</td>
   <td>string</td>
-  <td>The CLI-friendly name of the plan that will appear in the catalog.</td>
+  <td>The CLI-friendly name of the plan that will appear in the catalog. All lowercase, no spaces.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description*</td>
@@ -187,7 +242,32 @@ If the database has plans which are not found in the broker catalog, and there a
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metadata</td>
   <td>object</td>
-  <td>A list of metadata for a service plan. For more information, see <a href="catalog-metadata.html">Catalog Metadata</a>.</td>
+  <td>A list of metadata for a service plan. For more information, see <a href="catalog-metadata.html">Service Metadata</a>.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free</td>
+  <td>boolean</td>
+  <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.html">Quota Plans</a>. Default: true</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;dashboard_client</td>
+  <td>object</td>
+  <td>Contains the data necessary to activate the <a href="dashboard-sso.html">Dashboard SSO feature</a> for this service</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id</td>
+  <td>string</td>
+  <td>The id of the Oauth2 client that the service intends to use. The name may be taken, in which case the API will return an error to the operator</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secret</td>
+  <td>string</td>
+  <td>A secret for the dashboard client</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redirect_uri</td>
+  <td>string</td>
+  <td>A domain for the service dashboard that will be whitelisted by the UAA to enable SSO</td>
 </tr>
 </tbody>
 </table>
@@ -208,39 +288,57 @@ If the database has plans which are not found in the broker catalog, and there a
     },{
       "id": "plan2-guid-here",
       "name": "large",
-      "description": "A large dedicated database with 10GB storage quota, 512MB of RAM, and 100 connections"
-    }]
+      "description": "A large dedicated database with 10GB storage quota, 512MB of RAM, and 100 connections",
+      "free": false
+    }],
+    "dashboard_client": {
+      "id": "client-id-1",
+      "secret": "secret-1",
+      "redirect_uri": "https://dashboard.service.com"
+    }
   }]
 }
 </pre>
 
 ### <a id='create-broker'></a>Adding a Broker to Cloud Foundry ###
 
-Once you've implemented the first endpoint `GET /v2/catalog` above, you'll want to [register the broker with CF](managing-service-brokers.html#register-broker) to make your services and plans available to end users.
+Once you've implemented the first endpoint `GET /v2/catalog` above, you'll want
+to [register the broker with CF](managing-service-brokers.html#register-broker)
+to make your services and plans available to end users.
 
 ## <a id='provisioning'></a>Provisioning ##
 
-When the broker receives a provision request from Cloud Controller, it should synchronously take whatever action is necessary to create a new service resource for the developer. The result of provisioning varies by service type, although there are a few common actions that work for many services. For a MySQL service, provisioning could result in:
+When the broker receives a provision request from Cloud Controller, it should
+synchronously take whatever action is necessary to create a new service
+resource for the developer.
+The result of provisioning varies by service type, although there are a few
+common actions that work for many services.
+For a MySQL service, provisioning could result in:
 
 * An empty dedicated `mysqld` process running on its own VM.
-* An empty dedicated `mysqld` process running in a lightweight container on a shared VM.
+* An empty dedicated `mysqld` process running in a lightweight container on a
+shared VM.
 * An empty dedicated `mysqld` process running on a shared VM.
 * An empty dedicated database, on an existing shared running `mysqld`.
 * A database with business schema already there.
-* A copy of a full database, for example a QA database that is a copy of the production database.
+* A copy of a full database, for example a QA database that is a copy of the
+production database.
 
-For non-data services, provisioning could just mean getting an account on an existing system.
+For non-data services, provisioning could just mean getting an account on an
+existing system.
 
 ### Request ###
 
 ##### Route #####
 `PUT /v2/service_instances/:id`
 
-_Note: the `:id` of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates._
+_Note: the `:id` of a service instance is provided by the Cloud Controller.
+This ID will be used for future requests (bind and deprovision), so the broker
+must use it to correlate the resource it creates._
 
 ##### Body #####
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Request field</th>
@@ -272,9 +370,31 @@ _Note: the `:id` of a service instance is provided by the Cloud Controller. This
 </tbody>
 </table>
 
+<pre class="terminal">
+{
+  "service_id":        "service-guid-here",
+  "plan_id":           "plan-guid-here",
+  "organization_guid": "org-guid-here",
+  "space_guid":        "space-guid-here"
+}
+</pre>
+
+##### cURL #####
+<pre class="terminal">
+$ curl http://username:password@broker-url/v2/service_instances/:id -d '{
+  "service_id":        "service-guid-here",
+  "plan_id":           "plan-guid-here",
+  "organization_guid": "org-guid-here",
+  "space_guid":        "space-guid-here"
+}' -X PUT
+</pre>
+
+In this case, `id` refers to the service instance id generated by Cloud
+Controller
+
 ### Response ###
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Status Code</th>
@@ -307,7 +427,7 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 ##### Body #####
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Response field</th>
@@ -332,21 +452,26 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 ## <a id='binding'></a>Binding ##
 
-_Note: Not all services must be bindable --- some derive their value just from being provisioned. Brokers that do not provide any bindable services do not need to implement the endpoint for bind requests_
+_Note: Not all services must be bindable --- some derive their value just from
+being provisioned.
+Brokers that do not provide any bindable services do not need to implement the
+endpoint for bind requests_
 
 When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 
 ### Request ###
 
 ##### Route #####
-
 `PUT /v2/service_instances/:instance_id/service_bindings/:id`
 
-_Note: the `:id` of a service binding is provided by the Cloud Controller. `:instance_id` is the ID of a previously-provisioned service instance; `:id` will be used for future unbind requests, so the broker must use it to correlate the resource it creates._
+<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller.
+<code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code>
+will be used for future unbind requests, so the broker must use it to correlate
+the resource it creates.</p>
 
 ##### Body #####
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Request Field</th>
@@ -365,12 +490,36 @@ _Note: the `:id` of a service binding is provided by the Cloud Controller. `:ins
   <td>string</td>
   <td>ID of the plan from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
 </tr>
+<tr>
+  <td>app_guid*</td>
+  <td>string</td>
+  <td>GUID of the application that you want to bind your service to.</td>
+</tr>
 </tbody>
 </table>
 
+<pre class="terminal">
+{
+  "plan_id": "plan-guid-here",
+  "service_id": "service-guid-here",
+  "app_guid": "app-guid-here"
+}
+</pre>
+
+##### cURL #####
+<pre class="terminal">
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:id -d '{
+  "plan_id": "plan-guid-here",
+  "service_id": "service-guid-here",
+  "app_guid": "app-guid-here"
+}' -X PUT
+</pre>
+
+In this case, `instance_id` refers to the id of an existing service instance in a previous provisioning, while `id` is service binding id generated by Cloud Controller.
+
 ### Response ###
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Status Code</th>
@@ -404,7 +553,7 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 ##### Body #####
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Response Field</th>
@@ -440,15 +589,16 @@ future if JSON is expected rather than to support the cases when a JSON body may
 </pre>
 
 ## <a id='unbinding'></a>Unbinding ##
-_Note: Brokers that do not provide any bindable services do not need to implement the endpoint for unbind requests_
+_Note: Brokers that do not provide any bindable services do not need to
+implement the endpoint for unbind requests_
 
-
-When a broker receives an unbind request from Cloud Controller, it should delete any resources it created in bind. Usually this means that an application immediately cannot access the resource.
+When a broker receives an unbind request from Cloud Controller, it should
+delete any resources it created in bind.
+Usually this means that an application immediately cannot access the resource.
 
 ### Request ###
 
 ##### Route #####
-
 `DELETE /v2/service_instances/:instance_id/service_bindings/:id`
 
 The `:id` in the URL is the identifier of a previously created binding (the same `:id` passed in the bind request). The request has no body, because DELETE requests generally do not have bodies.
@@ -457,7 +607,7 @@ The `:id` in the URL is the identifier of a previously created binding (the same
 
 The request provides these query string parameters as useful hints for brokers.
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Query-String Field</th>
@@ -479,9 +629,15 @@ The request provides these query string parameters as useful hints for brokers.
 </tbody>
 </table>
 
+##### cURL #####
+<pre class="terminal">
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
+  service_bindings/:id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE
+</pre>
+
 ### Response ###
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Status Code</th>
@@ -508,21 +664,25 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 ## <a id='deprovisioning'></a>Deprovisioning ##
 
-When a broker receives a deprovision request from Cloud Controller, it should delete any resources it created during the provision. Usually this means that all resources are immediately reclaimed for future provisions.
+When a broker receives a deprovision request from Cloud Controller, it should
+delete any resources it created during the provision.
+Usually this means that all resources are immediately reclaimed for future
+provisions.
 
 ### Request ###
 
 ##### Route #####
-
 `DELETE /v2/service_instances/:id`
 
-The `:id` in the URL is the identifier of a previously provisioned instance (the same `:id` passed in the provision request).  The request has **no body**, because DELETE requests generally do not have bodies.
+The `:id` in the URL is the identifier of a previously provisioned instance (the same
+`:id` passed in the provision request).  The request has no body, because DELETE
+requests generally do not have bodies.
 
 ##### Parameters #####
 
 The request provides these query string parameters as useful hints for brokers.
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Query-String Field</th>
@@ -534,7 +694,7 @@ The request provides these query string parameters as useful hints for brokers.
 <tr>
   <td>service_id*</td>
   <td>string</td>
-  <td>ID of the service from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
+  <td>ID of the service from the catalog. While not strictly necessary, some brokers might make use of this ID. </td>
 </tr>
 <tr>
   <td>plan_id*</td>
@@ -544,9 +704,15 @@ The request provides these query string parameters as useful hints for brokers.
 </tbody>
 </table>
 
+##### cURL #####
+<pre class="terminal">
+$ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=
+    service-id-here&plan_id=plan-id-here' -X DELETE
+</pre>
+
 ### Response ###
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Status Code</th>
@@ -573,13 +739,20 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 ## <a id='broker-errors'></a>Broker Errors ##
 
-When a broker fails to perform any requested operation, unless it fails with a well-defined HTTP response code listed above (like 410 on delete), it should return an appropriate HTTP response code (chosen to accurately reflect the nature of the failure), and a JSON-encoded error payload.
+Broker failures beyond the scope of the well-defined HTTP response codes listed
+above (like 410 on delete) should return an appropriate HTTP response code
+(chosen to accurately reflect the nature of the failure) as well as a JSON-encoded
+error payload.
 
-This payload allows the broker to expose a message to end-user or operator. If a payload is included, only the message from the description field in the payload will be shown. If there is no payload, a generic error message containing the HTTP response code will be shown.
+This payload allows the broker to expose a message to end-user or operator.
+If a payload is included, only the message from the description field in the
+payload will be shown.
+If there is no payload, a generic error message containing the HTTP response
+code will be shown.
 
 ### Response ###
 
-<table border="1" class="nice">
+<table>
 <thead>
 <tr>
   <th>Response Field</th>
@@ -599,8 +772,18 @@ This payload allows the broker to expose a message to end-user or operator. If a
 
 ## <a id='orphans'></a>Orphans ##
 
-The Cloud Controller database and a Broker are expected to store identical copies of existing instances and bindings. Potentially, these two lists may become inconsistent. For example, if a broker times out during a delete request, the Cloud Controller will be unsure of whether that resource still exists on the broker or not. Cloud Controller will implement the following orphan prevention techniques:
+The Cloud Controller database and a Broker are expected to store identical
+copies of existing instances and bindings.
+These two lists may potentially become inconsistent.
+For example, if a broker times out during a delete request, the Cloud
+Controller will be unsure whether that resource still exists on the broker.
+Cloud Controller will implement the following orphan prevention techniques:
 
-* If a broker fails to provision or bind an instance, the Cloud Controller will immediately issue an deprovision or unbind request .
+* If a broker fails to provision or bind an instance, the Cloud Controller will
+immediately issue a deprovision or unbind request.
 
-* If a broker fails to unbind or deprovision an instance, the Cloud Controller will periodically retry that DELETE request until it succeeds (or generates a 410). Eventually it will give up, but this technique will help clean up resources that are remain when a broker fails to delete.
+* If a broker fails to unbind or deprovision an instance, the Cloud Controller
+will periodically retry that DELETE request until it succeeds (or generates a
+410).
+Eventually it will give up, but this technique will help clean up resources
+that remain when a broker fails to delete.

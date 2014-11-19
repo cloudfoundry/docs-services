@@ -24,8 +24,14 @@ brokers are upgraded.
     </thead>
     <tbody>
       <tr>
-        <td><a href="api.html">2.3</a></td>
-        <td><a href="api-v2.2.html">2.2</a><br/><a href="api-v2.1.html">2.1</a><br/><a href="api-v2.0.html">2.0</a><br/><a href="api-v1.html">v1 (unversioned)</a></td>
+        <td><a href="api.html">2.4</a></td>
+        <td>
+          <a href="api-v2.3.html">2.3</a><br/>
+          <a href="api-v2.2.html">2.2</a><br/>
+          <a href="api-v2.1.html">2.1</a><br/>
+          <a href="api-v2.0.html">2.0</a><br/>
+          <a href="api-v1.html">v1 (unversioned)</a>
+        </td>
       </tr>
     </tbody>
   </table>
@@ -42,18 +48,17 @@ added to enable support for new features.
 These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-### <a id='api-changes-since-v2-2'></a>Changes Since v2.2 ###
+### <a id='api-changes-since-v2-3'></a>Changes Since v2.3 ###
 
-The key change from v2.2 to v2.3 of the Services API is the addition of SSO functionality for users to access external service dashboard pages.
-
-* A service can request a dashboard client in the service broker catalog.
-
-For details, see the <a href="dashboard-sso.html">Dashboard SSO docs</a>
+The key change from v2.3 to v2.4 is support for users to change the service plan for a specified service instance.
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.3 of the services API has been supported since [final build 169](https://github.com/cloudfoundry/cf-release/tree/v169) of
-[cf-release](https://github.com/cloudfoundry/cf-release/).
+v2.4 of the services API has been supported since
+
+* [final build 192](https://github.com/cloudfoundry/cf-release/tree/v192) of [cf-release](https://github.com/cloudfoundry/cf-release/commit/2b0309bde9880f7acb039ec9676f992254ce62d9).
+* v2.17.0 of the [Cloud Controller API](https://github.com/cloudfoundry/cloud_controller_ng/commit/f8b31ecce5c2740d60818ac6cc8a9299120e3216)
+* v6.7 of the Cloud Foundry [Command Line Interface (CLI)](https://github.com/cloudfoundry/cli)
 
 ## <a id='api-overview'></a>API Overview ##
 
@@ -87,7 +92,7 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
 such that 2.9 comes before 2.10.
 An example of this header as of publication time is:
 
-`X-Broker-Api-Version: 2.3`
+`X-Broker-Api-Version: 2.4`
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -213,6 +218,11 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>&nbsp;&nbsp;&nbsp;requires</td>
   <td>array-of-strings</td>
   <td>A list of permissions that the user would have to give the service, if they provision it. The only permission currently supported is <tt>syslog_drain</tt>. </td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;plan_updatable</td>
+  <td>boolean</td>
+  <td>Whether the service instance plan can change.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plans*</td>
@@ -445,6 +455,71 @@ future if JSON is expected rather than to support the cases when a JSON body may
  "dashboard_url": "http://mongomgmthost/databases/9189kdfsk0vfnku"
 }
 </pre>
+
+
+## <a id='updating_service_instance'></a>Updating a Service Instance ##
+
+When the broker receives an update service instance request from the Cloud Controller, it will attempt to move the service instance from its current plan to the plan specified by the request. For example, for an application bound to a database service plan of 1GB, a downgrade to a 100MB plan would be achieved sending an update service instance request with the name of the new plan. The broker would then switch the instance from the current 1GB plan to the new 100MB plan.
+
+### Request ###
+
+##### Route #####
+`PATCH /v2/service_instances/:instance_guid`
+
+<p class="note"><strong>Note</strong>:
+<code>:instance_guid</code> is the global unique ID of a previously-provisioned service instance.</p>
+
+##### Body #####
+
+<table>
+<thead>
+<tr>
+  <th>Request Field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>plan_id*</td>
+  <td>string</td>
+  <td>ID of the new plan from the catalog.</td>
+</tr>
+</tbody>
+</table>
+
+<pre class="terminal">
+{
+  "plan_id": "plan-guid-here"
+}
+</pre>
+
+### Response ###
+
+<table>
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>New plan is effective. The expected response body is "{}".</td>
+</tr>
+<tr>
+  <td>422 Unprocessable entity</td>
+  <td>
+    May be returned if the service instance cannot be switched to the new plan. For example, a database service instance might not be switched to a new plan if it cuurently exceeds that plan's max storage quota. Refer to <a href="#broker-errors">broker errors</a> for the expected body.
+  </td>
+</tr>
+</tbody>
+</table>
+
+All other status codes will be interpreted as an error and cloud controller will inform the user that the update service request failed.
+
+We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 ## <a id='binding'></a>Binding ##
 

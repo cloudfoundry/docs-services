@@ -50,7 +50,7 @@ that do not understand them.
 
 The key change from v2.1 to v2.2 of the Services API is:
 
-* Addition of free as an optional field for a service plan in the broker catalog.
+* Addition of `free` as an optional field for a service plan in the broker catalog.
 
 ## <a id='dependencies'></a>Dependencies ##
 
@@ -204,7 +204,7 @@ A web friendly display name is camelcase with spaces and punctuation supported.
 <tr>
   <td>&nbsp;&nbsp;&nbsp;tags</td>
   <td>array-of-strings</td>
-  <td>Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. Eg. mysql, relational, redis, key-value, caching, messaging, amqp.</td>
+  <td>Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;metadata</td>
@@ -305,9 +305,7 @@ existing system.
 ##### Route #####
 `PUT /v2/service_instances/:id`
 
-_Note: the `:id` of a service instance is provided by the Cloud Controller.
-This ID will be used for future requests (bind and deprovision), so the broker
-must use it to correlate the resource it creates._
+<p class="note"><strong>Note</strong>: The <code>:id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
 
 ##### Body #####
 
@@ -393,7 +391,7 @@ Controller
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the provision failed.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the provision failed.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
 future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
@@ -426,10 +424,7 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 ## <a id='binding'></a>Binding ##
 
-_Note: Not all services must be bindable --- some derive their value just from
-being provisioned.
-Brokers that do not provide any bindable services do not need to implement the
-endpoint for bind requests_
+<p class="note"><strong>Note</strong>: Not all services must be bindable --- some derive their value just from being provisioned. Brokers that do not provide any bindable services do not need to implement the endpoint for bind requests.</p>
 
 When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 
@@ -438,10 +433,7 @@ When the broker receives a bind request from the Cloud Controller, it should ret
 ##### Route #####
 `PUT /v2/service_instances/:instance_id/service_bindings/:id`
 
-<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller.
-<code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code>
-will be used for future unbind requests, so the broker must use it to correlate
-the resource it creates.</p>
+<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller. <code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code> will be used for future unbind requests, so the broker must use it to correlate the resource it creates.</p>
 
 ##### Body #####
 
@@ -519,7 +511,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the bind failed.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the bind failed.
 Additionally, an unbind request will be sent to the broker to prevent an orphan being created on the broker.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
@@ -563,8 +555,8 @@ future if JSON is expected rather than to support the cases when a JSON body may
 </pre>
 
 ## <a id='unbinding'></a>Unbinding ##
-_Note: Brokers that do not provide any bindable services do not need to
-implement the endpoint for unbind requests_
+
+<p class="note"><strong>Note</strong>: Brokers that do not provide any bindable services do not need to implement the endpoint for unbind requests.</p>
 
 When a broker receives an unbind request from Cloud Controller, it should
 delete any resources it created in bind.
@@ -630,8 +622,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the unbind failed.
-The binding will remain in the cloud controller database.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the unbind failed.
+The binding will remain in the Cloud Controller database.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
 future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
@@ -705,8 +697,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and cloud controller will inform the user that the deprovision failed.
-The service instance will remain in the cloud controller database.
+All other status codes will be interpreted as an error and Cloud Controller will inform the user that the deprovision failed.
+The service instance will remain in the Cloud Controller database.
 
 We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
 future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.

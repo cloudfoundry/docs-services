@@ -15,7 +15,7 @@ Cloud Foundry, it is recommended that all new brokers implement v2 and that curr
 brokers are upgraded.
 
 <div style="width:50%">
-  <table>
+  <table border="1" class="nice">
     <thead>
       <tr>
         <th>Current Version</th>
@@ -34,6 +34,7 @@ brokers are upgraded.
     </tbody>
   </table>
 </div>
+
 
 ## <a id='changes'></a>Changes ##
 
@@ -79,7 +80,7 @@ the version number of the Broker API that Cloud Controller will use.
 This header will be useful in future minor revisions of the API to allow
 brokers to reject requests from Cloud Controllers that they do not understand.
 While minor API revisions will always be additive, it is possible that brokers
-will come to depend on a feature that was added after 2Cloud Controller.0, so they may use this
+will come to depend on a feature that was added after 2.0, so they may use this
 header to reject the request.
 Error messages from the broker in this situation should inform the operator of
 what the required and actual version numbers are so that an operator can go
@@ -206,7 +207,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;tags</td>
   <td>array-of-strings</td>
-  <td>Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. Eg. mysql, relational, redis, key-value, caching, messaging, amqp.</td>
+  <td>Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;metadata</td>
@@ -332,9 +333,7 @@ existing system.
 ##### Route #####
 `PUT /v2/service_instances/:id`
 
-_Note: the `:id` of a service instance is provided by the Cloud Controller.
-This ID will be used for future requests (bind and deprovision), so the broker
-must use it to correlate the resource it creates._
+<p class="note"><strong>Note</strong>: The <code>:id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
 
 ##### Body #####
 
@@ -452,10 +451,7 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 ## <a id='binding'></a>Binding ##
 
-_Note: Not all services must be bindable --- some derive their value just from
-being provisioned.
-Brokers that do not provide any bindable services do not need to implement the
-endpoint for bind requests_
+<p class="note"><strong>Note</strong>: Not all services must be bindable --- some derive their value just from being provisioned. Brokers that do not provide any bindable services do not need to implement the endpoint for bind requests.</p>
 
 When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 
@@ -464,10 +460,7 @@ When the broker receives a bind request from the Cloud Controller, it should ret
 ##### Route #####
 `PUT /v2/service_instances/:instance_id/service_bindings/:id`
 
-<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller.
-<code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code>
-will be used for future unbind requests, so the broker must use it to correlate
-the resource it creates.</p>
+<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller. <code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code> will be used for future unbind requests, so the broker must use it to correlate the resource it creates.</p>
 
 ##### Body #####
 
@@ -589,8 +582,8 @@ future if JSON is expected rather than to support the cases when a JSON body may
 </pre>
 
 ## <a id='unbinding'></a>Unbinding ##
-_Note: Brokers that do not provide any bindable services do not need to
-implement the endpoint for unbind requests_
+
+<p class="note"><strong>Note</strong>: Brokers that do not provide any bindable services do not need to implement the endpoint for unbind requests.</p>
 
 When a broker receives an unbind request from Cloud Controller, it should
 delete any resources it created in bind.

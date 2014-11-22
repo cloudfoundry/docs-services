@@ -76,13 +76,13 @@ $ cf update-service-broker mybrokername someuser somethingsecure http://mybroker
 
 ## <a id='rename-broker'></a>Rename a Broker ##
 
-A service broker can be renamed with the command `update-service-broker`
+A service broker can be renamed with the command `rename-service-broker`
 command.
 This name is used only by the Cloud Foundry operator to identify brokers, and
 has no relation to configuration of the broker itself.
 
 <pre class="terminal">
-$ cf update-service-broker mybrokername mynewbrokername
+$ cf rename-service-broker mybrokername mynewbrokername
 </pre>
 
 ## <a id='remove-broker'></a>Remove a Broker ##

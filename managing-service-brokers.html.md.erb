@@ -16,10 +16,10 @@ Given a service broker that has implemented the [Service Broker API](api.html), 
 
 ## <a id='register-broker'></a>Register a Broker ##
 
-Registering a broker causes cloud controller to fetch and validate the catalog
-from your broker, and save the catalog to the cloud controller database.
+Registering a broker causes Cloud Controller to fetch and validate the catalog
+from your broker, and save the catalog to the Cloud Controller database.
 The basic auth username and password which are provided when adding a broker are
-encrypted in cloud controller database, and used by the cloud controller to
+encrypted in Cloud Controller database, and used by the Cloud Controller to
 authenticate with the broker when making all API calls.
 Your service broker should validate the username and password sent in every
 request; otherwise, anyone could curl your broker to delete service instances.
@@ -51,7 +51,7 @@ when you see them.
 
 <pre class="terminal">
 $ cf service-brokers
-Getting service brokers as admin...
+Getting service brokers as admin...Cloud Controller
 OK
 
 Name            URL
@@ -62,8 +62,8 @@ my-service-name http://mybroker.example.com
 
 Updating a broker is how to ingest changes a broker author has made into Cloud
 Foundry.
-Similar to adding a broker, update causes cloud controller to fetch the catalog
-from a broker, validate it, and update the cloud controller database with any
+Similar to adding a broker, update causes Cloud Controller to fetch the catalog
+from a broker, validate it, and update the Cloud Controller database with any
 changes found in the catalog.
 
 Update also provides a means to change the basic auth credentials cloud
@@ -76,7 +76,7 @@ $ cf update-service-broker mybrokername someuser somethingsecure http://mybroker
 
 ## <a id='rename-broker'></a>Rename a Broker ##
 
-A service broker can be renamed with the command `rename-service-broker`
+A service broker can be renamed with the `rename-service-broker`
 command.
 This name is used only by the Cloud Foundry operator to identify brokers, and
 has no relation to configuration of the broker itself.
@@ -99,7 +99,7 @@ $ cf delete-service-broker mybrokername
 
 If a service broker has been shut down or removed without first deleting service instances from Cloud Foundry, you will be unable to remove the service broker or its services and plans from the Marketplace. In development environments, broker authors often destroy their broker deployments and need a way to clean up the Cloud Controller database.
 
-The following command will delete a service offering, all of its plans, as well as all associated service instances and bindings from the cloud controller database, without making any API calls to a service broker. For services from v1 brokers, you must provide a provider with `-p PROVIDER`. Once all services for a broker have been purged, the broker can be removed normally.
+The following command will delete a service offering, all of its plans, as well as all associated service instances and bindings from the Cloud Controller database, without making any API calls to a service broker. For services from v1 brokers, you must provide a provider with `-p PROVIDER`. Once all services for a broker have been purged, the broker can be removed normally.
 
 <pre class="terminal">
 $ cf purge-service-offering v1-test -p pivotal-software

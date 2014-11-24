@@ -217,7 +217,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;requires</td>
   <td>array-of-strings</td>
-  <td>A list of permissions that the user would have to give the service, if they provision it. The only permission currently supported is <tt>syslog_drain</tt>. </td>
+  <td>A list of permissions that the user would have to give the service, if they provision it. The only permission currently supported is <tt>syslog_drain</tt>; for more info see [Application Log Streaming](app-log-streaming.html).</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plans*</td>
@@ -455,6 +455,8 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 
+In addition, the bind operation can enable streaming of application logs from Cloud Foundry to a consuming service instance. For details, see [Application Log Streaming](app-log-streaming.html).
+
 ### Request ###
 
 ##### Route #####
@@ -563,7 +565,7 @@ future if JSON is expected rather than to support the cases when a JSON body may
 <tr>
   <td>syslog_drain_url</td>
   <td>string</td>
-  <td>A URL to which Cloud Foundry should drain logs to for the bound application. The <tt>syslog_drain</tt> permission is required for logs to be automatically wired to applications.</td>
+  <td>A URL to which Cloud Foundry should drain logs to for the bound application. For details, see <a href="app-log-streaming.html">Application Log Streaming</a>.</td>
 </tr>
 </tbody>
 </table>

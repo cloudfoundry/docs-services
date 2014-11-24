@@ -57,7 +57,7 @@ The key change from v2.3 to v2.4 is support for users to change the service plan
 v2.4 of the services API has been supported since:
 
 * [Final build 192](https://github.com/cloudfoundry/cf-release/tree/v192) of [cf-release](https://github.com/cloudfoundry/cf-release/commit/2b0309bde9880f7acb039ec9676f992254ce62d9)
-* v2.17.0 of the [Cloud Controller API](https://github.com/cloudfoundry/cloud_controller_ng/commit/f8b31ecce5c2740d60818ac6cc8a9299120e3216)
+* v2.17 of the [Cloud Controller API](https://github.com/cloudfoundry/cloud_controller_ng/commit/f8b31ecce5c2740d60818ac6cc8a9299120e3216)
 * v6.7 of the Cloud Foundry [Command Line Interface (CLI)](https://github.com/cloudfoundry/cli)
 
 ## <a id='api-overview'></a>API Overview ##
@@ -222,7 +222,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plan_updatable</td>
   <td>boolean</td>
-  <td>Whether the service instance plan can change.</td>
+  <td>Whether the service supports upgrade/downgrade for some plans.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plans*</td>
@@ -336,9 +336,9 @@ existing system.
 ### Request ###
 
 ##### Route #####
-`PUT /v2/service_instances/:id`
+`PUT /v2/service_instances/:instance_id`
 
-<p class="note"><strong>Note</strong>: The <code>:id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
+<p class="note"><strong>Note</strong>: The <code>:instance_id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
 
 ##### Body #####
 
@@ -385,7 +385,7 @@ existing system.
 
 ##### cURL #####
 <pre class="terminal">
-$ curl http://username:password@broker-url/v2/service_instances/:id -d '{
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
@@ -457,14 +457,16 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 ## <a id='updating_service_instance'></a>Updating a Service Instance ##
 
-When the broker receives an update service instance request from the Cloud Controller, it will attempt to move the service instance from its current plan to the plan specified by the request. For example, for an application bound to a database service plan of 1GB, a downgrade to a 100MB plan would be achieved sending an update service instance request with the name of the new plan. The broker would then switch the instance from the current 1GB plan to the new 100MB plan.
+Brokers that implement this endpoint can enable users to modify attributes of an existing service instance. The first attribute Cloud Foundry supports users modifying is the service plan. This effectively enables users to upgrade or downgrade their service instance to other plans. To see how users make these requests, see [Managing Services](/devguide/services/managing-services.html#update_service).
+
+To enable this functionality, a broker declares support for each service by including `plan_updatable: true` in its [catalog endpoint](#catalog-mgmt). If this optional field is not included, Cloud Foundry will return a meaningful error to users for any plan change request, and will not make an API call to the broker. If this field is included and configured as true, Cloud Foundry will make API calls to the broker for all plan change requests, and it is up to the broker to validate whether a particular permutation of plan change is supported. Not all permutations of plan changes are expected to be supported. For example, a service may support upgrading from plan "shared small" to "shared large" but not to plan "dedicated". If a particular plan change is not supported, the broker should return a meaningful error message in response.
 
 ### Request ###
 
 ##### Route #####
-`PATCH /v2/service_instances/:instance_guid`
+`PATCH /v2/service_instances/:instance_id`
 
-<p class="note"><strong>Note</strong>: <code>:instance_guid</code> is the global unique ID of a previously-provisioned service instance.</p>
+<p class="note"><strong>Note</strong>: <code>:instance_id</code> is the global unique ID of a previously-provisioned service instance.</p>
 
 ##### Body #####
 
@@ -478,7 +480,7 @@ When the broker receives an update service instance request from the Cloud Contr
 </thead>
 <tbody>
 <tr>
-  <td>plan_id*</td>
+  <td>plan_id</td>
   <td>string</td>
   <td>ID of the new plan from the catalog.</td>
 </tr>
@@ -489,6 +491,13 @@ When the broker receives an update service instance request from the Cloud Contr
 {
   "plan_id": "plan-guid-here"
 }
+</pre>
+
+##### cURL #####
+<pre class="terminal">
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
+  "plan_id": "plan-guid-here"
+}' -X PATCH
 </pre>
 
 ### Response ###
@@ -508,7 +517,7 @@ When the broker receives an update service instance request from the Cloud Contr
 <tr>
   <td>422 Unprocessable entity</td>
   <td>
-    May be returned if the service instance cannot be switched to the new plan. For example, a database service instance might not be switched to a new plan if it currently exceeds that plan's maximum storage quota. Refer to <a href="#broker-errors">broker errors</a> for the expected body.
+    May be returned if the requested plan change is not supported or if the request can not currently be fulfilled due to the state of the instance (eg. instance utilization is over the quota of the requested plan). Messages returned by the broker will be passed through to the client. Refer to <a href="#broker-errors">broker errors</a> for the expected body.
   </td>
 </tr>
 </tbody>
@@ -527,10 +536,10 @@ When the broker receives a bind request from the Cloud Controller, it should ret
 ### Request ###
 
 ##### Route #####
-`PUT /v2/service_instances/:instance_id/service_bindings/:id`
+`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller.
-<code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code>
+<p class="note"><strong>Note</strong>: The <code>:binding_id</code> of a service binding is provided by the Cloud Controller.
+<code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:binding_id</code>
 will be used for future unbind requests, so the broker must use it to correlate
 the resource it creates.</p>
 
@@ -573,7 +582,7 @@ the resource it creates.</p>
 
 ##### cURL #####
 <pre class="terminal">
-$ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:id -d '{
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
   "plan_id": "plan-guid-here",
   "service_id": "service-guid-here",
   "app_guid": "app-guid-here"
@@ -664,9 +673,9 @@ Usually this means that an application immediately cannot access the resource.
 ### Request ###
 
 ##### Route #####
-`DELETE /v2/service_instances/:instance_id/service_bindings/:id`
+`DELETE /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:id` in the URL is the identifier of a previously created binding (the same `:id` passed in the bind request). The request has no body, because DELETE requests generally do not have bodies.
+The `:binding_id` in the URL is the identifier of a previously created binding (the same `:binding_id` passed in the bind request). The request has no body, because DELETE requests generally do not have bodies.
 
 ##### Parameters #####
 
@@ -697,7 +706,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
-  service_bindings/:id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE
 </pre>
 
 ### Response ###
@@ -737,10 +746,10 @@ provisions.
 ### Request ###
 
 ##### Route #####
-`DELETE /v2/service_instances/:id`
+`DELETE /v2/service_instances/:instance_id`
 
-The `:id` in the URL is the identifier of a previously provisioned instance (the same
-`:id` passed in the provision request).  The request has no body, because DELETE
+The `:instance_id` in the URL is the identifier of a previously provisioned instance (the same
+`:instance_id` passed in the provision request).  The request has no body, because DELETE
 requests generally do not have bodies.
 
 ##### Parameters #####
@@ -771,7 +780,7 @@ The request provides these query string parameters as useful hints for brokers.
 
 ##### cURL #####
 <pre class="terminal">
-$ curl 'http://username:password@broker-url/v2/service_instances/:id?service_id=
+$ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?service_id=
     service-id-here&plan_id=plan-id-here' -X DELETE
 </pre>
 

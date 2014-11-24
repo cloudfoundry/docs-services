@@ -234,9 +234,9 @@ For non-data services, provisioning could just mean getting an account on an exi
 ### Request ###
 
 ##### Route #####
-`PUT /v2/service_instances/:id`
+`PUT /v2/service_instances/:instance_id`
 
-<p class="note"><strong>Note</strong>: The <code>:id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
+<p class="note"><strong>Note</strong>: The <code>:instance_id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
 
 ##### Body #####
 
@@ -340,9 +340,9 @@ When the broker receives a bind request from the Cloud Controller, it should ret
 
 ##### Route #####
 
-`PUT /v2/service_instances/:instance_id/service_bindings/:id`
+`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller. <code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code> will be used for future unbind requests, so the broker must use it to correlate the resource it creates.</p>
+<p class="note"><strong>Note</strong>: The <code>:binding_id</code> of a service binding is provided by the Cloud Controller. <code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:binding_id</code> will be used for future unbind requests, so the broker must use it to correlate the resource it creates.</p>
 
 ##### Body #####
 
@@ -449,9 +449,9 @@ When a broker receives an unbind request from Cloud Controller, it should delete
 
 ##### Route #####
 
-`DELETE /v2/service_instances/:instance_id/service_bindings/:id`
+`DELETE /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:id` in the URL is the identifier of a previously created binding (the same `:id` passed in the bind request). The request has no body, because DELETE requests generally do not have bodies.
+The `:binding_id` in the URL is the identifier of a previously created binding (the same `:binding_id` passed in the bind request). The request has no body, because DELETE requests generally do not have bodies.
 
 ##### Parameters #####
 
@@ -514,9 +514,9 @@ When a broker receives a deprovision request from Cloud Controller, it should de
 
 ##### Route #####
 
-`DELETE /v2/service_instances/:id`
+`DELETE /v2/service_instances/:instance_id`
 
-The `:id` in the URL is the identifier of a previously provisioned instance (the same `:id` passed in the provision request).  The request has **no body**, because DELETE requests generally do not have bodies.
+The `:instance_id` in the URL is the identifier of a previously provisioned instance (the same `:instance_id` passed in the provision request).  The request has **no body**, because DELETE requests generally do not have bodies.
 
 ##### Parameters #####
 

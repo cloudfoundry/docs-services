@@ -147,7 +147,7 @@ no longer be visible in the marketplace catalog or be provisionable.
 
 ### Response ###
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Status Code</th>
@@ -170,7 +170,7 @@ Keep it short -- imagine a user having to type it as an argument for a longer
 command.
 A web-friendly display name is camel-cased with spaces and punctuation supported.
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Response field</th>
@@ -337,7 +337,7 @@ existing system.
 
 ##### Body #####
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Request field</th>
@@ -393,7 +393,7 @@ Controller
 
 ### Response ###
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Status Code</th>
@@ -406,27 +406,28 @@ Controller
   <td>Service instance has been created. The expected response body is below.</td>
 </tr>
 <tr>
-  <td>409 Conflict</td>
-  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
-</tr>
-<tr>
   <td>200 OK</td>
   <td>
     May be returned if the service instance already exists and the requested parameters are identical to the existing service instance.
     The expected response body is below.
   </td>
 </tr>
+<tr>
+  <td>409 Conflict</td>
+  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
+</tr>
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and Cloud Controller will inform the user that the provision failed.
-
-We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
-future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
 ##### Body #####
 
-<table>
+All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For success responses, the following fields are valid.
+
+<table class="nice">
 <thead>
 <tr>
   <th>Response field</th>
@@ -466,7 +467,7 @@ In addition, the bind operation can enable streaming of application logs from Cl
 
 ##### Body #####
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Request Field</th>
@@ -514,7 +515,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 
 ### Response ###
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Status Code</th>
@@ -527,28 +528,28 @@ In this case, `instance_id` refers to the id of an existing service instance in 
   <td>Binding has been created. The expected response body is below.</td>
 </tr>
 <tr>
-  <td>409 Conflict</td>
-  <td>Should be returned if the requested binding already exists. The expected response body is "{}"</td>
-</tr>
-<tr>
   <td>200 OK</td>
   <td>
     May be returned if the binding already exists and the requested parameters are identical to the existing binding.
     The expected response body is below.
   </td>
 </tr>
+<tr>
+  <td>409 Conflict</td>
+  <td>Should be returned if the requested binding already exists. The expected response body is "{}"</td>
+</tr>
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and Cloud Controller will inform the user that the bind failed.
-Additionally, an unbind request will be sent to the broker to prevent an orphan being created on the broker.
-
-We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
-future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+Responses with any other status code will be interpreted as a failure and an unbind request will be sent to the broker to prevent an orphan being created on the broker. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
 ##### Body #####
 
-<table>
+All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For success responses, the following fields are valid.
+
+<table class="nice">
 <thead>
 <tr>
   <th>Response Field</th>
@@ -602,7 +603,7 @@ The `:binding_id` in the URL is the identifier of a previously created binding (
 
 The request provides these query string parameters as useful hints for brokers.
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Query-String Field</th>
@@ -632,7 +633,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 
 ### Response ###
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Status Code</th>
@@ -651,11 +652,13 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and Cloud Controller will inform the user that the unbind failed.
-The binding will remain in the Cloud Controller database.
+Responses with any other status code will be interpreted as a failure and the binding will remain in the Cloud Controller database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
-We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
-future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+##### Body #####
+
+All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For a success response, the expected response body is `"{}"`.
 
 ## <a id='deprovisioning'></a>Deprovisioning ##
 
@@ -677,7 +680,7 @@ requests generally do not have bodies.
 
 The request provides these query string parameters as useful hints for brokers.
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Query-String Field</th>
@@ -707,7 +710,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?se
 
 ### Response ###
 
-<table>
+<table class="nice">
 <thead>
 <tr>
   <th>Status Code</th>
@@ -726,28 +729,28 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?se
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and Cloud Controller will inform the user that the deprovision failed.
-The service instance will remain in the Cloud Controller database.
+Responses with any other status code will be interpreted as a failure and the service instance will remain in the Cloud Controller database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
-We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
-future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+##### Body #####
+
+All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For a success response, the expected response body is `"{}"`.
 
 ## <a id='broker-errors'></a>Broker Errors ##
 
-Broker failures beyond the scope of the well-defined HTTP response codes listed
-above (like 410 on delete) should return an appropriate HTTP response code
-(chosen to accurately reflect the nature of the failure) as well as a JSON-encoded
-error payload.
-
-This payload allows the broker to expose a message to end-user or operator.
-If a payload is included, only the message from the description field in the
-payload will be shown.
-If there is no payload, a generic error message containing the HTTP response
-code will be shown.
-
 ### Response ###
 
-<table>
+Broker failures beyond the scope of the well-defined HTTP response codes listed
+above (like 410 on delete) should return an appropriate HTTP response code (chosen to accurately reflect the nature of the failure) and a body containing valid JSON.
+
+##### Body #####
+
+All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For error responses, the following fields are valid. If empty JSON is returned in the body `"{}"`, a generic message containing the HTTP response code returned by the broker will be displayed to the requestor.
+
+<table class="nice">
 <thead>
 <tr>
   <th>Response Field</th>
@@ -759,8 +762,7 @@ code will be shown.
 <tr>
   <td>description</td>
   <td>string</td>
-  <td>An error message explaining why the request failed. This message will likely be forwarded to the person initiating the request.
-</td>
+  <td>An error message explaining why the request failed. This message will be displayed to the user who initiated the request.</td>
 </tr>
 </tbody>
 </table>

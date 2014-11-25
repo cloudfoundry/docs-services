@@ -4,7 +4,11 @@ title: Access Control
 
 By default, all new service plans are private. This means that when adding a new broker, or when adding a new plan to an existing broker's catalog, new service plans won't immediately be available to end users. This enables an admin to control which service plans are available to end users, and to manage limited availability.
 
-## <a id='prerequisites'></a>Prerequisites
+## <a id='cli'></a>Using the CLI ##
+
+If your CLI and/or deployment of cf-release do not meet the following prerequisites, you can manage access control with [cf curl](#curl).
+
+### <a id='prerequisites'></a>Prerequisites ###
 - CLI v6.4.0
 - Cloud Controller API v2.9.0 (cf-release v179)
 - Admin user access; the following commands can be run only by an admin user
@@ -26,7 +30,7 @@ $ cf curl /v2/info
 }
 </pre>
 
-## <a id='display-access'></a>Display Access to Service Plans
+### <a id='display-access'></a>Display Access to Service Plans ###
 
 The `service-access` CLI command enables an admin to see the current access control setting for every service plan in the marketplace, across all service brokers.
 
@@ -60,7 +64,7 @@ OPTIONS:
    -o 	plans accessible by a particular organization
 </pre>
 
-## <a id='enable-access'></a>Enable Access to Service Plans
+### <a id='enable-access'></a>Enable Access to Service Plans ###
 
 Service access is managed at the granularity of service plans, though CLI commands allow an admin to modify all plans of a service at once.
 
@@ -98,7 +102,7 @@ OPTIONS:
    -o 	Enable access to a particular organization
 </pre>
 
-## <a id='disable-access'></a>Disable Access to Service Plans
+### <a id='disable-access'></a>Disable Access to Service Plans ###
 
 <pre class="terminal">
 $ cf disable-service-access p-riakcs
@@ -132,6 +136,202 @@ OPTIONS:
    -o 	Disable access to a particular organization
 </pre>
 
-### Limitations
+#### Limitations ####
 
 - You cannot disable access to a service plan for an organization if the plan is currently available to all organizations. You must first disable access for all organizations; then you can enable access for a  particular organization.
+
+## <a id='curl'></a>Using cf curl ##
+
+The following commands must be run as a system admin user.
+
+### <a id='enable-access-curl'></a>Enable Access to Service Plans ###
+
+Access can be enabled for users of all organizations, or for users of particular organizations. Service plans which are available to all users are said to be "public". Plans that are available to no organizations, or to particular organizations, are said to be "private".
+
+#### Enable access to a plan for all organizations ####
+
+Once made public, the service plan can be seen by all users in the list of available services. See [Managing Services](/devguide/services/managing-services.html) for more information.
+
+To make a service plan public, you need the service plan GUID. To find the service plan GUID, run:
+
+`cf curl /v2/service_plans -X 'GET'`
+
+This command returns a filtered JSON response listing every service plan. Data about each plan shows in two sections: `metadata` and `entity.` The `metadata` section shows the service plan GUID, while the `entity` section lists the name of the plan. Note: Because `metadata` is listed before `entity` for each service plan, the GUID of a plan is shown six lines above the name.
+
+Example:
+
+<pre class="terminal">
+$ cf curl /v2/service_plans
+...
+{
+    "metadata": {
+        "guid": "1afd5050-664e-4be2-9389-6bf0c967c0c6",
+        "url": "/v2/service_plans/1afd5050-664e-4be2-9389-6bf0c967c0c6",
+        "created_at": "2014-02-12T06:24:04+00:00",
+        "updated_at": "2014-02-12T18:46:52+00:00"
+    },
+    "entity": {
+        "name": "plan-name-1",
+        "free": true,
+        "description": "plan-desc-1",
+        "service_guid": "d9011411-1463-477c-b223-82e04996b91f",
+        "extra": "{\"bullets\":[\"bullet1\",\"bullet2\"]}",
+        "unique_id": "plan-id-1",
+        "public": false,
+        "service_url": "/v2/services/d9011411-1463-477c-b223-82e04996b91f",
+        "service_instances_url": "/v2/service_plans/1afd5050-664e-4be2-9389-6bf0c967c0c6/service_instances"
+    }
+}
+</pre>
+
+In this example, the GUID of plan-name-1 is 1afd5050-664e-4be2-9389-6bf0c967c0c6.
+
+To make a service plan public, run:
+`cf curl /v2/service_plans/SERVICE_PLAN_GUID -X 'PUT' -d '{"public":true}'`
+
+As verification, the "entity" section of the JSON response shows the `"public":true` key-value pair.
+
+<pre class="terminal">
+$ cf curl /v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111 -X 'PUT' -d '{"public":true}'
+
+{
+    "metadata": {
+        "guid": "1113aa0-124e-4af2-1526-6bfacf61b111",
+        "url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111",
+        "created_at": "2014-02-12T06:24:04+00:00",
+        "updated_at": "2014-02-12T20:55:10+00:00"
+    },
+    "entity": {
+        "name": "plan-name-1",
+        "free": true,
+        "description": "plan-desc-1",
+        "service_guid": "d9011411-1463-477c-b223-82e04996b91f",
+        "extra": "{\"bullets\":[\"bullet1\",\"bullet2\"]}",
+        "unique_id": "plan-id-1",
+        "public": true,
+        "service_url": "/v2/services/d9011411-1463-477c-b223-82e04996b91f",
+        "service_instances_url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111/service_instances"
+    }
+}
+</pre>
+
+#### Enable access to a private plan for a particular organization ####
+
+Users have access to private plans that have been enabled for an organization only when targeting a space of  that organization. See [Managing Services](/devguide/services/managing-services.html) for more information.
+
+To make a service plan available to users of a specific organization, you need the GUID of both the organization and the service plan. To get the GUID of the service plan, run the same command described above for [enabling access to a plan for all organizations](#enable-access-curl):
+
+`cf curl -X 'GET' /v2/service_plans`
+
+To find the organization GUIDs, run:
+
+`cf curl /v2/organizations?q=name:YOUR-ORG-NAME`
+
+The `metadata` section shows the organization GUID, while the `entity` section lists the name of the organization. Note: Because `metadata` is listed before `entity` for each organization, the GUID of an organization is shown six lines above the name.
+
+Example:
+
+<pre class="terminal">
+$ cf curl /v2/organizations?q=name:my-org
+
+{
+    "metadata": {
+        "guid": "c54bf317-d791-4d12-89f0-b56d0936cfdc",
+        "url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc",
+        "created_at": "2013-05-06T16:34:56+00:00",
+        "updated_at": "2013-09-25T18:44:35+00:00"
+    },
+    "entity": {
+        "name": "my-org",
+        "billing_enabled": true,
+        "quota_definition_guid": "52c5413c-869f-455a-8873-7972ecb85ca8",
+        "status": "active",
+        "quota_definition_url": "/v2/quota_definitions/52c5413c-869f-455a-8873-7972ecb85ca8",
+        "spaces_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/spaces",
+        "domains_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/domains",
+        "private_domains_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/private_domains",
+        "users_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/users",
+        "managers_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/managers",
+        "billing_managers_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/billing_managers",
+        "auditors_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/auditors",
+        "app_events_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc/app_events"
+    }
+}
+</pre>
+
+In this example, the GUID of my-org is c54bf317-d791-4d12-89f0-b56d0936cfdc.
+
+To make a private plan available to a specific organization, run:
+
+`cf curl /v2/service_plan_visibilities -X POST -d '{"service_plan_guid":"SERVICE_PLAN_GUID","organization_guid":"ORG_GUID"}'`
+
+Example:
+
+<pre class="terminal">
+$ cf curl /v2/service_plan_visibilities -X 'POST' -d '{"service_plan_guid":"1113aa0-124e-4af2-1526-6bfacf61b111","organization_guid":"aaaa1234-da91-4f12-8ffa-b51d0336aaaa"}'
+
+{
+    "metadata": {
+        "guid": "99993789-a368-483e-ae7c-ebe79e199999",
+        "url": "/v2/service_plan_visibilities/99993789-a368-483e-ae7c-ebe79e199999",
+        "created_at": "2014-02-12T21:03:42+00:00",
+        "updated_at": null
+    },
+    "entity": {
+        "service_plan_guid": "1113aa0-124e-4af2-1526-6bfacf61b111",
+        "organization_guid": "aaaa1234-da91-4f12-8ffa-b51d0336aaaa",
+        "service_plan_url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111",
+        "organization_url": "/v2/organizations/c54bf317-d791-4d12-89f0-b56d0936cfdc"
+    }
+}
+</pre>
+
+Members of my-org can now see the plan-name-1 service plan in the list of available services when a space of my-org is targeted.
+
+Note: The `guid` field in the `metadata` section of this JSON response is the id of the "service plan visibility", and can be used to revoke access to the plan for the organization as described below.
+
+### <a id='disable-access-curl'></a>Disable Access to Service Plans ###
+
+#### Disable access to a plan for all organizations
+
+To make a service plan private, follow the instructions above for [Enable Access](#enable-access-curl), but replace `"public":true` with `"public":false`.
+
+Note: organizations that have explicitly been granted access will retain access once a plan is private. To be sure access is removed for all organizations, access must be explicitly revoked for organizations to which access has been explicitly granted. For details see below.
+
+Example making plan-name-1 private:
+
+<pre class="terminal">
+$ cf curl /v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111 -X 'PUT' -d '{"public":false}'
+
+{
+    "metadata": {
+        "guid": "1113aa0-124e-4af2-1526-6bfacf61b111",
+        "url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111",
+        "created_at": "2014-02-12T06:24:04+00:00",
+        "updated_at": "2014-02-12T20:55:10+00:00"
+    },
+    "entity": {
+        "name": "plan-name-1",
+        "free": true,
+        "description": "plan-desc-1",
+        "service_guid": "d9011411-1463-477c-b223-82e04996b91f",
+        "extra": "{\"bullets\":[\"bullet1\",\"bullet2\"]}",
+        "unique_id": "plan-id-1",
+        "public": false,
+        "service_url": "/v2/services/d9011411-1463-477c-b223-82e04996b91f",
+        "service_instances_url": "/v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111/service_instances"
+    }
+}
+</pre>
+
+#### Disable access to a private plan for a particular organization ####
+
+To revoke access to a service plan for a particular organization, run:
+
+`cf curl /v2/service_plan_visibilities/SERVICE_PLAN_VISIBILITIES_GUID -X 'DELETE'`
+
+Example:
+
+<pre class="terminal">
+$ cf curl /v2/service_plan_visibilities/99993789-a368-483e-ae7c-ebe79e199999 -X DELETE
+</pre>

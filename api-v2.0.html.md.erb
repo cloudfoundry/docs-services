@@ -161,7 +161,7 @@ If the database has plans which are not found in the broker catalog, and there a
 <tr>
   <td>&nbsp;&nbsp;&nbsp;requires</td>
   <td>array-of-strings</td>
-  <td>A list of permissions that the user would have to give the service, if they provision it. The only permission currently supported is <tt>syslog_drain</tt>. </td>
+  <td>A list of permissions that the user would have to give the service, if they provision it. The only permission currently supported is <tt>syslog_drain</tt>; for more info see [Application Log Streaming](app-log-streaming.html).</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plans*</td>
@@ -234,9 +234,9 @@ For non-data services, provisioning could just mean getting an account on an exi
 ### Request ###
 
 ##### Route #####
-`PUT /v2/service_instances/:id`
+`PUT /v2/service_instances/:instance_id`
 
-<p class="note"><strong>Note</strong>: The <code>:id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
+<p class="note"><strong>Note</strong>: The <code>:instance_id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
 
 ##### Body #####
 
@@ -287,25 +287,26 @@ For non-data services, provisioning could just mean getting an account on an exi
   <td>Service instance has been created. The expected response body is below.</td>
 </tr>
 <tr>
-  <td>409 Conflict</td>
-  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
-</tr>
-<tr>
   <td>200 OK</td>
   <td>
     May be returned if the service instance already exists and the requested parameters are identical to the existing service instance.
     The expected response body is below.
   </td>
 </tr>
+<tr>
+  <td>409 Conflict</td>
+  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
+</tr>
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and Cloud Controller will inform the user that the provision failed.
-
-We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
-future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
 ##### Body #####
+
+All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For success responses, the following fields are valid.
 
 <table border="1" class="nice">
 <thead>
@@ -336,13 +337,15 @@ future if JSON is expected rather than to support the cases when a JSON body may
 
 When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 
+In addition, the bind operation can enable streaming of application logs from Cloud Foundry to a consuming service instance. For details, see [Application Log Streaming](app-log-streaming.html).
+
 ### Request ###
 
 ##### Route #####
 
-`PUT /v2/service_instances/:instance_id/service_bindings/:id`
+`PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-<p class="note"><strong>Note</strong>: The <code>:id</code> of a service binding is provided by the Cloud Controller. <code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:id</code> will be used for future unbind requests, so the broker must use it to correlate the resource it creates.</p>
+<p class="note"><strong>Note</strong>: The <code>:binding_id</code> of a service binding is provided by the Cloud Controller. <code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:binding_id</code> will be used for future unbind requests, so the broker must use it to correlate the resource it creates.</p>
 
 ##### Body #####
 
@@ -383,26 +386,26 @@ When the broker receives a bind request from the Cloud Controller, it should ret
   <td>Binding has been created. The expected response body is below.</td>
 </tr>
 <tr>
-  <td>409 Conflict</td>
-  <td>Should be returned if the requested binding already exists. The expected response body is "{}"</td>
-</tr>
-<tr>
   <td>200 OK</td>
   <td>
     May be returned if the binding already exists and the requested parameters are identical to the existing binding.
     The expected response body is below.
   </td>
 </tr>
+<tr>
+  <td>409 Conflict</td>
+  <td>Should be returned if the requested binding already exists. The expected response body is "{}"</td>
+</tr>
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and Cloud Controller will inform the user that the bind failed.
-Additionally, an unbind request will be sent to the broker to prevent an orphan being created on the broker.
-
-We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
-future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+Responses with any other status code will be interpreted as a failure and an unbind request will be sent to the broker to prevent an orphan being created on the broker. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
 ##### Body #####
+
++All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
++
++For success responses, the following fields are valid.
 
 <table border="1" class="nice">
 <thead>
@@ -421,7 +424,7 @@ future if JSON is expected rather than to support the cases when a JSON body may
 <tr>
   <td>syslog_drain_url</td>
   <td>string</td>
-  <td>A URL to which Cloud Foundry should drain logs to for the bound application. The <tt>syslog_drain</tt> permission is required for logs to be automatically wired to applications.</td>
+  <td>A URL to which Cloud Foundry should drain logs to for the bound application. For details, see <a href="app-log-streaming.html">Application Log Streaming</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -449,9 +452,9 @@ When a broker receives an unbind request from Cloud Controller, it should delete
 
 ##### Route #####
 
-`DELETE /v2/service_instances/:instance_id/service_bindings/:id`
+`DELETE /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-The `:id` in the URL is the identifier of a previously created binding (the same `:id` passed in the bind request). The request has no body, because DELETE requests generally do not have bodies.
+The `:binding_id` in the URL is the identifier of a previously created binding (the same `:binding_id` passed in the bind request). The request has no body, because DELETE requests generally do not have bodies.
 
 ##### Parameters #####
 
@@ -500,11 +503,13 @@ The request provides these query string parameters as useful hints for brokers.
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and Cloud Controller will inform the user that the unbind failed.
-The binding will remain in the Cloud Controller database.
+Responses with any other status code will be interpreted as a failure and the binding will remain in the Cloud Controller database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
-We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
-future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+##### Body #####
+
+All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For a success response, the expected response body is `"{}"`.
 
 ## <a id='deprovisioning'></a>Deprovisioning ##
 
@@ -514,9 +519,9 @@ When a broker receives a deprovision request from Cloud Controller, it should de
 
 ##### Route #####
 
-`DELETE /v2/service_instances/:id`
+`DELETE /v2/service_instances/:instance_id`
 
-The `:id` in the URL is the identifier of a previously provisioned instance (the same `:id` passed in the provision request).  The request has **no body**, because DELETE requests generally do not have bodies.
+The `:instance_id` in the URL is the identifier of a previously provisioned instance (the same `:instance_id` passed in the provision request).  The request has **no body**, because DELETE requests generally do not have bodies.
 
 ##### Parameters #####
 
@@ -565,19 +570,25 @@ The request provides these query string parameters as useful hints for brokers.
 </tbody>
 </table>
 
-All other status codes will be interpreted as an error and Cloud Controller will inform the user that the deprovision failed.
-The service instance will remain in the Cloud Controller database.
+Responses with any other status code will be interpreted as a failure and the service instance will remain in the Cloud Controller database. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
-We have chosen to require empty JSON in the response for future compatibility; it will be easier to add fields in the
-future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+##### Body #####
+
+All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For a success response, the expected response body is `"{}"`.
 
 ## <a id='broker-errors'></a>Broker Errors ##
 
-When a broker fails to perform any requested operation, unless it fails with a well-defined HTTP response code listed above (like 410 on delete), it should return an appropriate HTTP response code (chosen to accurately reflect the nature of the failure), and a JSON-encoded error payload.
-
-This payload allows the broker to expose a message to end-user or operator. If a payload is included, only the message from the description field in the payload will be shown. If there is no payload, a generic error message containing the HTTP response code will be shown.
-
 ### Response ###
+
+When a broker fails to perform any requested operation, unless it fails with a well-defined HTTP response code listed above (like 410 on delete), it should return an appropriate HTTP response code (chosen to accurately reflect the nature of the failure) and a body containing valid JSON.
+
+##### Body #####
+
+All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For error responses, the following fields are valid. If empty JSON is returned in the body `"{}"`, a generic message containing the HTTP response code returned by the broker will be displayed to the requestor.
 
 <table border="1" class="nice">
 <thead>
@@ -591,8 +602,7 @@ This payload allows the broker to expose a message to end-user or operator. If a
 <tr>
   <td>description</td>
   <td>string</td>
-  <td>An error message explaining why the request failed. This message will likely be forwarded to the person initiating the request.
-</td>
+  <td>An error message explaining why the request failed. This message will be displayed to the user who initiated the request.</td>
 </tr>
 </tbody>
 </table>

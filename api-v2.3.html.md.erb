@@ -774,13 +774,5 @@ copies of existing instances and bindings.
 These two lists may potentially become inconsistent.
 For example, if a broker times out during a delete request, the Cloud
 Controller will be unsure whether that resource still exists on the broker.
-Cloud Controller will implement the following orphan prevention techniques:
-
-* If a broker fails to provision or bind an instance, the Cloud Controller will
-immediately issue a deprovision or unbind request.
-
-* If a broker fails to unbind or deprovision an instance, the Cloud Controller
-will periodically retry that DELETE request until it succeeds (or generates a
-410).
-Eventually it will give up, but this technique will help clean up resources
-that remain when a broker fails to delete.
+If the broker creates an instance, then it will be out of sync with Cloud
+Controller.

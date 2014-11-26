@@ -609,8 +609,11 @@ For error responses, the following fields are valid. If empty JSON is returned i
 
 ## <a id='orphans'></a>Orphans ##
 
-The Cloud Controller database and a Broker are expected to store identical copies of existing instances and bindings. Potentially, these two lists may become inconsistent. For example, if a broker times out during a delete request, the Cloud Controller will be unsure of whether that resource still exists on the broker or not. Cloud Controller will implement the following orphan prevention techniques:
+The Cloud Controller database and a Broker are expected to store identical
+copies of existing instances and bindings.
+These two lists may potentially become inconsistent.
+For example, if a broker times out during a delete request, the Cloud
+Controller will be unsure whether that resource still exists on the broker.
+If the broker creates an instance, then it will be out of sync with Cloud
+Controller.
 
-* If a broker fails to provision or bind an instance, the Cloud Controller will immediately issue an deprovision or unbind request .
-
-* If a broker fails to unbind or deprovision an instance, the Cloud Controller will periodically retry that DELETE request until it succeeds (or generates a 410). Eventually it will give up, but this technique will help clean up resources that are remain when a broker fails to delete.

@@ -18,9 +18,9 @@ To enable this functionality, a service broker must implement the following:
 ## How does it work?
 
 - Broker returns a value for `syslog_drain_url` in response to bind
-- When application is restarted, [VCAP_SERVICES](/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES) is updated with the key and value for `syslog_drain_url`
+- When application is restarted, [VCAP_SERVICES](../devguide/deploy-apps/environment-variable.html#VCAP-SERVICES) is updated with the key and value for `syslog_drain_url`
 - DEAs continuously stream application logs to the Loggregator
-- If `syslog_drain_url` is present in [VCAP_SERVICES](/devguide/deploy-apps/environment-variable.html#VCAP-SERVICES), the DEA tags the logs with this field
+- If `syslog_drain_url` is present in [VCAP_SERVICES](../devguide/deploy-apps/environment-variable.html#VCAP-SERVICES), the DEA tags the logs with this field
 - Loggregator streams logs tagged with this key to the location specified as its value
 
-Users can manually configure app logs to be streamed to a location of their choice using User-provided Service Instances. For details, see [Using Third-Party Log Management Services](/devguide/services/log-management.html).
+Users can manually configure app logs to be streamed to a location of their choice using User-provided Service Instances. For details, see [Using Third-Party Log Management Services](../devguide/services/log-management.html).

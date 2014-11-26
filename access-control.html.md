@@ -150,7 +150,7 @@ Access can be enabled for users of all organizations, or for users of particular
 
 #### Enable access to a plan for all organizations ####
 
-Once made public, the service plan can be seen by all users in the list of available services. See [Managing Services](/devguide/services/managing-services.html) for more information.
+Once made public, the service plan can be seen by all users in the list of available services. See [Managing Services](../devguide/services/managing-services.html) for more information.
 
 To make a service plan public, you need the service plan GUID. To find the service plan GUID, run:
 
@@ -217,7 +217,7 @@ $ cf curl /v2/service_plans/1113aa0-124e-4af2-1526-6bfacf61b111 -X 'PUT' -d '{"p
 
 #### Enable access to a private plan for a particular organization ####
 
-Users have access to private plans that have been enabled for an organization only when targeting a space of  that organization. See [Managing Services](/devguide/services/managing-services.html) for more information.
+Users have access to private plans that have been enabled for an organization only when targeting a space of  that organization. See [Managing Services](../devguide/services/managing-services.html) for more information.
 
 To make a service plan available to users of a specific organization, you need the GUID of both the organization and the service plan. To get the GUID of the service plan, run the same command described above for [enabling access to a plan for all organizations](#enable-access-curl):
 

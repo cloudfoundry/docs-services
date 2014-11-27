@@ -769,10 +769,4 @@ For error responses, the following fields are valid. If empty JSON is returned i
 
 ## <a id='orphans'></a>Orphans ##
 
-The Cloud Controller database and a Broker are expected to store identical
-copies of existing instances and bindings.
-These two lists may potentially become inconsistent.
-For example, if a broker times out during a delete request, the Cloud
-Controller will be unsure whether that resource still exists on the broker.
-If the broker creates an instance, then it will be out of sync with Cloud
-Controller.
+The Cloud Controller and Broker are expected to store identical copies of existing instances and bindings. These two lists can potentially become inconsistent if the broker doesn't return a response before the request times out (typically 60 seconds). For example, if a broker doesn't return a response to a provision request before Cloud Controller times out, the broker may eventually succeed where Cloud Controller considered this a failure. This results in an orphan instance on the service side. 

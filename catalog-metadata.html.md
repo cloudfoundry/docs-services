@@ -22,7 +22,7 @@ command.</p>
 
 ## <a id='services-metadata-fields'></a>Services Metadata Fields ##
 
-| Broker API Field | Type | Description | CC API Field | Pivotal CLI | Pivotal Developer Console |
+| Broker API Field | Type | Description | CC API Field | Pivotal CLI | Pivotal Apps Manager |
 |------------------|------|-------------|--------------|-------------|---------------------------|
 | name | CLI string | A short name for the service to be displayed in a catalog. | label | X | X |
 | description | string | A short 1-line description for the service, usually a single sentence or phrase. | description | X | X |
@@ -35,7 +35,7 @@ command.</p>
 
 ## <a id='plan-metadata-fields'></a>Plan Metadata Fields ##
 
-| Broker API Field | Type | Description | CC API Field | Pivotal CLI | Pivotal Developer Console |
+| Broker API Field | Type | Description | CC API Field | Pivotal CLI | Pivotal Apps Manager |
 |------------------|------|-------------|--------------|-------------|---------------------------|
 | name | CLI string | A short name for the service plan to be displayed in a catalog. | name | X | |
 | description | string | A description of the service plan to be displayed in a catalog. | description | | |

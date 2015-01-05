@@ -2,7 +2,10 @@
 title: v2 API Change Log
 ---
 
-## 2014-9-26 ##
+## 2015-01-05 ##
+Bug found in [the v2 doc](api.html). It refers to the service broker API Catalog attribute `plan_updateable` as `plan_updatable` (correct spelling). This is an unfortunate mispelling. Instead of correcting the spelling and breaking backward compatibility, we have opted to keep that misspelling and change the docs to use the misspelled attribute. We have also added a note to explain the issue.
+
+## 2014-09-26 ##
 Bug found in [the v2 doc](api.html). It indicated that the broker would try to
 unbind or unprovision when a bind or provision request times out. The
 documentation also indicated that the Cloud Controller will retry requests.

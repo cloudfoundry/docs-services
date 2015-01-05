@@ -220,9 +220,13 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>A list of permissions that the user would have to give the service, if they provision it. The only permission currently supported is <tt>syslog_drain</tt>; for more info see [Application Log Streaming](app-log-streaming.html). </td>
 </tr>
 <tr>
-  <td>&nbsp;&nbsp;&nbsp;plan_updatable</td>
+  <td>&nbsp;&nbsp;&nbsp;plan_updateable</td>
   <td>boolean</td>
-  <td>Whether the service supports upgrade/downgrade for some plans.</td>
+  <td>
+	  Whether the service supports upgrade/downgrade for some plans.
+	  <br/>
+	  Please note that the misspelling of the attribute <i>plan_updatable</i> to <i>plan_updateable</i> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.
+  </td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plans*</td>
@@ -460,7 +464,7 @@ For success responses, the following fields are valid.
 
 Brokers that implement this endpoint can enable users to modify attributes of an existing service instance. The first attribute Cloud Foundry supports users modifying is the service plan. This effectively enables users to upgrade or downgrade their service instance to other plans. To see how users make these requests, see [Managing Services](../devguide/services/managing-services.html#update_service).
 
-To enable this functionality, a broker declares support for each service by including `plan_updatable: true` in its [catalog endpoint](#catalog-mgmt). If this optional field is not included, Cloud Foundry will return a meaningful error to users for any plan change request, and will not make an API call to the broker. If this field is included and configured as true, Cloud Foundry will make API calls to the broker for all plan change requests, and it is up to the broker to validate whether a particular permutation of plan change is supported. Not all permutations of plan changes are expected to be supported. For example, a service may support upgrading from plan "shared small" to "shared large" but not to plan "dedicated". If a particular plan change is not supported, the broker should return a meaningful error message in response.
+To enable this functionality, a broker declares support for each service by including `plan_updateable: true` in its [catalog endpoint](#catalog-mgmt). If this optional field is not included, Cloud Foundry will return a meaningful error to users for any plan change request, and will not make an API call to the broker. If this field is included and configured as true, Cloud Foundry will make API calls to the broker for all plan change requests, and it is up to the broker to validate whether a particular permutation of plan change is supported. Not all permutations of plan changes are expected to be supported. For example, a service may support upgrading from plan "shared small" to "shared large" but not to plan "dedicated". If a particular plan change is not supported, the broker should return a meaningful error message in response.
 
 ### Request ###
 

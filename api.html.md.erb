@@ -864,7 +864,7 @@ The Cloud Controller is the source of truth for service instances and bindings. 
 
 Orphans can result if the broker does not return a response before a request from Cloud Controller times out (typically 60 seconds). For example, if a broker does not return a response to a provision request before Cloud Controller times out, the broker might eventually succeed in provisioning an instance after Cloud Controller considers the request a failure. This results in an orphan instance on the service side.
 
-To mitigate orphan instances and bindings, Cloud Controller will attempt to delete resources it can not be sure were successfully created, and will keep trying to delete them until the broker responds with a success.
+To mitigate orphan instances and bindings, Cloud Controller will attempt to delete resources it cannot be sure were successfully created, and will keep trying to delete them until the broker responds with a success.
 
 More specifically, when a provision or bind request to the broker times out or the broker returns a 5xx response, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails (request times out, or the broker returns a 5xx), Cloud Controller will retry the request at increasing intervals until the broker responds with a success (maximum ten tries), doubling the time interval with each failed request.
 

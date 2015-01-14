@@ -423,7 +423,7 @@ Responses with any other status code will be interpreted as a failure. Brokers c
 
 ##### Body #####
 
-All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 For success responses, the following fields are valid.
 
@@ -545,7 +545,7 @@ Responses with any other status code will be interpreted as a failure and an unb
 
 ##### Body #####
 
-All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 For success responses, the following fields are valid.
 
@@ -656,7 +656,7 @@ Responses with any other status code will be interpreted as a failure and the bi
 
 ##### Body #####
 
-All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 For a success response, the expected response body is `"{}"`.
 
@@ -733,7 +733,7 @@ Responses with any other status code will be interpreted as a failure and the se
 
 ##### Body #####
 
-All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 For a success response, the expected response body is `"{}"`.
 
@@ -746,7 +746,7 @@ above (like 410 on delete) should return an appropriate HTTP response code (chos
 
 ##### Body #####
 
-All responses must include valid JSON in the body. This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
 For error responses, the following fields are valid. If empty JSON is returned in the body `"{}"`, a generic message containing the HTTP response code returned by the broker will be displayed to the requestor.
 
@@ -769,4 +769,4 @@ For error responses, the following fields are valid. If empty JSON is returned i
 
 ## <a id='orphans'></a>Orphans ##
 
-The Cloud Controller and Broker are expected to store identical copies of existing instances and bindings. These two lists can potentially become inconsistent if the broker doesn't return a response before the request times out (typically 60 seconds). For example, if a broker doesn't return a response to a provision request before Cloud Controller times out, the broker may eventually succeed where Cloud Controller considered this a failure. This results in an orphan instance on the service side. 
+The Cloud Controller and Broker are expected to store identical copies of existing instances and bindings. These two lists can potentially become inconsistent if the broker doesn't return a response before the request times out (typically 60 seconds). For example, if a broker doesn't return a response to a provision request before Cloud Controller times out, the broker may eventually succeed where Cloud Controller considered this a failure. This results in an orphan instance on the service side.

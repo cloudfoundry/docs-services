@@ -860,4 +860,10 @@ For error responses, the following fields are valid. If empty JSON is returned i
 
 ## <a id='orphans'></a>Orphans ##
 
-The Cloud Controller and Broker are expected to store identical copies of existing instances and bindings. These two lists can potentially become inconsistent if the broker doesn't return a response before the request times out (typically 60 seconds). For example, if a broker doesn't return a response to a provision request before Cloud Controller times out, the broker may eventually succeed where Cloud Controller considered this a failure. This results in an orphan instance on the service side. 
+The Cloud Controller and Broker are expected to store identical copies of existing instances and bindings. These two lists can potentially become inconsistent if the broker doesn't return a response before the request times out (typically 60 seconds). For example, if a broker doesn't return a response to a provision request before Cloud Controller times out, the broker may eventually succeed where Cloud Controller considered this a failure. This results in an orphan instance on the service side.
+
+To mitigate orphaned instances and bindings, Cloud Controller will send a corresponding delete or unbind request. If the delete or unbind request fails, the Cloud Controller will retry the request at increasing intervals with up to 10 retries, following exponential backoff: doubling the time interval with each failed request.
+
+If the Cloud Controller has an internal error related to provisioning instances (eg - saving to the database fails), then the Cloud Controller will send a corresponding delete or unbind request without retrying.
+
+This orphan mitigation behavior has been introduced as part of cf-release v196.

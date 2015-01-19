@@ -1,5 +1,5 @@
 ---
-title: Service Broker API v2.2
+title: Service Broker API v2.4
 ---
 
 ## <a id='changelog'></a>Document Changelog ##
@@ -16,19 +16,20 @@ title: Service Broker API v2.2
 * New optional endpoints, or new HTTP methods for existing endpoints, may be
 added to enable support for new features.
 * New fields may be added to existing request/response messages.
-These fields must be optional, and should be ignored by clients and servers
+These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-### <a id='api-changes-since-v2-1'></a>Changes Since v2.1 ###
+### <a id='api-changes-since-v2-3'></a>Changes Since v2.3 ###
 
-The key change from v2.1 to v2.2 of the Services API is:
-
-* Addition of `free` as an optional field for a service plan in the broker catalog.
+The key change from v2.3 to v2.4 is support for users to change the service plan for a specified service instance.
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.2 of the services API has been supported since final build 164 of
-[cf-release](https://github.com/cloudfoundry/cf-release/).
+v2.4 of the services API has been supported since:
+
+* [Final build 192](https://github.com/cloudfoundry/cf-release/tree/v192) of [cf-release](https://github.com/cloudfoundry/cf-release/commit/2b0309bde9880f7acb039ec9676f992254ce62d9)
+* v2.17 of the [Cloud Controller API](https://github.com/cloudfoundry/cloud_controller_ng/commit/f8b31ecce5c2740d60818ac6cc8a9299120e3216)
+* v6.7 of the Cloud Foundry [Command Line Interface (CLI)](https://github.com/cloudfoundry/cli)
 
 ## <a id='api-overview'></a>API Overview ##
 
@@ -36,7 +37,7 @@ The Cloud Foundry services API defines the contract between the Cloud
 Controller and the service broker.
 The broker is expected to implement several HTTP (or HTTPS) endpoints
 underneath a URI prefix.
-One or more services can be provided by a single broker and load balancing
+One or more services can be provided by a single broker, and load balancing
 enables horizontal scalability of redundant brokers.
 Multiple Cloud Foundry instances can be supported by a single broker using
 different URL prefixes and credentials.
@@ -47,30 +48,30 @@ different URL prefixes and credentials.
 
 Requests from the Cloud Controller to the broker contain a header that defines
 the version number of the Broker API that Cloud Controller will use.
-This header will be useful in future minor revisions of the API, to allow
+This header will be useful in future minor revisions of the API to allow
 brokers to reject requests from Cloud Controllers that they do not understand.
 While minor API revisions will always be additive, it is possible that brokers
 will come to depend on a feature that was added after 2.0, so they may use this
 header to reject the request.
 Error messages from the broker in this situation should inform the operator of
-what the required and actual version numbers are, so that an operator can go
+what the required and actual version numbers are so that an operator can go
 upgrade Cloud Controller and resolve the issue.
 A broker should respond with a `412 Precondition Failed` message when rejecting
 a request.
 
 The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
 such that 2.9 comes before 2.10.
-An example of this header, as of publication time is:
+An example of this header as of publication time is:
 
-`X-Broker-Api-Version: 2.2`
+`X-Broker-Api-Version: 2.4`
 
 ## <a id='authentication'></a>Authentication ##
 
 Cloud Controller (final release v145+) authenticates with the Broker using HTTP
-basic authentication (the `Authentication:` header) on every request, and will
+basic authentication (the `Authentication:` header) on every request and will
 reject any broker registrations that do not contain a username and password.
 The broker is responsible for checking the username and password and returning
-a `401 Unauthorized` message if they are invalid.
+a `401 Unauthorized` message if credentials are invalid.
 Cloud Controller supports connecting to a broker using SSL if additional
 security is desired.
 
@@ -81,7 +82,7 @@ Cloud Controller will initially fetch this endpoint from all brokers and make
 adjustments to the user-facing service catalog stored in the Cloud Controller
 database.
 If the catalog fails to initially load or validate, Cloud Controller will not
-allow the operator to add the new broker, and should give a meaningful error
+allow the operator to add the new broker and will give a meaningful error
 message.
 Cloud Controller will also update the catalog whenever a broker is updated, so
 you can use `update-service-broker` with no changes to force a catalog refresh.
@@ -89,7 +90,7 @@ you can use `update-service-broker` with no changes to force a catalog refresh.
 When Cloud Controller fetches a catalog from a broker, it will compare the
 broker's id for services and plans with the `unique_id` values for services and
 plan in the  Cloud Controller database.
-If a service or plan in the broker catalog has an id which is not present
+If a service or plan in the broker catalog has an id that is not present
 amongst the `unique_id` values in the database, a new record will be added to
 the database.
 If services or plans in the database are found with `unique_id`s that match the
@@ -98,11 +99,12 @@ the broker’s catalog.
 
 If the database has plans which are not found in the broker catalog, and there
 are no associated service instances, Cloud Controller will remove these plans
+from the database. Cloud Controller will then delete services that do not have associated plans
 from the database.
-If there are provisioned instances, the plan will be marked “inactive” and will
+If the database has plans which are not found in the broker catalog, and there
+**are** provisioned instances, the plan will be marked “inactive” and will
 no longer be visible in the marketplace catalog or be provisionable.
-Cloud Controller will then delete services that do not have associated plans
-from the database.
+
 
 ### Request ###
 
@@ -137,10 +139,9 @@ CLI and web clients have different needs with regard to service and plan names.
 A CLI-friendly string is all lowercase, with no spaces.
 Keep it short -- imagine a user having to type it as an argument for a longer
 command.
-A web friendly display name is camelcase with spaces and punctuation supported.
+A web-friendly display name is camel-cased with spaces and punctuation supported.
 
 <table border="1" class="nice">
-
 <thead>
 <tr>
   <th>Response field</th>
@@ -187,7 +188,16 @@ A web friendly display name is camelcase with spaces and punctuation supported.
 <tr>
   <td>&nbsp;&nbsp;&nbsp;requires</td>
   <td>array-of-strings</td>
-  <td>A list of permissions that the user would have to give the service, if they provision it. The only permission currently supported is <tt>syslog_drain</tt>; for more info see [Application Log Streaming](app-log-streaming.html).</td>
+  <td>A list of permissions that the user would have to give the service, if they provision it. The only permission currently supported is <tt>syslog_drain</tt>; for more info see [Application Log Streaming](app-log-streaming.html). </td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;plan_updateable</td>
+  <td>boolean</td>
+  <td>
+	  Whether the service supports upgrade/downgrade for some plans.
+	  <br/>
+	  Please note that the misspelling of the attribute <i>plan_updatable</i> to <i>plan_updateable</i> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.
+  </td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plans*</td>
@@ -220,6 +230,26 @@ A web friendly display name is camelcase with spaces and punctuation supported.
   <td>boolean</td>
   <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.html">Quota Plans</a>. Default: true</td>
 </tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;dashboard_client</td>
+  <td>object</td>
+  <td>Contains the data necessary to activate the <a href="dashboard-sso.html">Dashboard SSO feature</a> for this service</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id</td>
+  <td>string</td>
+  <td>The id of the Oauth2 client that the service intends to use. The name may be taken, in which case the API will return an error to the operator</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secret</td>
+  <td>string</td>
+  <td>A secret for the dashboard client</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redirect_uri</td>
+  <td>string</td>
+  <td>A domain for the service dashboard that will be whitelisted by the UAA to enable SSO</td>
+</tr>
 </tbody>
 </table>
 
@@ -241,7 +271,12 @@ A web friendly display name is camelcase with spaces and punctuation supported.
       "name": "large",
       "description": "A large dedicated database with 10GB storage quota, 512MB of RAM, and 100 connections",
       "free": false
-    }]
+    }],
+    "dashboard_client": {
+      "id": "client-id-1",
+      "secret": "secret-1",
+      "redirect_uri": "https://dashboard.service.com"
+    }
   }]
 }
 </pre>
@@ -395,6 +430,83 @@ For success responses, the following fields are valid.
 }
 </pre>
 
+
+## <a id='updating_service_instance'></a>Updating a Service Instance ##
+
+Brokers that implement this endpoint can enable users to modify attributes of an existing service instance. The first attribute Cloud Foundry supports users modifying is the service plan. This effectively enables users to upgrade or downgrade their service instance to other plans. To see how users make these requests, see [Managing Services](../devguide/services/managing-services.html#update_service).
+
+To enable this functionality, a broker declares support for each service by including `plan_updateable: true` in its [catalog endpoint](#catalog-mgmt). If this optional field is not included, Cloud Foundry will return a meaningful error to users for any plan change request, and will not make an API call to the broker. If this field is included and configured as true, Cloud Foundry will make API calls to the broker for all plan change requests, and it is up to the broker to validate whether a particular permutation of plan change is supported. Not all permutations of plan changes are expected to be supported. For example, a service may support upgrading from plan "shared small" to "shared large" but not to plan "dedicated". If a particular plan change is not supported, the broker should return a meaningful error message in response.
+
+### Request ###
+
+##### Route #####
+`PATCH /v2/service_instances/:instance_id`
+
+<p class="note"><strong>Note</strong>: <code>:instance_id</code> is the global unique ID of a previously-provisioned service instance.</p>
+
+##### Body #####
+
+<table class="nice">
+<thead>
+<tr>
+  <th>Request Field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>plan_id</td>
+  <td>string</td>
+  <td>ID of the new plan from the catalog.</td>
+</tr>
+</tbody>
+</table>
+
+<pre class="terminal">
+{
+  "plan_id": "plan-guid-here"
+}
+</pre>
+
+##### cURL #####
+<pre class="terminal">
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
+  "plan_id": "plan-guid-here"
+}' -X PATCH
+</pre>
+
+### Response ###
+
+<table class="nice">
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>New plan is effective. The expected response body is "{}".</td>
+</tr>
+<tr>
+  <td>422 Unprocessable entity</td>
+  <td>
+    May be returned if the particular plan change requested is not supported or if the request can not currently be fulfilled due to the state of the instance (eg. instance utilization is over the quota of the requested plan). Broker should include a user-facing message in the body; for details see <a href="#broker-errors">Broker Errors</a>.
+  </td>
+</tr>
+</tbody>
+</table>
+
+Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
+
+##### Body #####
+
+All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For a success response, the expected response body is `"{}"`.
+
 ## <a id='binding'></a>Binding ##
 
 <p class="note"><strong>Note</strong>: Not all services must be bindable --- some derive their value just from being provisioned. Brokers that do not provide any bindable services do not need to implement the endpoint for bind requests.</p>
@@ -408,7 +520,10 @@ In addition, the bind operation can enable streaming of application logs from Cl
 ##### Route #####
 `PUT /v2/service_instances/:instance_id/service_bindings/:binding_id`
 
-<p class="note"><strong>Note</strong>: The <code>:binding_id</code> of a service binding is provided by the Cloud Controller. <code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:binding_id</code> will be used for future unbind requests, so the broker must use it to correlate the resource it creates.</p>
+<p class="note"><strong>Note</strong>: The <code>:binding_id</code> of a service binding is provided by the Cloud Controller.
+<code>:instance_id</code> is the ID of a previously-provisioned service instance; <code>:binding_id</code>
+will be used for future unbind requests, so the broker must use it to correlate
+the resource it creates.</p>
 
 ##### Body #####
 
@@ -650,7 +765,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?service_id=
-  service-id-here&plan_id=plan-id-here' -X DELETE
+    service-id-here&plan_id=plan-id-here' -X DELETE
 </pre>
 
 ### Response ###
@@ -686,9 +801,9 @@ For a success response, the expected response body is `"{}"`.
 
 ### Response ###
 
-When a broker fails to perform any requested operation, unless it fails with a
-well-defined HTTP response code listed above (like 410 on delete), it should
-return an appropriate HTTP response code (chosen to accurately reflect the nature of the failure) and a body containing a valid JSON Object (not an array).
+Broker failures beyond the scope of the well-defined HTTP response codes listed
+above (like 410 on delete) should return an appropriate HTTP response code
+(chosen to accurately reflect the nature of the failure) and a body containing a valid JSON Object (not an array).
 
 ##### Body #####
 
@@ -708,7 +823,7 @@ For error responses, the following fields are valid. If empty JSON is returned i
 <tr>
   <td>description</td>
   <td>string</td>
-  <td>An error message explaining why the request failed. This message will likely be forwarded to the person initiating the request.
+  <td>An error message explaining why the request failed. This message will be displayed to the user who initiated the request.
 </td>
 </tr>
 </tbody>
@@ -716,4 +831,14 @@ For error responses, the following fields are valid. If empty JSON is returned i
 
 ## <a id='orphans'></a>Orphans ##
 
-The Cloud Controller and Broker are expected to store identical copies of existing instances and bindings. These two lists can potentially become inconsistent if the broker doesn't return a response before the request times out (typically 60 seconds). For example, if a broker doesn't return a response to a provision request before Cloud Controller times out, the broker may eventually succeed where Cloud Controller considered this a failure. This results in an orphan instance on the service side.
+The Cloud Controller is the source of truth for service instances and bindings. Service brokers are expected to have successfully provisioned all the instances and bindings Cloud Controller knows about, and none that it doesn't.
+
+Orphans can result if the broker does not return a response before a request from Cloud Controller times out (typically 60 seconds). For example, if a broker does not return a response to a provision request before Cloud Controller times out, the broker might eventually succeed in provisioning an instance after Cloud Controller considers the request a failure. This results in an orphan instance on the service side.
+
+To mitigate orphan instances and bindings, Cloud Controller will attempt to delete resources it cannot be sure were successfully created, and will keep trying to delete them until the broker responds with a success.
+
+More specifically, when a provision or bind request to the broker times out or the broker returns a 5xx response, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails (request times out, or the broker returns a 5xx), Cloud Controller will retry the request at increasing intervals until the broker responds with a success (maximum ten tries), doubling the time interval with each failed request.
+
+If the Cloud Controller encounters an internal error provisioning an instance or binding (for example, saving to the database fails), then the Cloud Controller will send a single delete or unbind request to the broker but will not retry.
+
+This orphan mitigation behavior was introduced in cf-release v196.

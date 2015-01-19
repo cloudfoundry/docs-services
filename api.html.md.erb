@@ -6,36 +6,7 @@ title: Service Broker API
 
 [v2 API Change Log](v2-api-changelog.html)
 
-## <a id='versions'></a>Versions ##
-
-Two major versions of the Service Broker API are currently supported by Cloud
-Foundry, v1 and v2.
-As v1 is deprecated and support will be removed in the next major version of
-Cloud Foundry, it is recommended that all new brokers implement v2 and that current
-brokers are upgraded.
-
-<div style="width:50%">
-  <table border="1" class="nice">
-    <thead>
-      <tr>
-        <th>Current Version</th>
-        <th>Past Versions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a href="api.html">2.4</a></td>
-        <td>
-          <a href="api-v2.3.html">2.3</a><br/>
-          <a href="api-v2.2.html">2.2</a><br/>
-          <a href="api-v2.1.html">2.1</a><br/>
-          <a href="api-v2.0.html">2.0</a><br/>
-          <a href="api-v1.html">v1 (unversioned)</a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<%= partial "version_table.html" %>
 
 ## <a id='changes'></a>Changes ##
 
@@ -50,11 +21,11 @@ that do not understand them.
 
 ### <a id='api-changes-since-v2-3'></a>Changes Since v2.3 ###
 
-The key change from v2.3 to v2.4 is support for users to change the service plan for a specified service instance.
+The key change from v2.3 to v2.5 is support for users to change the service plan for a specified service instance.
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.4 of the services API has been supported since:
+v2.5 of the services API has been supported since:
 
 * [Final build 192](https://github.com/cloudfoundry/cf-release/tree/v192) of [cf-release](https://github.com/cloudfoundry/cf-release/commit/2b0309bde9880f7acb039ec9676f992254ce62d9)
 * v2.17 of the [Cloud Controller API](https://github.com/cloudfoundry/cloud_controller_ng/commit/f8b31ecce5c2740d60818ac6cc8a9299120e3216)
@@ -92,7 +63,7 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
 such that 2.9 comes before 2.10.
 An example of this header as of publication time is:
 
-`X-Broker-Api-Version: 2.4`
+`X-Broker-Api-Version: 2.5`
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -318,9 +289,24 @@ to make your services and plans available to end users.
 
 ## <a id='provisioning'></a>Provisioning ##
 
-When the broker receives a provision request from Cloud Controller, it should
-synchronously take whatever action is necessary to create a new service
-resource for the developer.
+Starting in version 2.5 the Cloud Controller will send
+``?accepts_incomplete=true`` to the broker if the client supports asynchronous
+provisioning of service resources. If the broker supports async, it must return
+a JSON object with a ``state`` key set to either ``creating`` if the resource is
+still being provisioned or ``available`` if the resource is ready to be used.
+The broker must also implement the <a href="#service_instance">Service
+Instance Endpoint</a> when supporting async.
+
+If the broker does not support asynchronous provisioning then it should
+synchronously take whatever action is necessary to create a new service resource
+for the developer.
+
+If the broker only supports asynchronous provisioning and the request does not
+include "?accepts_incomplete=true" then the broker must reject the request.
+
+Regardless if asynchronous provisioning is supported, the broker must respond to
+the Cloud Controller's request within 60 seconds.
+
 The result of provisioning varies by service type, although there are a few
 common actions that work for many services.
 For a MySQL service, provisioning could result in:
@@ -448,14 +434,133 @@ For success responses, the following fields are valid.
 <tr>
   <td>dashboard_url</td>
   <td>string</td>
-  <td>The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL should contain enough information for the dashboard to identify the resource being accessed ("9189kdfsk0vfnku" in the example below). For information on how users can authenticate with service dashboards via SSO, see <a href="dashboard-sso.html">Dashboard Single Sign-On</a>.</td>
+  <td>The URL of a web-based management user interface for the service instance;
+  we refer to this as a service dashboard. The URL should contain enough
+  information for the dashboard to identify the resource being accessed
+  ("9189kdfsk0vfnku" in the example below). For information on how users can
+  authenticate with service dashboards via SSO, see <a
+  href="dashboard-sso.html">Dashboard Single Sign-On</a>.</td>
+</tr>
+<tr>
+  <td>state</td>
+  <td>string</td>
+  <td>Required field if broker supports asynchronous provisioning. The state of
+  the provision action. Can be one of the following values: "creating",
+  "available" or "failed". Asynchronous brokers return "creating" to indicate
+  that the service is still being created. If state is not provided, "available"
+  is assumed.</td>
+</tr>
+<tr>
+  <td>state_description</td>
+  <td>string</td>
+  <td>Optional field. The text to display to the cloud controller client. For
+  the CLI, this is text displayed to the user.</td>
 </tr>
 </tboby>
 </table>
 
 <pre class="terminal">
 {
- "dashboard_url": "http://mongomgmthost/databases/9189kdfsk0vfnku"
+  "dashboard_url": "http://mongomgmthost/databases/9189kdfsk0vfnku",
+  "state": "creating",
+  "state_description": "Creating service (50% complete)."
+}
+</pre>
+
+## <a id='service_instance'></a>Service Instance ##
+
+New in version 2.5.
+
+This endpoint is used by the Cloud Controller when the broker returns a state of
+``creating`` when <a href="#provisioning">provisioning</a> a service. The Cloud
+Controller will poll this endpoint to determine when the service resource is
+available.
+
+### Request ###
+
+##### Route #####
+`GET /v2/service_instances/:instance_id`
+
+<p class="note"><strong>Note</strong>: The <code>:instance_id</code> of a
+service instance is provided by the Cloud Controller. This ID will be used for
+future requests (bind and deprovision), so the broker must use it to correlate
+the resource it creates.</p>
+
+##### cURL #####
+<pre class="terminal">
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id
+</pre>
+
+In this case, `id` refers to the service instance id generated by Cloud
+Controller
+
+### Response ###
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>The expected response body is below.</td>
+</tr>
+</tbody>
+</table>
+
+Responses with any other status code will be interpreted as a failure. Brokers
+can include a user-facing message in the `description` field; for details see
+[Broker Errors](#broker-errors).
+
+##### Body #####
+
+All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
+
+For success responses, the following fields are valid.
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>dashboard_url</td>
+  <td>string</td>
+  <td>The URL of a web-based management user interface for the service instance;
+  we refer to this as a service dashboard. The URL should contain enough
+  information for the dashboard to identify the resource being accessed
+  ("9189kdfsk0vfnku" in the example below). For information on how users can
+  authenticate with service dashboards via SSO, see <a
+  href="dashboard-sso.html">Dashboard Single Sign-On</a>.</td>
+</tr>
+<tr>
+  <td>state</td>
+  <td>string</td>
+  <td>Required field. The state of the provision action. Can be one of the
+  following values: "creating", "available" or "failed". Brokers return
+  "creating" to indicate that the service is still being created.</td>
+</tr>
+<tr>
+  <td>state_description</td>
+  <td>string</td>
+  <td>Optional field. The text to display to the cloud controller client. For
+  the CLI, this is text displayed to the user.</td>
+</tr>
+</tboby>
+</table>
+
+<pre class="terminal">
+{
+ "dashboard_url": "http://mongomgmthost/databases/9189kdfsk0vfnku",
+  "state": "creating",
+  "state_description": "Creating service (20% complete)."
 }
 </pre>
 

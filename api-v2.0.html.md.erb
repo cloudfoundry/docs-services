@@ -72,7 +72,7 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning s
 
 ## <a id='authentication'></a>Authentication ##
 
-Cloud Controller (final release v145+) authenticates with the Broker using HTTP basic authentication (the `Authentication:` header) on every request, and will reject any broker registrations that do not contain a username and password. The broker is responsible for checking the username and password and returning a `401 Unauthorized` message if they are invalid. Cloud Controller supports connecting to a broker using SSL if additional security is desired.
+Cloud Controller (final release v145+) authenticates with the Broker using HTTP basic authentication (the `Authorization:` header) on every request, and will reject any broker registrations that do not contain a username and password. The broker is responsible for checking the username and password and returning a `401 Unauthorized` message if they are invalid. Cloud Controller supports connecting to a broker using SSL if additional security is desired.
 
 
 

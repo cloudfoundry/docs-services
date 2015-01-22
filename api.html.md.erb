@@ -289,23 +289,7 @@ to make your services and plans available to end users.
 
 ## <a id='provisioning'></a>Provisioning ##
 
-Starting in version 2.5 the Cloud Controller will send
-``?accepts_incomplete=true`` to the broker if the client supports asynchronous
-provisioning of service resources. If the broker supports async, it must return
-a JSON object with a ``state`` key set to either ``creating`` if the resource is
-still being provisioned or ``available`` if the resource is ready to be used.
-The broker must also implement the <a href="#service_instance">Service
-Instance Endpoint</a> when supporting async.
-
-If the broker does not support asynchronous provisioning then it should
-synchronously take whatever action is necessary to create a new service resource
-for the developer.
-
-If the broker only supports asynchronous provisioning and the request does not
-include "?accepts_incomplete=true" then the broker must reject the request.
-
-Regardless if asynchronous provisioning is supported, the broker must respond to
-the Cloud Controller's request within 60 seconds.
+### <a id='provision-definition'></a>The definition of provision differs by service ###
 
 The result of provisioning varies by service type, although there are a few
 common actions that work for many services.
@@ -322,6 +306,22 @@ production database.
 
 For non-data services, provisioning could just mean getting an account on an
 existing system.
+
+### <a id='asynchronous-provisioning'></a>Asynchronous Provisioning ###
+
+Starting in version 2.5 the Cloud Controller will send
+``?accepts_incomplete=true`` to the broker if the Cloud Controller client has declared support for asynchronous
+provisioning of service instances. If the broker also supports async, it must return
+a JSON object with a ``state`` key set to either ``creating`` if the resource is
+still being provisioned or ``available`` if the resource is ready for use.
+Brokers that support async must also implement the <a href="#service_instance">Service
+Instance Endpoint</a> that enables Cloud Controller to expose the status of the provision operation to users.
+
+Brokers that can guarantee provisioning of a usable instance in less than a minute can return a
+synchronous response (201 CREATED). If not, brokers should implement support for asynchronous provisioning. Regardless, brokers should respond to all Cloud Controller requests within 60 seconds.
+
+If the broker only supports asynchronous provisioning and the request does not
+include "?accepts_incomplete=true" then the broker must reject the request.
 
 ### Request ###
 
@@ -375,7 +375,7 @@ existing system.
 
 ##### cURL #####
 <pre class="terminal">
-$ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete -d '{
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
@@ -447,14 +447,13 @@ For success responses, the following fields are valid.
   <td>Required field if broker supports asynchronous provisioning. The state of
   the provision action. Can be one of the following values: "creating",
   "available" or "failed". Asynchronous brokers return "creating" to indicate
-  that the service is still being created. If state is not provided, "available"
+  that the service is still being created. This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> until the broker returns state "available" or "failed". If state is not provided, "available"
   is assumed.</td>
 </tr>
 <tr>
   <td>state_description</td>
   <td>string</td>
-  <td>Optional field. The text to display to the cloud controller client. For
-  the CLI, this is text displayed to the user.</td>
+  <td>Optional field. A user-facing message displayed to the cloud controller client. Can be used to tell the user details about the initial status of the provision request.</td>
 </tr>
 </tboby>
 </table>
@@ -469,12 +468,11 @@ For success responses, the following fields are valid.
 
 ## <a id='service_instance'></a>Service Instance ##
 
-New in version 2.5.
+New in API v2.5.
 
 This endpoint is used by the Cloud Controller when the broker returns a state of
 ``creating`` when <a href="#provisioning">provisioning</a> a service. The Cloud
-Controller will poll this endpoint to determine when the service resource is
-available.
+Controller will poll this endpoint as long as broker returns `state` "creating". Returning state "available" or "failed" will cause Cloud Controller to cease polling.
 
 ### Request ###
 

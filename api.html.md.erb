@@ -868,6 +868,48 @@ To mitigate orphan instances and bindings, Cloud Controller will attempt to dele
 
 More specifically, when a provision or bind request to the broker times out or the broker returns a 5xx response, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails (request times out, or the broker returns a 5xx), Cloud Controller will retry the request at increasing intervals until the broker responds with a success (maximum ten tries), doubling the time interval with each failed request.
 
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Status code</th>
+  <th>Result</th>
+  <th>Orphan mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>201</td>
+  <td>Success</td>
+  <td></td>
+</tr>
+<tr>
+  <td>201 with malformed response</td>
+  <td>Failure</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>All other 2xx</td>
+  <td>Failure</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>408</td>
+  <td>Failure due to timeout</td>
+  <td>Yes</td>
+</tr>
+<tr>
+  <td>All other 4xx</td>
+  <td>Broker rejects request</td>
+  <td>
+</tr>
+<tr>
+  <td>5xx</td>
+  <td>Broker error</td>
+  <td>Yes</td>
+</tr>
+</tbody>
+</table>
+
 If the Cloud Controller encounters an internal error provisioning an instance or binding (for example, saving to the database fails), then the Cloud Controller will send a single delete or unbind request to the broker but will not retry.
 
 This orphan mitigation behavior was introduced in cf-release v196.

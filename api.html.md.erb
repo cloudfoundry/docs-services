@@ -356,6 +356,11 @@ existing system.
 </thead>
 <tbody>
 <tr>
+  <td>instance_name</td>
+  <td>string</td>
+  <td>The name of the instance provided by the user.</td>
+</tr>	
+<tr>
   <td>service_id*</td>
   <td>string</td>
   <td>The ID of the service within the catalog above. While not strictly necessary, some brokers might make use of this ID.</td>
@@ -380,6 +385,7 @@ existing system.
 
 <pre class="terminal">
 {
+  "instance_name":     "user-provided-instance-name-here",
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
@@ -390,6 +396,7 @@ existing system.
 ##### cURL #####
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
+  "instance_name":     "user-provided-instance-name-here",
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
@@ -585,18 +592,18 @@ the resource it creates.</p>
 
 <pre class="terminal">
 {
-  "plan_id": "plan-guid-here",
-  "service_id": "service-guid-here",
-  "app_guid": "app-guid-here"
+  "plan_id": 		"plan-guid-here",
+  "service_id": 	"service-guid-here",
+  "app_guid": 		"app-guid-here"
 }
 </pre>
 
 ##### cURL #####
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
-  "plan_id": "plan-guid-here",
-  "service_id": "service-guid-here",
-  "app_guid": "app-guid-here"
+  "plan_id": 		"plan-guid-here",
+  "service_id": 	"service-guid-here",
+  "app_guid":	 	"app-guid-here"
 }' -X PUT
 </pre>
 

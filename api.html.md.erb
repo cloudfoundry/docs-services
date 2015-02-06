@@ -321,7 +321,15 @@ Brokers that can guarantee provisioning of a usable instance in less than a minu
 synchronous response (201 CREATED). If not, brokers should implement support for asynchronous provisioning. Regardless, brokers should respond to all Cloud Controller requests within 60 seconds.
 
 If the broker only supports asynchronous provisioning and the request does not
-include "?accepts_incomplete=true" then the broker must reject the request.
+include "?accepts_incomplete=true" then the broker must reject the request and return with status code: 422
+
+The body of response should include
+<pre class="terminal">
+{
+"error": "AsyncRequired",
+"description": "This service plan requires support for asynchronous provisioning by Cloud Foundry and its clients."
+}
+</pre>
 
 ### Request ###
 

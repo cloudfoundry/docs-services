@@ -873,7 +873,7 @@ Orphans can result if the broker does not return a response before a request fro
 
 To mitigate orphan instances and bindings, Cloud Controller will attempt to delete resources it cannot be sure were successfully created, and will keep trying to delete them until the broker responds with a success.
 
-More specifically, when a provision or bind request to the broker fails, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails, Cloud Controller will retry the delete or unbind request ten times with an exponental backoff schedule (over a period of 34 hours).   
+More specifically, when a provision or bind request to the broker fails, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails, Cloud Controller will retry the delete or unbind request ten times with an exponental backoff schedule (over a period of 34 hours).
 
 <table border="1" class="nice">
 <thead>
@@ -884,6 +884,16 @@ More specifically, when a provision or bind request to the broker fails, Cloud C
 </tr>
 </thead>
 <tbody>
+<tr>
+  <td>200</td>
+  <td>Success</td>
+  <td></td>
+</tr>
+<tr>
+  <td>200 with malformed response</td>
+  <td>Failure</td>
+  <td></td>
+</tr>
 <tr>
   <td>201</td>
   <td>Success</td>
@@ -916,6 +926,17 @@ More specifically, when a provision or bind request to the broker fails, Cloud C
 </tr>
 </tbody>
 </table>
+<!-- =======
+More specifically, Cloud Controller will immediately send a corresponding deprovision or unbind request when:
+
+<ul>
+  <li>a provision or bind request times out</li>
+  <li>the broker returns a 5xx response</li>
+  <li>the broker returns a malformed success response except when the status code is 200</li>
+</ul>
+
+If the delete or unbind request fails (request times out, or the broker returns a 5xx), Cloud Controller will retry the request at increasing intervals until the broker responds with a success (maximum ten tries), doubling the time interval with each failed request.
+>>>>>>> Stashed changes -->
 
 If the Cloud Controller encounters an internal error provisioning an instance or binding (for example, saving to the database fails), then the Cloud Controller will send a single delete or unbind request to the broker but will not retry.
 

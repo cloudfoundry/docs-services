@@ -356,11 +356,6 @@ existing system.
 </thead>
 <tbody>
 <tr>
-  <td>instance_name*</td>
-  <td>string</td>
-  <td>The name of the instance provided by the user.</td>
-</tr>
-<tr>
   <td>service_id*</td>
   <td>string</td>
   <td>The ID of the service within the catalog above. While not strictly necessary, some brokers might make use of this ID.</td>
@@ -385,7 +380,6 @@ existing system.
 
 <pre class="terminal">
 {
-  "instance_name":     "user-provided-instance-name-here",
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
@@ -396,7 +390,6 @@ existing system.
 ##### cURL #####
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
-  "instance_name":     "user-provided-instance-name-here",
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
@@ -924,19 +917,13 @@ More specifically, when a provision or bind request to the broker fails, Cloud C
   <td>Broker error</td>
   <td>Yes</td>
 </tr>
+<tr>
+  <td>Timeout</td>
+  <td>Failure</td>
+  <td>Yes</td>
+</tr>
 </tbody>
 </table>
-<!-- =======
-More specifically, Cloud Controller will immediately send a corresponding deprovision or unbind request when:
-
-<ul>
-  <li>a provision or bind request times out</li>
-  <li>the broker returns a 5xx response</li>
-  <li>the broker returns a malformed success response except when the status code is 200</li>
-</ul>
-
-If the delete or unbind request fails (request times out, or the broker returns a 5xx), Cloud Controller will retry the request at increasing intervals until the broker responds with a success (maximum ten tries), doubling the time interval with each failed request.
->>>>>>> Stashed changes -->
 
 If the Cloud Controller encounters an internal error provisioning an instance or binding (for example, saving to the database fails), then the Cloud Controller will send a single delete or unbind request to the broker but will not retry.
 

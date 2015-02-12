@@ -353,7 +353,7 @@ Controller
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
+  <td>Should be returned if the requested service instance already exists. The expected response body is "{}", though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -474,7 +474,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Should be returned if the requested binding already exists. The expected response body is "{}"</td>
+  <td>Should be returned if the requested binding already exists. The expected response body is "{}", though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -702,10 +702,16 @@ For error responses, the following fields are valid. If empty JSON is returned i
 <tr>
   <td>description</td>
   <td>string</td>
-  <td><td>An error message explaining why the request failed. This message will be displayed to the user who initiated the request.</td>
+  <td>An error message explaining why the request failed. This message will be displayed to the user who initiated the request.</td>
 </tr>
 </tbody>
 </table>
+
+<pre class="terminal">
+{
+  "description": "Something went wrong. Please contact support at http://support.example.com."
+}
+</pre>
 
 ## <a id='orphans'></a>Orphans ##
 

@@ -289,7 +289,7 @@ to make your services and plans available to end users.
 
 ## <a id='provisioning'></a>Provisioning ##
 
-### <a id='provision-definition'></a>The definition of provision differs by service ###
+### The definition of provision differs by service ###
 
 The result of provisioning varies by service type, although there are a few
 common actions that work for many services.
@@ -307,36 +307,31 @@ production database.
 For non-data services, provisioning could just mean getting an account on an
 existing system.
 
-### <a id='asynchronous-provisioning'></a>Asynchronous Provisioning ###
-
-Starting in version 2.5 the Cloud Controller will send
-``?accepts_incomplete=true`` to the broker if the Cloud Controller client has declared support for asynchronous
-provisioning of service instances. If the broker also supports async, it must return
-a JSON object with a ``last_operation`` key, with the nested ``state`` key set to either ``in progress`` if the resource is
-still being provisioned or ``succeeded`` if the resource is ready for use.
-Brokers that support async must also implement the <a href="#service_instance">Service
-Instance Endpoint</a> that enables Cloud Controller to expose the status of the provision operation to users.
-
-Brokers that can guarantee provisioning of a usable instance in less than a minute can return a
-synchronous response (201 CREATED). If not, brokers should implement support for asynchronous provisioning. Regardless, brokers should respond to all Cloud Controller requests within 60 seconds.
-
-If the broker only supports asynchronous provisioning and the request does not
-include "?accepts_incomplete=true" then the broker must reject the request and return with status code: 422
-
-The body of response should include
-<pre class="terminal">
-{
-"error": "AsyncRequired",
-"description": "This service plan requires support for asynchronous provisioning by Cloud Foundry and its clients."
-}
-</pre>
-
 ### Request ###
 
 ##### Route #####
 `PUT /v2/service_instances/:instance_id`
 
 <p class="note"><strong>Note</strong>: The <code>:instance_id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
+
+##### Parameters #####
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Query-String Field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>accepts_incomplete</td>
+  <td>boolean</td>
+  <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous provisioning. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
+</tr>
+</tbody>
+</table>
 
 ##### Body #####
 
@@ -406,27 +401,39 @@ Controller
 <tbody>
 <tr>
   <td>201 Created</td>
-  <td>Service instance has been created. The expected response body is below.</td>
+  <td>Service instance has been created and is usable. The appropriate response for synchronous provisioning. The expected response body is below.</td>
 </tr>
 <tr>
   <td>202 Accepted</td>
-  <td>Service instance creation is in progress. The expected response body is below.</td>
+  <td>Service instance creation is in progress. The expected response is "{ "last_operation": {"state" : "in progress"} }". This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> for operation status.</td>
 </tr>
 <tr>
   <td>200 OK</td>
-  <td>
-    May be returned if the service instance already exists and the requested parameters are identical to the existing service instance.
-    The expected response body is below.
+  <td>May be returned if the service instance already exists and the requested parameters are identical to the existing service instance. The expected response body is below.
   </td>
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
+  <td>Should be returned if the requested service instance already exists. The expected response body is "{}", though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
+</tr>
+<tr>
+  <td>422 Unprocessable Entity</td>
+  <td>Should be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include ?accepts_incomplete=true. The expected response body is: "{ "error": "AsyncRequired", "description": "This service plan requires support for asynchronous provisioning by Cloud Foundry and its clients."}". The error code allows newer Cloud Controllers to return a meaningful default message; older Cloud Controllers will pass through the suggested value of 'description'.</td>
 </tr>
 </tbody>
 </table>
 
 Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
+
+##### <a id='synchronous-provisioning'></a>Synchronous Provisioning #####
+
+Brokers that can guarantee provisioning of a usable instance in less than a minute should return the synchronous response `201 CREATED`. If not, brokers should implement support for asynchronous provisioning. Regardless, brokers should respond to all Cloud Controller requests within 60 seconds.
+
+##### <a id='asynchronous-provisioning'></a>Asynchronous Provisioning #####
+
+If the broker supports asynchronous provisioning for the requested plan, and `?accepts_incomplete:true` was included in the request, it must return a JSON object with the `last_operation` key, and the nested `state` key set to `in progress` as described below.
+
+Brokers that support async must also implement the <a href="#service_instance">Service Instance Endpoint</a> that enables Cloud Controller to expose the status of the provision operation to users.
 
 ##### Body #####
 
@@ -456,15 +463,12 @@ For success responses, the following fields are valid.
 <tr>
   <td>last_operation</td>
   <td>object</td>
-  <td>Required field if broker supports asynchronous provisioning. It contains two fields, ``state`` and ``description``. If the field is not provided, synchronous provisioning is assumed.</td>
+  <td>Required field for 202 (asynchronous) response; optional for 201 response. It contains two fields, `state` and `description`.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state</td>
   <td>string</td>
-  <td>Required field if broker supports asynchronous provisioning. The state of
-  the provision action. Can be one of the following values: "in progress",
-  "succeeded" or "failed". Asynchronous brokers return "in progress" to indicate
-  that the service is still being created. This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> until the broker returns state "succeeded" or "failed".</td>
+  <td>Required field for 202 (asynchronous) response; value must be `in progress`. This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> for operation status. Optional for 201 response; if present, value must be `succeeded`.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description</td>
@@ -477,8 +481,10 @@ For success responses, the following fields are valid.
 <pre class="terminal">
 {
   "dashboard_url": "http://mongomgmthost/databases/9189kdfsk0vfnku",
-  "state": "in progress",
-  "state_description": "Creating service (50% complete)."
+  "last_operation": {
+    "state": "in progress",
+    "description": "Creating service (50% complete)."
+  }
 }
 </pre>
 
@@ -487,7 +493,7 @@ For success responses, the following fields are valid.
 New in API v2.5.
 
 This endpoint is used by the Cloud Controller when the broker returns a state of
-``in progress`` when <a href="#provisioning">provisioning</a> a service. The Cloud
+`in progress` when <a href="#provisioning">provisioning</a> a service. The Cloud
 Controller will poll this endpoint as long as broker returns `state` "in progress". Returning state "succeeded" or "failed" will cause Cloud Controller to cease polling.
 
 ### Request ###
@@ -557,7 +563,7 @@ For success responses, the following fields are valid.
 <tr>
   <td>last_operation</td>
   <td>object</td>
-  <td>Required field if broker supports asynchronous provisioning. It contains two fields, ``state`` and ``description``. If the field is not provided, synchronous provisioning is assumed.</td>
+  <td>Required field if broker supports asynchronous provisioning. It contains two fields, `state` and `description`. If the field is not provided, synchronous provisioning is assumed.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state</td>
@@ -749,7 +755,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Should be returned if the requested binding already exists. The expected response body is "{}"</td>
+  <td>Should be returned if the requested binding already exists. The expected response body is "{}", though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -981,6 +987,12 @@ For error responses, the following fields are valid. If empty JSON is returned i
 </tr>
 </tbody>
 </table>
+
+<pre class="terminal">
+{
+  "description": "Something went wrong. Please contact support at http://support.example.com."
+}
+</pre>
 
 ## <a id='orphans'></a>Orphans ##
 

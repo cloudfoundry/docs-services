@@ -6,35 +6,7 @@ title: Service Broker API v2.3
 
 [v2 API Change Log](v2-api-changelog.html)
 
-## <a id='versions'></a>Versions ##
-
-Two major versions of the Service Broker API are currently supported by Cloud
-Foundry, v1 and v2.
-As v1 is deprecated and support will be removed in the next major version of
-Cloud Foundry, it is recommended that all new brokers implement v2 and that current
-brokers are upgraded.
-
-<div style="width:50%">
-  <table border="1" class="nice">
-    <thead>
-      <tr>
-        <th>Current Version</th>
-        <th>Past Versions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td><a href="api.html">2.4</a></td>
-        <td><a href="api-v2.3.html">2.3</a><br/>
-            <a href="api-v2.2.html">2.2</a><br/>
-            <a href="api-v2.1.html">2.1</a><br/>
-            <a href="api-v2.0.html">2.0</a><br/>
-            <a href="api-v1.html">v1 (unversioned)</a></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
-
+<%= partial "version_table.html" %>
 
 ## <a id='changes'></a>Changes ##
 
@@ -71,7 +43,7 @@ enables horizontal scalability of redundant brokers.
 Multiple Cloud Foundry instances can be supported by a single broker using
 different URL prefixes and credentials.
 
-<%= image_tag("../images/v2services-new.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
+<%= image_tag("../images/v2services.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
 
 ## <a id='api-version-header'></a>API Version Header ##
 
@@ -97,7 +69,7 @@ An example of this header as of publication time is:
 ## <a id='authentication'></a>Authentication ##
 
 Cloud Controller (final release v145+) authenticates with the Broker using HTTP
-basic authentication (the `Authorization:` header) on every request and will
+basic authentication (the `Authentication:` header) on every request and will
 reject any broker registrations that do not contain a username and password.
 The broker is responsible for checking the username and password and returning
 a `401 Unauthorized` message if credentials are invalid.
@@ -414,7 +386,7 @@ Controller
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
+  <td>Should be returned if the requested service instance already exists. The expected response body is "{}", though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -536,7 +508,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Should be returned if the requested binding already exists. The expected response body is "{}"</td>
+  <td>Should be returned if the requested binding already exists. The expected response body is "{}", though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -766,6 +738,12 @@ For error responses, the following fields are valid. If empty JSON is returned i
 </tr>
 </tbody>
 </table>
+
+<pre class="terminal">
+{
+  "description": "Something went wrong. Please contact support at http://support.example.com."
+}
+</pre>
 
 ## <a id='orphans'></a>Orphans ##
 

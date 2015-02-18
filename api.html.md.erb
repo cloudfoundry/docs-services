@@ -42,7 +42,30 @@ enables horizontal scalability of redundant brokers.
 Multiple Cloud Foundry instances can be supported by a single broker using
 different URL prefixes and credentials.
 
-<%= image_tag("images/v2services-new.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
+## <a id='sync-flow'></a>Synchronous API ##
+
+In versions prior to 2.5, the Cloud Controller only supported synchronous
+provisioning. This means that the service broker must provision the request
+resource within the Cloud Controller's request. The Cloud Controller requires
+all its requests to the service broker to be completed in under 60 seconds.
+
+<%= image_tag("images/sync-service-broker-flow.png", :width =>"1247", :height =>"358", :style => 'background-color:#fff') %>
+
+## <a id='async-flow'></a>Asynchronous API ##
+
+Starting in version 2.5, the Cloud Controller supports asynchronous
+provisioning. This means the service broker can indicate the resource requested
+is still being provisioned. The Cloud Controller will poll the
+<a href='#service_instance'>service instance details</a> every minute until the
+broker returns an operation state of `succeeded`  or `failed`. After the initial
+request for the desired operation, the Cloud Controller will respond to the
+original client that requested the service instance operation.
+
+Cloud Controllers that support asynchronous provisioning will pass along the
+parameter `accepts_incomplete=true` to all broker API requests. The broker can
+choose to perform asynchronous or synchronous provisioning.
+
+<%= image_tag("images/async-service-broker-flow.png", :width =>"1250", :height =>"642", :style => 'background-color:#fff') %>
 
 ## <a id='api-version-header'></a>API Version Header ##
 

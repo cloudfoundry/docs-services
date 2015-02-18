@@ -17,7 +17,7 @@ described in this document.
 An oversimplified example of making a broker that supports the 3 most basic
 operations can be found here: https://github.com/geapi/cf-service-example.
 
-<%= image_tag("../images/v1services.png", :width =>"960", :height=>"720", :style => 'background-color:#fff') %>
+<%= image_tag("images/v1services.png", :width =>"960", :height=>"720", :style => 'background-color:#fff') %>
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -56,7 +56,7 @@ sync.
 1. It issues DELETE requests to remove offerings and plans it no longer wants to
 advertise.
 
-All catalog management APIs are in the CloudController.
+All catalog management APIs are in the Cloud Controller.
 A service is identified by the combination of `[label, provider, version]`,
 which must be unique.
 A plan is identified by `[service_guid, name]`, which must also be unique.

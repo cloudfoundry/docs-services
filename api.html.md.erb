@@ -47,7 +47,7 @@ different URL prefixes and credentials.
 In versions prior to 2.5, the Cloud Controller only supported synchronous
 provisioning. This means that the service broker must return a valid response to all requests within 60 seconds. For provisioning requests, a success response implies the service instance has been created and is useable.
 
-<%= image_tag("images/sync-service-broker-flow.png", :width =>"1247", :height =>"358", :style => 'background-color:#fff') %>
+<%= image_tag("images/sync-service-broker-flow.png", :width =>"1250", :height =>"358", :style => 'background-color:#fff') %>
 
 ## <a id='async-flow'></a>Asynchronous API ##
 
@@ -59,7 +59,7 @@ broker returns an operation state of `succeeded`  or `failed`. The user can disc
 Cloud Controllers that support asynchronous provisioning will pass the
 parameter `accepts_incomplete=true` with all broker API requests. If this parameter is included, the broker can choose to execute the request synchronously or asynchronously.
 
-<%= image_tag("images/async-service-broker-flow.png", :width =>"1250", :height =>"642", :style => 'background-color:#fff') %>
+<%= image_tag("images/async-service-broker-flow.png", :width =>"1250", :height =>"823", :style => 'background-color:#fff') %>
 
 ## <a id='api-version-header'></a>API Version Header ##
 

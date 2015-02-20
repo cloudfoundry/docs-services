@@ -45,25 +45,19 @@ different URL prefixes and credentials.
 ## <a id='sync-flow'></a>Synchronous API ##
 
 In versions prior to 2.5, the Cloud Controller only supported synchronous
-provisioning. This means that the service broker must provision the request
-resource within the Cloud Controller's request. The Cloud Controller requires
-all its requests to the service broker to be completed in under 60 seconds.
+provisioning. This means that the service broker must return a valid response to all requests within 60 seconds. For provisioning requests, a success response implies the service instance has been created and is useable.
 
 <%= image_tag("images/sync-service-broker-flow.png", :width =>"1247", :height =>"358", :style => 'background-color:#fff') %>
 
 ## <a id='async-flow'></a>Asynchronous API ##
 
 Starting in version 2.5, the Cloud Controller supports asynchronous
-provisioning. This means the service broker can indicate the resource requested
-is still being provisioned. The Cloud Controller will poll the
-<a href='#service_instance'>service instance details</a> every minute until the
-broker returns an operation state of `succeeded`  or `failed`. After the initial
-request for the desired operation, the Cloud Controller will respond to the
-original client that requested the service instance operation.
+operations. This means the service broker can indicate the requested operation is in progress. The Cloud Controller will poll the
+<a href='#service_instance'>service instance details</a> endpoint every minute until the
+broker returns an operation state of `succeeded`  or `failed`. The user can discover the state of the operation and details returned by the broker.
 
-Cloud Controllers that support asynchronous provisioning will pass along the
-parameter `accepts_incomplete=true` to all broker API requests. The broker can
-choose to perform asynchronous or synchronous provisioning.
+Cloud Controllers that support asynchronous provisioning will pass the
+parameter `accepts_incomplete=true` with all broker API requests. If this parameter is included, the broker can choose to execute the request synchronously or asynchronously.
 
 <%= image_tag("images/async-service-broker-flow.png", :width =>"1250", :height =>"642", :style => 'background-color:#fff') %>
 

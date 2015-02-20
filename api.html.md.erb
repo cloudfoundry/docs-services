@@ -578,6 +578,10 @@ Controller
   <td>200 OK</td>
   <td>The expected response body is below.</td>
 </tr>
+<tr>
+  <td>410 GONE</td>
+  <td>Appropriate only for asynchronous delete requests, in which case Cloud Controller will consider this response a success and remove the resource from its database. The expected response body is <code>{}</code>. Returning this while Cloud Controller is polling for create or update operations will be interpreted as an error, causing Cloud Controller to keep polling.</td>
+</tr>
 </tbody>
 </table>
 

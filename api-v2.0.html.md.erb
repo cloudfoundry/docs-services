@@ -91,7 +91,7 @@ If the database has plans which are not found in the broker catalog, and there a
 
 ##### cURL #####
 <pre class="terminal">
- $ curl http://username:password@broker-url/v2/catalog
+ $ curl -H "X-Broker-API-Version: 2.0" http://username:password@broker-url/v2/catalog
 </pre>
 
 ### Response ###

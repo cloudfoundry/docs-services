@@ -510,6 +510,11 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
   <td>Optional field. A user-facing message displayed to the cloud controller client. Can be used to tell the user details about the initial status of the provision request.</td>
 </tr>
 <tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
+  <td>integer</td>
+  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value may be overridden, depending on the Cloud Controller configuration or if the value exceeds 86400 seconds (24 hours).</td>
+</tr>
+<tr>
   <td>error</td>
   <td>string</td>
   <td>Optional field. Should be returned for <code>422</code> responses with value <code>AsyncRequired</code> when broker only supports asynchronous provisioning for the requested plan, but request did not include the <code>?accepts_incomplete</code> parameter. Should be accompanied by <code>"description": This service plan requires support for asynchronous provisioning by Cloud Foundry and its clients.</code>. See <a href="#broker-errors">Broker Errors</a>) for more about the <code>description</code> field. The error code allows newer Cloud Controllers to return a meaningful default message; older Cloud Controllers will pass through the suggested value of the description field.</td>
@@ -710,7 +715,42 @@ Responses with any other status code will be interpreted as a failure. Brokers c
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-For a success response, the expected response body is `{}`.
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>last_operation</td>
+  <td>object</td>
+  <td>Required field for <code>202</code> (asynchronous) response; optional for <code>200</code> response. It contains two fields, <code>state</code> and <code>description</code>.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state</td>
+  <td>string</td>
+  <td>Required field for <code>202</code> (asynchronous) response; value must be <code>in progress</code>. This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> for operation status. Optional for <code>200</code> response; if present, value must be <code>succeeded</code>.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description</td>
+  <td>string</td>
+  <td>Optional field. A user-facing message displayed to the cloud controller client. Can be used to tell the user details about the initial status of the update request.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
+  <td>integer</td>
+  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value may be overridden, depending on the Cloud Controller configuration or if the value exceeds 86400 seconds (24 hours).</td>
+</tr>
+<tr>
+  <td>error</td>
+  <td>string</td>
+  <td>Optional field. Should be returned for <code>422</code> responses with value <code>AsyncRequired</code> when broker only supports asynchronous operations for the requested plan, but request did not include the <code>?accepts_incomplete</code> parameter. Should be accompanied by <code>"description": This service plan requires client support for asynchronous service operations</code>. See <a href="#broker-errors">Broker Errors</a>) for more about the <code>description</code> field. The error code allows newer Cloud Controllers to return a meaningful default message; older Cloud Controllers will pass through the suggested value of the description field.</td>
+</tr>
+</tboby>
+</table>
 
 ## <a id='binding'></a>Binding ##
 
@@ -1000,7 +1040,42 @@ Responses with any other status code will be interpreted as a failure and the se
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-For a success response, the expected response body is `{}`.
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>last_operation</td>
+  <td>object</td>
+  <td>Required field for <code>202</code> (asynchronous) response; optional for <code>200</code> response. It contains two fields, <code>state</code> and <code>description</code>.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state</td>
+  <td>string</td>
+  <td>Required field for <code>202</code> (asynchronous) response; value must be <code>in progress</code>. This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> for operation status. Optional for <code>200</code> response; if present, value must be <code>succeeded</code>.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description</td>
+  <td>string</td>
+  <td>Optional field. A user-facing message displayed to the cloud controller client. Can be used to tell the user details about the initial status of the deprovision request.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
+  <td>integer</td>
+  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value may be overridden, depending on the Cloud Controller configuration or if the value exceeds 86400 seconds (24 hours).</td>
+</tr>
+<tr>
+  <td>error</td>
+  <td>string</td>
+  <td>Optional field. Should be returned for <code>422</code> responses with value <code>AsyncRequired</code> when broker only supports asynchronous operations for the requested plan, but request did not include the <code>?accepts_incomplete</code> parameter. Should be accompanied by <code>"description": This service plan requires client support for asynchronous service operations</code>. See <a href="#broker-errors">Broker Errors</a>) for more about the <code>description</code> field. The error code allows newer Cloud Controllers to return a meaningful default message; older Cloud Controllers will pass through the suggested value of the description field.</td>
+</tr>
+</tboby>
+</table>
 
 ## <a id='broker-errors'></a>Broker Errors ##
 

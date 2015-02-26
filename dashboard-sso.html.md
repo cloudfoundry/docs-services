@@ -18,7 +18,7 @@ To enable the SSO feature, the Cloud Controller requires a UAA client with suffi
       clients:
         cc-service-dashboards:
           secret: cc-broker-secret
-          scope: openid,cloud_controller_service_permissions.read
+          scope: cloud_controller.write,openid,cloud_controller.read,cloud_controller_service_permissions.read
           authorities: clients.read,clients.write,clients.admin
           authorized-grant-types: client_credentials
   ```

@@ -1,5 +1,5 @@
 ---
-title: Service Broker API
+title: Service Broker API v2.4
 ---
 
 ## <a id='changelog'></a>Document Changelog ##
@@ -19,13 +19,13 @@ added to enable support for new features.
 These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-### <a id='api-changes-since-v2-4'></a>Changes Since v2.4 ###
+### <a id='api-changes-since-v2-3'></a>Changes Since v2.3 ###
 
-The key change from v2.4 to v2.5 is support for asynchronous operations on service instances.
+The key change from v2.3 to v2.4 is support for users to change the service plan for a specified service instance.
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.5 of the services API has been supported since:
+v2.4 of the services API has been supported since:
 
 * [Final build 192](https://github.com/cloudfoundry/cf-release/tree/v192) of [cf-release](https://github.com/cloudfoundry/cf-release/commit/2b0309bde9880f7acb039ec9676f992254ce62d9)
 * v2.17 of the [Cloud Controller API](https://github.com/cloudfoundry/cloud_controller_ng/commit/f8b31ecce5c2740d60818ac6cc8a9299120e3216)
@@ -42,24 +42,7 @@ enables horizontal scalability of redundant brokers.
 Multiple Cloud Foundry instances can be supported by a single broker using
 different URL prefixes and credentials.
 
-## <a id='sync-flow'></a>Synchronous API ##
-
-In versions prior to 2.5, the Cloud Controller only supported synchronous
-provisioning. This means that the service broker must return a valid response to all requests within 60 seconds. For provisioning requests, a success response implies the service instance has been created and is useable.
-
-<%= image_tag("images/sync-service-broker-flow.png", :width =>"1250", :height =>"358", :style => 'background-color:#fff') %>
-
-## <a id='async-flow'></a>Asynchronous API ##
-
-Starting in version 2.5, the Cloud Controller supports asynchronous
-operations. This means the service broker can indicate the requested operation is in progress. The Cloud Controller will poll the
-<a href='#service_instance'>service instance details</a> endpoint every minute until the
-broker returns an operation state of `succeeded`  or `failed`. The user can discover the state of the operation and details returned by the broker.
-
-Cloud Controllers that support asynchronous provisioning will pass the
-parameter `accepts_incomplete=true` with all broker API requests. If this parameter is included, the broker can choose to execute the request synchronously or asynchronously.
-
-<%= image_tag("images/async-service-broker-flow.png", :width =>"1250", :height =>"823", :style => 'background-color:#fff') %>
+<%= image_tag("../images/v2services.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
 
 ## <a id='api-version-header'></a>API Version Header ##
 
@@ -80,12 +63,12 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
 such that 2.9 comes before 2.10.
 An example of this header as of publication time is:
 
-`X-Broker-Api-Version: 2.5`
+`X-Broker-Api-Version: 2.4`
 
 ## <a id='authentication'></a>Authentication ##
 
 Cloud Controller (final release v145+) authenticates with the Broker using HTTP
-basic authentication (the `Authorization:` header) on every request and will
+basic authentication (the `Authentication:` header) on every request and will
 reject any broker registrations that do not contain a username and password.
 The broker is responsible for checking the username and password and returning
 a `401 Unauthorized` message if credentials are invalid.
@@ -130,7 +113,7 @@ no longer be visible in the marketplace catalog or be provisionable.
 
 ##### cURL #####
 <pre class="terminal">
- $ curl -H "X-Broker-API-Version: 2.5" http://username:password@broker-url/v2/catalog
+ $ curl http://username:password@broker-url/v2/catalog
 </pre>
 
 ### Response ###
@@ -306,8 +289,9 @@ to make your services and plans available to end users.
 
 ## <a id='provisioning'></a>Provisioning ##
 
-### The definition of provision differs by service ###
-
+When the broker receives a provision request from Cloud Controller, it should
+synchronously take whatever action is necessary to create a new service
+resource for the developer.
 The result of provisioning varies by service type, although there are a few
 common actions that work for many services.
 For a MySQL service, provisioning could result in:
@@ -330,25 +314,6 @@ existing system.
 `PUT /v2/service_instances/:instance_id`
 
 <p class="note"><strong>Note</strong>: The <code>:instance_id</code> of a service instance is provided by the Cloud Controller. This ID will be used for future requests (bind and deprovision), so the broker must use it to correlate the resource it creates.</p>
-
-##### Parameters #####
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Query-String Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>accepts_incomplete</td>
-  <td>boolean</td>
-  <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous provisioning. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
-</tr>
-</tbody>
-</table>
 
 ##### Body #####
 
@@ -395,169 +360,12 @@ existing system.
 
 ##### cURL #####
 <pre class="terminal">
-$ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete -d '{
+$ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
   "space_guid":        "space-guid-here"
-}' -X PUT -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
-</pre>
-
-In this case, `instance_id` refers to the service instance id generated by Cloud
-Controller
-
-### Response ###
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>201 Created</td>
-  <td>Service instance has been created and is usable. The appropriate response for synchronous provisioning. The expected response body is described below.</td>
-</tr>
-<tr>
-  <td>202 Accepted</td>
-  <td>Service instance creation is in progress. The expected response body is described below but must include: <code>{ "last_operation": { "state": "in progress" } }</code>. This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> for operation status.</td>
-</tr>
-<tr>
-  <td>200 OK</td>
-  <td>May be returned if the service instance already exists and the requested parameters are identical to the existing service instance. The expected response body is the same as for <code>200</code> and will update the Cloud Controller database.
-  </td>
-</tr>
-<tr>
-  <td>409 Conflict</td>
-  <td>Should be returned if the requested service instance already exists. The expected response body is "{}", though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
-</tr>
-<tr>
-  <td>422 Unprocessable Entity</td>
-  <td>Should be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires support for asynchronous provisioning by Cloud Foundry and its clients." }</code>, as described below.</td>
-</tr>
-</tbody>
-</table>
-
-Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
-
-##### Synchronous Provisioning #####
-
-Brokers that can guarantee provisioning of a usable instance in less than a minute should return the synchronous response `201 CREATED`. If not, brokers should implement support for asynchronous provisioning. Regardless, brokers should respond to all Cloud Controller requests within 60 seconds.
-
-##### Asynchronous Provisioning #####
-
-If the broker supports asynchronous provisioning for the requested plan, and `?accepts_incomplete:true` was included in the request, it should return the asynchronous response `202 ACCEPTED`. The body must include:
-
-<pre class="terminal">
-{
-  "last_operation": {
-    "state": "in progress"
-  }
-}
-</pre>
-
-Additional optional fields are described below.
-
-Brokers that only support asynchronous provisioning for the requested plan should reject requests that do not include `?accepts_incomplete:true` with a response of `422 UNPROCESSIBLE ENTITY` and body:
-
-<pre class="terminal">
-{
-  "error": "AsyncRequired",
-  "description": "This service plan requires support for asynchronous provisioning by Cloud Foundry and its clients."
-}
-</pre>
-
-Brokers that support async must also implement the <a href="#service_instance">Service Instance Endpoint</a> that enables Cloud Controller to expose the status of the provision operation to users.
-
-##### Body #####
-
-All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>dashboard_url</td>
-  <td>string</td>
-  <td>The URL of a web-based management user interface for the service instance;
-  we refer to this as a service dashboard. The URL should contain enough
-  information for the dashboard to identify the resource being accessed
-  ("9189kdfsk0vfnku" in the example below). For information on how users can
-  authenticate with service dashboards via SSO, see <a
-  href="dashboard-sso.html">Dashboard Single Sign-On</a>.</td>
-</tr>
-<tr>
-  <td>last_operation</td>
-  <td>object</td>
-  <td>Required field for <code>202</code> (asynchronous) response; optional for <code>201</code> response. It contains two fields, <code>state</code> and <code>description</code>.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state</td>
-  <td>string</td>
-  <td>Required field for <code>202</code> (asynchronous) response; value must be <code>in progress</code>. This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> for operation status. Optional for <code>201</code> response; if present, value must be <code>succeeded</code>.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description</td>
-  <td>string</td>
-  <td>Optional field. A user-facing message displayed to the cloud controller client. Can be used to tell the user details about the initial status of the provision request.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
-  <td>integer</td>
-  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value may be overridden, depending on the Cloud Controller configuration or if the value exceeds 86400 seconds (24 hours).</td>
-</tr>
-<tr>
-  <td>error</td>
-  <td>string</td>
-  <td>Optional field. Should be returned for <code>422</code> responses with value <code>AsyncRequired</code> when broker only supports asynchronous provisioning for the requested plan, but request did not include the <code>?accepts_incomplete</code> parameter. Should be accompanied by <code>"description": This service plan requires support for asynchronous provisioning by Cloud Foundry and its clients.</code>. See <a href="#broker-errors">Broker Errors</a>) for more about the <code>description</code> field. The error code allows newer Cloud Controllers to return a meaningful default message; older Cloud Controllers will pass through the suggested value of the description field.</td>
-</tr>
-</tboby>
-</table>
-
-Example body for `201` (synchronous) response:
-<pre class="terminal">
-{
-  "dashboard\_url": "http://example.com/9189kdfsk0vfnku",
-}
-</pre>
-
-Example body for `202` (asynchronous) response:
-<pre class="terminal">
-{
-  "dashboard\_url": "http://example.com/9189kdfsk0vfnku",
-  "last_operation": {
-    "state": "in progress",
-    "description": "Creating service (10% complete)."
-  }
-}
-</pre>
-
-## <a id='service_instance'></a>Get Service Instance Details ##
-
-This endpoint is used by the Cloud Controller when the broker returns a `202 ACCEPTED` and `"state": "in progress"` in response to a <a href="#provisioning">provision</a> request. The Cloud
-Controller will poll this endpoint as long as the broker returns `"state": "in progress"`. Returning `"state": "succeeded"` or `"state": "failed"` will cause Cloud Controller to cease polling.
-
-### Request ###
-
-##### Route #####
-`GET /v2/service_instances/:instance_id`
-
-<p class="note"><strong>Note</strong>: The <code>:instance_id</code> of a
-service instance is provided by the Cloud Controller. This ID will be used for
-future requests (bind and deprovision), so the broker must use it to correlate
-the resource it creates.</p>
-
-##### cURL #####
-<pre class="terminal">
-$ curl http://username:password@broker-url/v2/service_instances/:instance_id
+}' -X PUT
 </pre>
 
 In this case, `id` refers to the service instance id generated by Cloud
@@ -574,19 +382,24 @@ Controller
 </thead>
 <tbody>
 <tr>
-  <td>200 OK</td>
-  <td>The expected response body is below.</td>
+  <td>201 Created</td>
+  <td>Service instance has been created. The expected response body is below.</td>
 </tr>
 <tr>
-  <td>410 GONE</td>
-  <td>Appropriate only for asynchronous delete requests, in which case Cloud Controller will consider this response a success and remove the resource from its database. The expected response body is <code>{}</code>. Returning this while Cloud Controller is polling for create or update operations will be interpreted as an error, causing Cloud Controller to keep polling.</td>
+  <td>200 OK</td>
+  <td>
+    May be returned if the service instance already exists and the requested parameters are identical to the existing service instance.
+    The expected response body is below.
+  </td>
+</tr>
+<tr>
+  <td>409 Conflict</td>
+  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
 </tr>
 </tbody>
 </table>
 
-Responses with any other status code will be interpreted as a failure. Brokers
-can include a user-facing message in the `description` field; for details see
-[Broker Errors](#broker-errors).
+Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
 
 ##### Body #####
 
@@ -606,40 +419,17 @@ For success responses, the following fields are valid.
 <tr>
   <td>dashboard_url</td>
   <td>string</td>
-  <td>The URL of a web-based management user interface for the service instance;
-  we refer to this as a service dashboard. The URL should contain enough
-  information for the dashboard to identify the resource being accessed
-  ("9189kdfsk0vfnku" in the example below). For information on how users can
-  authenticate with service dashboards via SSO, see <a
-  href="dashboard-sso.html">Dashboard Single Sign-On</a>.</td>
-</tr>
-<tr>
-  <td>last_operation</td>
-  <td>object</td>
-  <td>Required field when <code>202</code> was returned for <a href="#provisioning">provision</a> request. It contains two fields, <code>state</code> and <code>description</code>.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state</td>
-  <td>string</td>
-  <td>Required field when <code>202</code> was returned for <a href="#provisioning">provision</a> request. Valid values are <code>in progress</code>, <code>succeeded</code>, and <code>failed</code>. While <code>"state": "in progress"</code>, Cloud Controller will continue polling. A response with <code>"state": "succeeded"</code> or <code>"state": "failed"</code> will cause Cloud Controller to cease polling.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description</td>
-  <td>string</td>
-  <td>Optional field. A user-facing message displayed to the cloud controller client. Can be used to tell the user details about the initial status of the provision request.</td>
+  <td>The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL should contain enough information for the dashboard to identify the resource being accessed ("9189kdfsk0vfnku" in the example below). For information on how users can authenticate with service dashboards via SSO, see <a href="dashboard-sso.html">Dashboard Single Sign-On</a>.</td>
 </tr>
 </tboby>
 </table>
 
 <pre class="terminal">
 {
-  "dashboard\_url": "http://example.com/9189kdfsk0vfnku",
-  "last_operation": {
-    "state": "in progress",
-    "description": "Creating service (10% complete)."
-  }
+ "dashboard_url": "http://mongomgmthost/databases/9189kdfsk0vfnku"
 }
 </pre>
+
 
 ## <a id='updating_service_instance'></a>Updating a Service Instance ##
 
@@ -683,7 +473,7 @@ To enable this functionality, a broker declares support for each service by incl
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
   "plan_id": "plan-guid-here"
-}' -X PATCH -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
+}' -X PATCH
 </pre>
 
 ### Response ###
@@ -698,7 +488,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
 <tbody>
 <tr>
   <td>200 OK</td>
-  <td>New plan is effective. The expected response body is <code>{}</code>.</td>
+  <td>New plan is effective. The expected response body is "{}".</td>
 </tr>
 <tr>
   <td>422 Unprocessable entity</td>
@@ -715,42 +505,7 @@ Responses with any other status code will be interpreted as a failure. Brokers c
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>last_operation</td>
-  <td>object</td>
-  <td>Required field for <code>202</code> (asynchronous) response; optional for <code>200</code> response. It contains two fields, <code>state</code> and <code>description</code>.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state</td>
-  <td>string</td>
-  <td>Required field for <code>202</code> (asynchronous) response; value must be <code>in progress</code>. This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> for operation status. Optional for <code>200</code> response; if present, value must be <code>succeeded</code>.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description</td>
-  <td>string</td>
-  <td>Optional field. A user-facing message displayed to the cloud controller client. Can be used to tell the user details about the initial status of the update request.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
-  <td>integer</td>
-  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value may be overridden, depending on the Cloud Controller configuration or if the value exceeds 86400 seconds (24 hours).</td>
-</tr>
-<tr>
-  <td>error</td>
-  <td>string</td>
-  <td>Optional field. Should be returned for <code>422</code> responses with value <code>AsyncRequired</code> when broker only supports asynchronous operations for the requested plan, but request did not include the <code>?accepts_incomplete</code> parameter. Should be accompanied by <code>"description": This service plan requires client support for asynchronous service operations</code>. See <a href="#broker-errors">Broker Errors</a>) for more about the <code>description</code> field. The error code allows newer Cloud Controllers to return a meaningful default message; older Cloud Controllers will pass through the suggested value of the description field.</td>
-</tr>
-</tboby>
-</table>
+For a success response, the expected response body is `"{}"`.
 
 ## <a id='binding'></a>Binding ##
 
@@ -801,22 +556,22 @@ the resource it creates.</p>
 
 <pre class="terminal">
 {
-  "plan_id": 		"plan-guid-here",
-  "service_id": 	"service-guid-here",
-  "app_guid": 		"app-guid-here"
+  "plan_id": "plan-guid-here",
+  "service_id": "service-guid-here",
+  "app_guid": "app-guid-here"
 }
 </pre>
 
 ##### cURL #####
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
-  "plan_id": 		"plan-guid-here",
-  "service_id": 	"service-guid-here",
-  "app_guid":	 	"app-guid-here"
-}' -X PUT -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
+  "plan_id": "plan-guid-here",
+  "service_id": "service-guid-here",
+  "app_guid": "app-guid-here"
+}' -X PUT
 </pre>
 
-In this case, `instance_id` refers to the id of an existing service instance in a previous provisioning, while `binding_id` is service binding id generated by Cloud Controller.
+In this case, `instance_id` refers to the id of an existing service instance in a previous provisioning, while `id` is service binding id generated by Cloud Controller.
 
 ### Response ###
 
@@ -841,7 +596,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Should be returned if the requested binding already exists. The expected response body is "{}", though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
+  <td>Should be returned if the requested binding already exists. The expected response body is "{}"</td>
 </tr>
 </tbody>
 </table>
@@ -933,7 +688,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.5"
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE
 </pre>
 
 ### Response ###
@@ -948,11 +703,11 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 <tbody>
 <tr>
   <td>200 OK</td>
-  <td>Binding was deleted. The expected response body is <code>{}</code></td>
+  <td>Binding was deleted. The expected response body is "{}"</td>
 </tr>
 <tr>
   <td>410 Gone</td>
-  <td>Should be returned if the binding does not exist. The expected response body is <code>{}</code></td>
+  <td>Should be returned if the binding does not exist. The expected response body is "{}"</td>
 </tr>
 </tbody>
 </table>
@@ -963,7 +718,7 @@ Responses with any other status code will be interpreted as a failure and the bi
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-For a success response, the expected response body is `{}`.
+For a success response, the expected response body is `"{}"`.
 
 ## <a id='deprovisioning'></a>Deprovisioning ##
 
@@ -1010,7 +765,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?service_id=
-    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.5"
+    service-id-here&plan_id=plan-id-here' -X DELETE
 </pre>
 
 ### Response ###
@@ -1025,11 +780,11 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?se
 <tbody>
 <tr>
   <td>200 OK</td>
-  <td>Service instance was deleted. The expected response body is <code>{}</code></td>
+  <td>Service instance was deleted. The expected response body is "{}"</td>
 </tr>
 <tr>
   <td>410 Gone</td>
-  <td>Should be returned if the service instance does not exist. The expected response body is <code>{}</code></td>
+  <td>Should be returned if the service instance does not exist. The expected response body is "{}"</td>
 </tr>
 </tbody>
 </table>
@@ -1040,42 +795,7 @@ Responses with any other status code will be interpreted as a failure and the se
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>last_operation</td>
-  <td>object</td>
-  <td>Required field for <code>202</code> (asynchronous) response; optional for <code>200</code> response. It contains two fields, <code>state</code> and <code>description</code>.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;state</td>
-  <td>string</td>
-  <td>Required field for <code>202</code> (asynchronous) response; value must be <code>in progress</code>. This triggers Cloud Controller to poll the <a href="#service_instance">Service Instance Endpoint</a> for operation status. Optional for <code>200</code> response; if present, value must be <code>succeeded</code>.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description</td>
-  <td>string</td>
-  <td>Optional field. A user-facing message displayed to the cloud controller client. Can be used to tell the user details about the initial status of the deprovision request.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
-  <td>integer</td>
-  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value may be overridden, depending on the Cloud Controller configuration or if the value exceeds 86400 seconds (24 hours).</td>
-</tr>
-<tr>
-  <td>error</td>
-  <td>string</td>
-  <td>Optional field. Should be returned for <code>422</code> responses with value <code>AsyncRequired</code> when broker only supports asynchronous operations for the requested plan, but request did not include the <code>?accepts_incomplete</code> parameter. Should be accompanied by <code>"description": This service plan requires client support for asynchronous service operations</code>. See <a href="#broker-errors">Broker Errors</a>) for more about the <code>description</code> field. The error code allows newer Cloud Controllers to return a meaningful default message; older Cloud Controllers will pass through the suggested value of the description field.</td>
-</tr>
-</tboby>
-</table>
+For a success response, the expected response body is `"{}"`.
 
 ## <a id='broker-errors'></a>Broker Errors ##
 
@@ -1089,7 +809,7 @@ above (like 410 on delete) should return an appropriate HTTP response code
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-For error responses, the following fields are valid. If empty JSON is returned in the body `{}`, a generic message containing the HTTP response code returned by the broker will be displayed to the requestor.
+For error responses, the following fields are valid. If empty JSON is returned in the body `"{}"`, a generic message containing the HTTP response code returned by the broker will be displayed to the requestor.
 
 <table border="1" class="nice">
 <thead>
@@ -1109,78 +829,15 @@ For error responses, the following fields are valid. If empty JSON is returned i
 </tbody>
 </table>
 
-<pre class="terminal">
-{
-  "description": "Something went wrong. Please contact support at http://support.example.com."
-}
-</pre>
-
 ## <a id='orphans'></a>Orphans ##
 
 The Cloud Controller is the source of truth for service instances and bindings. Service brokers are expected to have successfully provisioned all the instances and bindings Cloud Controller knows about, and none that it doesn't.
 
-Orphans can result if the broker does not return a response before a request from Cloud Controller times out (typically 60 seconds). For example, a broker may not return a response, the provision requests times out, but the broker eventually succeeds in provisioning an instance without Cloud Controller knowing about it. This results in an orphan instance on the service side.
+Orphans can result if the broker does not return a response before a request from Cloud Controller times out (typically 60 seconds). For example, if a broker does not return a response to a provision request before Cloud Controller times out, the broker might eventually succeed in provisioning an instance after Cloud Controller considers the request a failure. This results in an orphan instance on the service side.
 
 To mitigate orphan instances and bindings, Cloud Controller will attempt to delete resources it cannot be sure were successfully created, and will keep trying to delete them until the broker responds with a success.
 
-More specifically, when a provision or bind request to the broker fails, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails, Cloud Controller will retry the delete or unbind request ten times with an exponental backoff schedule (over a period of 34 hours).
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status code</th>
-  <th>Result</th>
-  <th>Orphan mitigation</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>200</td>
-  <td>Success</td>
-  <td></td>
-</tr>
-<tr>
-  <td>200 with malformed response</td>
-  <td>Failure</td>
-  <td></td>
-</tr>
-<tr>
-  <td>201</td>
-  <td>Success</td>
-  <td></td>
-</tr>
-<tr>
-  <td>201 with malformed response</td>
-  <td>Failure</td>
-  <td>Yes</td>
-</tr>
-<tr>
-  <td>All other 2xx</td>
-  <td>Failure</td>
-  <td>Yes</td>
-</tr>
-<tr>
-  <td>408</td>
-  <td>Failure due to timeout</td>
-  <td>Yes</td>
-</tr>
-<tr>
-  <td>All other 4xx</td>
-  <td>Broker rejects request</td>
-  <td></td>
-</tr>
-<tr>
-  <td>5xx</td>
-  <td>Broker error</td>
-  <td>Yes</td>
-</tr>
-<tr>
-  <td>Timeout</td>
-  <td>Failure</td>
-  <td>Yes</td>
-</tr>
-</tbody>
-</table>
+More specifically, when a provision or bind request to the broker times out or the broker returns a 5xx response, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails (request times out, or the broker returns a 5xx), Cloud Controller will retry the request at increasing intervals until the broker responds with a success (maximum ten tries), doubling the time interval with each failed request.
 
 If the Cloud Controller encounters an internal error provisioning an instance or binding (for example, saving to the database fails), then the Cloud Controller will send a single delete or unbind request to the broker but will not retry.
 

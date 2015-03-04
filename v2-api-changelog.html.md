@@ -2,6 +2,9 @@
 title: v2 API Change Log
 ---
 
+## 2015-03-02 ##
+Introduce experimental version of Asynchronous Operations. The API allows for provisioning, updating, and deprovisioning of service instances in an asynchronous manner. The change includes a new endpoint for checking the status of service instance operations. It also allows brokers to return `202 Accepted` in response to provision, update, or deprovision requests with an updated response body to communicate the status of the requested operation.
+
 ## 2015-01-14 ##
 Updated Orphans section of the API to document the new behavior of reducing likelihood of orphaned instances in cf-release v196.
 

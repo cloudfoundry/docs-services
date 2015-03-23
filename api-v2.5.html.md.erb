@@ -515,7 +515,7 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
   <td>integer</td>
-  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value may be overridden, depending on the Cloud Controller configuration or if the value exceeds 86400 seconds (24 hours).</td>
+  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value should be between the Cloud Controller configuration of minimal interval and 86400 seconds (24 hours). If the value is not within the range it will be overwriten to the closest acceptable value. Default: 60 seconds</td>
 </tr>
 <tr>
   <td>error</td>
@@ -779,7 +779,7 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
   <td>integer</td>
-  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value may be overridden, depending on the Cloud Controller configuration or if the value exceeds 86400 seconds (24 hours).</td>
+  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value should be between the Cloud Controller configuration of minimal interval and 86400 seconds (24 hours). If the value is not within the range it will be overwriten to the closest acceptable value. Default: 60 seconds</td>
 </tr>
 <tr>
   <td>error</td>
@@ -1137,7 +1137,7 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
   <td>integer</td>
-  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value may be overridden, depending on the Cloud Controller configuration or if the value exceeds 86400 seconds (24 hours).</td>
+  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value should be between the Cloud Controller configuration of minimal interval and 86400 seconds (24 hours). If the value is not within the range it will be overwriten to the closest acceptable value. Default: 60 seconds</td>
 </tr>
 <tr>
   <td>error</td>

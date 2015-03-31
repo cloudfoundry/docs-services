@@ -1,8 +1,18 @@
 ---
-title: Asynchronous Operations
+title: Asynchronous Operations (Experimental)
 ---
 
-## <a id='blocking'></a>Blocking Operations ##
+<p class='note'><strong>Warning:</strong> This feature is considered experimental changes and may change in backwards incompatible ways.</p>
+
+## Polling ##
+
+### Polling Interval ###
+When making an asynchronous request (request in which the client specifies accepts_incomplete=true), the broker can return an optional requested polling interval. The Cloud Foundry operator can configure a minimum interval, which will override this value and is used as a default if this field is not returned (default 60 seconds). Maximum supported value is 86400 seconds (24 hours).
+
+### Polling Timeout ###
+When making an asynchronous request (request in which the client specifies accepts_incomplete=true), Cloud Controller will make a maximum number of polling attempts before declaring the operation failed. This number can be configured by the Cloud Foundry operator (default 25).
+
+## <a id='blocking'></a>Blocking ##
 
 ### Provisioning ###
 
@@ -19,13 +29,4 @@ While an asynchronous provision is in progress:
 - Requests to unbind can not be made because there is not binding resource to delete. The CLI returns a success for idempotent scriptability, with message "Binding between myasync and async-broker did not exist".
 - Requests to delete fail with response 400 "Another operation for this service instance is in progress."
 
-## <a id='blocking'></a>Asynchronous Operations ##
 
-### Polling Interval ###
-When making an asynchronous request (request in which the client specifies accepts_incomplete=true), the broker can return an optional value for expected polling interval. The polling interval is set by default to 60 seconds. This value will be used for polling the opration state, but can be overwitten in the following cases:
-
-- If the polling interval value provided is lower the minimal value which default is 60 seconds. This could be defined by the cloud controller operator.
-- If the polling interval value provided exeeds the maximal value of 86400 seconds (24 hours)
-
-### Polling Timeout ###
-When making an asynchronous request (request in which the client specifies accepts_incomplete=true), the client will be able to make a maximal number of polling attempts before declaring the operation as failed. This number can be configured by the cloud controller operator, and is set by default to 25.

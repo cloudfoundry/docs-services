@@ -47,20 +47,15 @@ different URL prefixes and credentials.
 
 ## <a id='sync-flow'></a>Synchronous API ##
 
-In versions prior to 2.5, the Cloud Controller only supported synchronous
-provisioning. This means that the service broker must return a valid response to all requests within 60 seconds. For provisioning requests, a success response implies the service instance has been created and is useable.
+In versions prior to 2.5, the Cloud Controller only supported a synchronous integration with service brokers. This means that the service broker must return a valid response to all requests within 60 seconds. For provisioning requests, a success response implies the service instance has been created and is useable. 
 
 <%= image_tag("images/sync-service-broker-flow.png", :width =>"1250", :height =>"358", :style => 'background-color:#fff') %>
 
 ## <a id='async-flow'></a>Asynchronous API ##
 
-Starting in version 2.5, the Cloud Controller supports asynchronous
-operations. This means the service broker can indicate the requested operation is in progress. The Cloud Controller will poll the
-<a href='#service_instance'>service instance details</a> endpoint every minute until the
-broker returns an operation state of `succeeded`  or `failed`. The user can discover the state of the operation and details returned by the broker.
+Starting in version 2.5, the Cloud Controller also supports asynchronous broker integrations. This means the service broker can respond that the requested operation is accepted but not completed, triggering Cloud Controller to poll the <a href='#service_instance'>service instance details</a> endpoint until the broker indicates that the requested operation has succeeded or failed. During this time, end users are able to discover the state of the requested operation using Cloud Controller API clients.
 
-Cloud Controllers that support asynchronous provisioning will pass the
-parameter `accepts_incomplete=true` with all broker API requests. If this parameter is included, the broker can choose to execute the request synchronously or asynchronously.
+For an operation to be executed asynchronously, all three components (CC API client, CC, and broker) must support it, and the broker has the choice of responding synchronously or asynchronously. If a Cloud Controller API client passes the parameter `accepts_incomplete=true` with a create/update/delete request, and Cloud Controller is supports asynchronous operations, it will pass the same parameter with its request to the broker. If this parameter is included, the broker can choose to execute the request synchronously or asynchronously. If the parameter is not included, and the broker can not fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request.
 
 <%= image_tag("images/async-service-broker-flow.png", :width =>"1250", :height =>"823", :style => 'background-color:#fff') %>
 
@@ -515,7 +510,7 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
   <td>integer</td>
-  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value should be between the Cloud Controller configuration of minimal interval and 86400 seconds (24 hours). If the value is not within the range it will be overwriten to the closest acceptable value. Default: 60 seconds</td>
+  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The Cloud Foundry operator can configure a minimum interval, which will override this value and is used as a default if this field is not returned (default 60 seconds). Maximum supported value is 86400 seconds (24 hours).</td>
 </tr>
 <tr>
   <td>error</td>
@@ -779,7 +774,7 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
   <td>integer</td>
-  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value should be between the Cloud Controller configuration of minimal interval and 86400 seconds (24 hours). If the value is not within the range it will be overwriten to the closest acceptable value. Default: 60 seconds</td>
+  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The Cloud Foundry operator can configure a minimum interval, which will override this value and is used as a default if this field is not returned (default 60 seconds). Maximum supported value is 86400 seconds (24 hours).</td>
 </tr>
 <tr>
   <td>error</td>
@@ -1137,7 +1132,7 @@ All response bodies must be a valid JSON Object (`{}`). This is for future compa
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;async_poll_interval_seconds</td>
   <td>integer</td>
-  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The value should be between the Cloud Controller configuration of minimal interval and 86400 seconds (24 hours). If the value is not within the range it will be overwriten to the closest acceptable value. Default: 60 seconds</td>
+  <td>Optional field. Tells the Cloud Controller how often to poll for the state of the operation. The Cloud Foundry operator can configure a minimum interval, which will override this value and is used as a default if this field is not returned (default 60 seconds). Maximum supported value is 86400 seconds (24 hours).</td>
 </tr>
 <tr>
   <td>error</td>

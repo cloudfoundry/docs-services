@@ -10,7 +10,7 @@ title: Asynchronous Operations (Experimental)
 When making an asynchronous request (request in which the client specifies accepts_incomplete=true), the broker can return an optional requested polling interval. The Cloud Foundry operator can configure a minimum interval, which will override this value and is used as a default if this field is not returned (default 60 seconds). Maximum supported value is 86400 seconds (24 hours).
 
 ### Polling Timeout ###
-When making an asynchronous request (request in which the client specifies accepts_incomplete=true), Cloud Controller will make a maximum number of polling attempts before declaring the operation failed. This number can be configured by the Cloud Foundry operator (default 25).
+When making an asynchronous request (request in which the client specifies accepts_incomplete=true), Cloud Controller will continously poll for a maximum duration before declaring the operation failed. This number can be configured by the Cloud Foundry operator (default 10080 or 1 week).
 
 ## <a id='blocking'></a>Blocking ##
 

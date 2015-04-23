@@ -2,6 +2,9 @@
 title: v2 API Change Log
 ---
 
+## 2015-04-22 ##
+Move Asynchronous Operations to separate document and remove v2.5 experimental documentation. Async operations will be added to a v2.X doc when they are considered non-experimental.
+
 ## 2015-03-02 ##
 Introduce experimental version of Asynchronous Operations. The API allows for provisioning, updating, and deprovisioning of service instances in an asynchronous manner. The change includes a new endpoint for checking the status of service instance operations. It also allows brokers to return `202 Accepted` in response to provision, update, or deprovision requests with an updated response body to communicate the status of the requested operation.
 
@@ -57,4 +60,3 @@ Bug found in [the v2.0 doc](api-v2.0.html). It was indicated that a 404
 returned for a unbind or delete would be interpreted by cloud controller as a
 success. This was incorrect. Cloud controller accepts 200 and 410 as successes
 and 404 as a failure. Doc has been updated and API version remains at 2.0.
-

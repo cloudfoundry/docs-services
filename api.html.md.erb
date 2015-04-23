@@ -688,7 +688,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.4"
 </pre>
 
 ### Response ###
@@ -765,7 +765,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?service_id=
-    service-id-here&plan_id=plan-id-here' -X DELETE
+    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.4"
 </pre>
 
 ### Response ###

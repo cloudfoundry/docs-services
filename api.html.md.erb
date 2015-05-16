@@ -405,7 +405,7 @@ Responses with any other status code will be interpreted as a failure. Brokers c
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-For success responses, the following fields are valid.
+For success responses, the following fields are supported. Others will be ignored. For error responses, see [Broker Errors](#broker-errors).
 
 <table border="1" class="nice">
 <thead>
@@ -607,7 +607,7 @@ Responses with any other status code will be interpreted as a failure and an unb
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-For success responses, the following fields are valid.
+For success responses, the following fields are supported. Others will be ignored. For error responses, see [Broker Errors](#broker-errors).
 
 <table border="1" class="nice">
 <thead>
@@ -809,7 +809,7 @@ above (like 410 on delete) should return an appropriate HTTP response code
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-For error responses, the following fields are valid. If empty JSON is returned in the body `{}`, a generic message containing the HTTP response code returned by the broker will be displayed to the requestor.
+For error responses, the following fields are valid. Others will be ignored. If an empty JSON object is returned in the body `{}`, a generic message containing the HTTP response code returned by the broker will be displayed to the requestor.
 
 <table border="1" class="nice">
 <thead>

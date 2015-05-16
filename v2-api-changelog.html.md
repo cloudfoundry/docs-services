@@ -2,6 +2,9 @@
 title: v2 API Change Log
 ---
 
+## 2015-05-15 ##
+Made it explicit that specified fields are supported for responses to create and bind requests, and that others will be ignored.
+
 ## 2015-04-22 ##
 Move Asynchronous Operations to separate document and remove v2.5 experimental documentation. Async operations will be added to a v2.X doc when they are considered non-experimental.
 

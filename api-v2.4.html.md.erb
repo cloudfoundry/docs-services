@@ -1,5 +1,5 @@
 ---
-title: Service Broker API v2.5
+title: Service Broker API v2.4
 ---
 
 ## <a id='changelog'></a>Document Changelog ##
@@ -19,16 +19,16 @@ added to enable support for new features.
 These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-### <a id='api-changes-since-v2-4'></a>Changes Since v2.4 ###
+### <a id='api-changes-since-v2-3'></a>Changes Since v2.3 ###
 
-The key change from v2.4 to v2.5 is support for users to send service-specific configuration parameters along with provision, update and bind requests.
+The key change from v2.3 to v2.4 is support for users to change the service plan for a specified service instance.
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.5 of the services API has been supported since:
+v2.4 of the services API has been supported since:
 
-* [Final build 209](https://github.com/cloudfoundry/cf-release/tree/v209) of [cf-release](https://github.com/cloudfoundry/cf-release/)
-* v2.27.0 of the Cloud Controller API
+* [Final build 192](https://github.com/cloudfoundry/cf-release/tree/v192) of [cf-release](https://github.com/cloudfoundry/cf-release/)
+* v2.17 of the [Cloud Controller API](https://github.com/cloudfoundry/cloud_controller_ng/commit/f8b31ecce5c2740d60818ac6cc8a9299120e3216)
 * v6.7 of the Cloud Foundry [Command Line Interface (CLI)](https://github.com/cloudfoundry/cli)
 
 ## <a id='api-overview'></a>API Overview ##
@@ -346,11 +346,6 @@ existing system.
   <td>string</td>
   <td>Similar to organization_guid, but for the space.</td>
 </tr>
-<tr>
-  <td>parameters</td>
-  <td>JSON object</td>
-  <td>Service-specific configuration parameters specified by the user. For a list of supported configuration parameters, see documentation for the particular service offering.</td>
-</tr>
 </tbody>
 </table>
 
@@ -359,11 +354,7 @@ existing system.
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
-  "space_guid":        "space-guid-here",
-  "parameters":        {
-    "parameter1": 1,
-    "parameter2": "value"
-  }
+  "space_guid":        "space-guid-here"
 }
 </pre>
 
@@ -373,11 +364,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
-  "space_guid":        "space-guid-here",
-  "parameters":        {
-    "parameter1": 1,
-    "parameter2": "value"
-  }  
+  "space_guid":        "space-guid-here"
 }' -X PUT -H "X-Broker-API-Version: 2.4" -H "Content-Type: application/json"
 </pre>
 
@@ -473,32 +460,19 @@ To enable this functionality, a broker declares support for each service by incl
   <td>string</td>
   <td>ID of the new plan from the catalog.</td>
 </tr>
-<tr>
-  <td>parameters</td>
-  <td>JSON object</td>
-  <td>Service-specific configuration parameters specified by the user. For a list of supported configuration parameters, see documentation for the particular service offering.</td>
-</tr>
 </tbody>
 </table>
 
 <pre class="terminal">
 {
-  "plan_id": "plan-guid-here",
-  "parameters":        {
-    "parameter1": 1,
-    "parameter2": "value"
-  }
+  "plan_id": "plan-guid-here"
 }
 </pre>
 
 ##### cURL #####
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
-  "plan_id": "plan-guid-here",
-  "parameters":        {
-    "parameter1": 1,
-    "parameter2": "value"
-  }
+  "plan_id": "plan-guid-here"
 }' -X PATCH -H "X-Broker-API-Version: 2.4" -H "Content-Type: application/json"
 </pre>
 
@@ -577,11 +551,6 @@ the resource it creates.</p>
   <td>string</td>
   <td>GUID of the application that you want to bind your service to.</td>
 </tr>
-<tr>
-  <td>parameters</td>
-  <td>JSON object</td>
-  <td>Service-specific configuration parameters specified by the user. For a list of supported configuration parameters, see documentation for the particular service offering.</td>
-</tr>
 </tbody>
 </table>
 
@@ -589,11 +558,7 @@ the resource it creates.</p>
 {
   "plan_id":      "plan-guid-here",
   "service_id":   "service-guid-here",
-  "app_guid":     "app-guid-here",
-  "parameters":        {
-    "parameter1": 1,
-    "parameter2": "value"
-  }
+  "app_guid":     "app-guid-here"
 }
 </pre>
 
@@ -602,11 +567,7 @@ the resource it creates.</p>
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
   "plan_id":      "plan-guid-here",
   "service_id":   "service-guid-here",
-  "app_guid":     "app-guid-here",
-  "parameters":        {
-    "parameter1": 1,
-    "parameter2": "value"
-  }
+  "app_guid":     "app-guid-here"
 }' -X PUT
 </pre>
 

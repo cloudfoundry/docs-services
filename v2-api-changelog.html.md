@@ -2,6 +2,9 @@
 title: v2 API Change Log
 ---
 
+## 2015-05-19 ##
+Add support for arbitrary params; users can send service-specific configuration parameters along with provision, update and bind requests.
+
 ## 2015-05-15 ##
 Made it explicit that specified fields are supported for responses to create and bind requests, and that others will be ignored.
 

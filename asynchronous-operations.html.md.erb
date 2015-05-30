@@ -15,13 +15,13 @@ Asynchronous Operations (experimental) have been supported since:
 
 Previously, Cloud Foundry only supported a synchronous integration with service brokers. This means that service brokers must return valid responses to all requests within 60 seconds. This also means that on receiving a success response to a provision request, users expect a service instance is immediately useable.
 
-With support for Asyncronous Operations, brokers may now respond that the requested operation has been accepted but is not complete, triggering Cloud Foundry to poll a new endpoint `/v2/service_instances/:guid/last_operation` until the broker indicates that the requested operation has succeeded or failed. During the intervening time, end users are able to discover the state of the requested operation using Cloud Foundry API clients. 
+With support for Asynchronous Operations, brokers may now respond that the requested operation has been accepted but is not complete, triggering Cloud Foundry to poll a new endpoint `/v2/service_instances/:guid/last_operation` until the broker indicates that the requested operation has succeeded or failed. During the intervening time, end users are able to discover the state of the requested operation using Cloud Foundry API clients.
 
-For an operation to be executed asynchronously, all three components (CF API client, CF, and broker) must support the feature. The parameter `accepts_incomplete=true` must be passed in a request by the CF API client, triggering CF to include the same parameter in a request to the broker. The broker can choose to execute the request synchronously or asynchronously.  
+For an operation to be executed asynchronously, all three components (CF API client, CF, and broker) must support the feature. The parameter `accepts_incomplete=true` must be passed in a request by the CF API client, triggering CF to include the same parameter in a request to the broker. The broker can choose to execute the request synchronously or asynchronously.
 
-If the broker executes the request asynchronously, the response must use the status code `202 ACCEPTED`; the response body should be the same as if the broker were serving the request synchronously. 
+If the broker executes the request asynchronously, the response must use the status code `202 ACCEPTED`; the response body should be the same as if the broker were serving the request synchronously.
 
-If the `accepts_incomplete=true` parameter is not included, and the broker can not fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request with the status code `422 UNPROCESSIBLE ENTITY` and the following body:
+If the `accepts_incomplete=true` parameter is not included, and the broker can not fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request with the status code `422 UNPROCESSABLE ENTITY` and the following body:
 
 <pre class="terminal">
 {
@@ -43,7 +43,7 @@ The Cloud Controller ensures that service brokers do not receive requests for an
 
 ## <a id='when-to-use-async'></a>When to use Asynchronous Service Operations ##
 
-Service brokers should respond to all Cloud Controller requests within 60 seconds. Brokers that can guarantee completion of the requested operation with the response may return the synchronous response (eg. `201 CREATED` for a provision request). Brokers that can not guarantee completion of the operation with the response should implement support for asynchronous provisioning. Support for asynchronous or asynchronous responses may vary by service offering, even by service plan. 
+Service brokers should respond to all Cloud Controller requests within 60 seconds. Brokers that can guarantee completion of the requested operation with the response may return the synchronous response (e.g. `201 CREATED` for a provision request). Brokers that can not guarantee completion of the operation with the response should implement support for asynchronous provisioning. Support for asynchronous or asynchronous responses may vary by service offering, even by service plan.
 
 ##  <a id='updated-apis'></a>Changes to existing APIs ##
 
@@ -215,7 +215,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 When a broker returns status code `202 ACCEPTED` for [provision](#provision), [update](#update), or [deprovision](#deprovision), Cloud Foundry will begin to poll the `/v2/service_instances/:guid/last_operation` endpoint to obtain the state of the last requested operation. The broker response must contain the field `state` and an optional field `description`.
 
-Valid values for `state` are `in progress`, `succeeded`, and `failed`. Cloud Foundry will poll the `last_operation` endpoint as long as the broker returns `"state": "in progress"`. Returning `"state": "succeeded"` or `"state": "failed"` will cause Cloud Foundry to cease polling. The value provided for `description` will be passed through to the CF API client and can be used to provide additional detail for users about the state of the operation. 
+Valid values for `state` are `in progress`, `succeeded`, and `failed`. Cloud Foundry will poll the `last_operation` endpoint as long as the broker returns `"state": "in progress"`. Returning `"state": "succeeded"` or `"state": "failed"` will cause Cloud Foundry to cease polling. The value provided for `description` will be passed through to the CF API client and can be used to provide additional detail for users about the state of the operation.
 
 ### Request ###
 
@@ -248,7 +248,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/las
 </tbody>
 </table>
 
-Responses with any other status code will be interpreted as an error or invalid response; Cloud Foundry will continue polling until the broker returns a valid response or the [polling timeout](#polling-timeout) is reached. Brokers may use the `description` field to expose user-facing error messages about the operation state; for more info see [Broker Errors](api.html#broker-errors).
+Responses with any other status code will be interpreted as an error or invalid response; Cloud Foundry will continue polling until the broker returns a valid response or the [maximum polling duration](#max-polling-duration) is reached. Brokers may use the `description` field to expose user-facing error messages about the operation state; for more info see [Broker Errors](api.html#broker-errors).
 
 ##### Body #####
 

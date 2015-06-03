@@ -19,6 +19,8 @@ With support for Asyncronous Operations, brokers may now respond that the reques
 
 For an operation to be executed asynchronously, all three components (CF API client, CF, and broker) must support the feature. The parameter `accepts_incomplete=true` must be passed in a request by the CF API client, triggering CF to include the same parameter in a request to the broker. The broker can choose to execute the request synchronously or asynchronously.  
 
+<p class='note'><strong>Note:</strong> Asynchronous Operations are currently supported only for provision, update, and deprovision. Bind and unbind will be added once the feature is considered stable.</p>
+
 If the broker executes the request asynchronously, the response must use the status code `202 ACCEPTED`; the response body should be the same as if the broker were serving the request synchronously. 
 
 If the `accepts_incomplete=true` parameter is not included, and the broker can not fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request with the status code `422 UNPROCESSIBLE ENTITY` and the following body:

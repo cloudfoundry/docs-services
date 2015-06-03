@@ -21,6 +21,8 @@ For an operation to be executed asynchronously, all three components (CF API cli
 
 If the broker executes the request asynchronously, the response must use the status code `202 ACCEPTED`; the response body should be the same as if the broker were serving the request synchronously.
 
+<p class='note'><strong>Note:</strong> Asynchronous Operations are currently supported only for provision, update, and deprovision. Bind and unbind will be added once the feature is considered stable.</p>
+
 If the `accepts_incomplete=true` parameter is not included, and the broker can not fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request with the status code `422 UNPROCESSABLE ENTITY` and the following body:
 
 <pre class="terminal">
@@ -295,5 +297,3 @@ When a broker responds asynchronously to a request from Cloud Foundry containing
 
 * An example broker that implements this feature can be found at [Example Service Brokers](examples.html).
 * A demo video of the CLI user experience using the above broker can be found [here](https://youtu.be/Ij5KSKrAq9Q).
-
-

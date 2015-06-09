@@ -2,9 +2,9 @@
 title: Supporting Multiple Cloud Foundry Instances
 ---
 
-It is possible to register a service broker with multiple Cloud Foundry instances. It may be necessary for the broker to know which Cloud Foundry instance is making a given request. For example: when using [Dashboard Single Sign-On](dashboard-sso.html), the broker is expected to interact with the authorization and token endpoints for a given Cloud Foundry instance.
+It is possible to register a service broker with multiple Cloud Foundry instances. It may be necessary for the broker to know which Cloud Foundry instance is making a given request. For example, when using [Dashboard Single Sign-On](dashboard-sso.html), the broker is expected to interact with the authorization and token endpoints for a given Cloud Foundry instance.
 
-There are a couple of strategies that may be used to discover which Cloud Foundry instance is making a given request.
+There are two strategies that can be used to discover which Cloud Foundry instance is making a given request.
 
 ## Routing & Authentication
 The broker can use unique credentials and/or a unique url for each Cloud Foundry instance. When registering the broker, different Cloud Foundry instances can be configured to use different base urls that include a unique id. For example:

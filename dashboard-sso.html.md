@@ -63,7 +63,7 @@ Users can then navigate to the service dashboard at the URL provided by `dashboa
 
 ### <a id='oauth2-flow'></a>OAuth2 Flow ###
 
-When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth2 login flow. A summary of the flow can be found in [section 1.2 of the OAuth2 RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth2 expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In Cloud Foundry, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field.
+When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth2 login flow. A summary of the flow can be found in [section 1.2 of the OAuth2 RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth2 expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In Cloud Foundry, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field. To enable brokered services to support SSO for multiple CF instances, we provide the /v2/info url in the `X-Api-Info-Location` header of each call.
 
 ```
 $ curl api.example-cf.com/info

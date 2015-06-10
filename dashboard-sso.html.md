@@ -63,16 +63,16 @@ Users can then navigate to the service dashboard at the URL provided by `dashboa
 
 ### <a id='oauth2-flow'></a>OAuth2 Flow ###
 
-When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth2 login flow. A summary of the flow can be found in [section 1.2 of the OAuth2 RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth2 expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In Cloud Foundry, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field. To enable brokered services to support SSO for multiple CF instances, we provide the /v2/info url in the `X-Api-Info-Location` header of each call.
+When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth2 login flow. A summary of the flow can be found in [section 1.2 of the OAuth2 RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth2 expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In Cloud Foundry, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field. 
 
 ```
 $ curl api.example-cf.com/info
-{"name":"vcap","build":"2222","support":"http://support.cloudfoundry.com","version":2,
-"description":"Cloud Foundry sponsored by Pivotal","authorization_endpoint":"https://login.example-cf.com",
-"token_endpoint":"https://uaa.example-cf.com","allow_debug":true}
+{"name":"vcap","build":"2222","support":"http://support.example-cf.com","version":2,"description":"Cloud Foundry sponsored by Pivotal","authorization_endpoint":"https://login.example-cf.com","token_endpoint":"https://uaa.example-cf.com","allow_debug":true}
 ```
 
-More specifically, a service dashboard should implement the OAuth2 Authorization Code Grant type ([UAA docs](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC docs](http://tools.ietf.org/html/rfc6749#section-4.1)).
+<p class='note'>To enable service dashboards to support SSO for service instances created from different Cloud Foundry instances, the /v2/info url is sent to service brokers in the `X-Api-Info-Location` header of every API call. A service dashboard should be able to discover this URL from the broker, and enabling the dashboard to contact the appropriate UAA for a particular service instance.</p>
+
+A service dashboard should implement the OAuth2 Authorization Code Grant type ([UAA docs](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC docs](http://tools.ietf.org/html/rfc6749#section-4.1)).
 
 1. When a user visits the service dashboard at the value of `dashboard_url`, the dashboard should redirect the user's browser to the Authorization Endpoint and include its `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and list of requested scopes.
 

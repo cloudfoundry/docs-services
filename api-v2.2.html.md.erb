@@ -397,7 +397,7 @@ For success responses, the following fields are valid.
 
 ## <a id='binding'></a>Binding ##
 
-<p class="note"><strong>Note</strong>: Not all services must be bindable --- some derive their value just from being provisioned. Brokers that do not provide any bindable services do not need to implement the endpoint for bind requests.</p>
+<p class="note"><strong>Note</strong>: Not all services must be bindable --- some deliver value just from being provisioned. Brokers that offer services that are not bindable should declare them as such using `bindable: false` in the [Catalog](#catalog-mgmt). Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
 
 When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 

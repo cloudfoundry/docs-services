@@ -70,6 +70,11 @@ Below are the changes to existing Broker API endpoints to include asynchronous o
   <td>boolean</td>
   <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous provisioning. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
 </tr>
+<tr>
+  <td>parameters</td>
+  <td>JSON Object</td>
+  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
+</tr>
 </tbody>
 </table>
 
@@ -79,7 +84,9 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
-  "space_guid":        "space-guid-here"
+  "space_guid":        "space-guid-here",
+  "parameters":        "parameters":{"param1-name-here": "param1-value-here",
+                                     "param2-name-here": "param2-value-here"}
 }' -X PUT -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
 </pre>
 
@@ -109,61 +116,72 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 ##### New Parameters #####
 
 <table border="1" class="nice">
-<thead>
-<tr>
-  <th>Query-String Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>accepts_incomplete</td>
-  <td>boolean</td>
-  <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous update. If this parameter is not included in the request, and the broker can only update an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
-</tr>
-</tbody>
+  <thead>
+  <tr>
+    <th>Query-String Field</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>accepts_incomplete</td>
+    <td>boolean</td>
+    <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous update. If this parameter is not included in the request, and the broker can only update an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
+  </tr>
+  <tr>
+    <td>service_id</td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>parameters</td>
+    <td>JSON Object/td>
+    <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
+  </tr>
+  </tbody>
 </table>
 
 ##### cURL #####
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
   "plan_id":           "plan-guid-here",
+  "parameters":        "parameters":{"param1-name-here": "param1-value-here",
+                                     "param2-name-here": "param2-value-here"}
 }' -X PATCH -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
 </pre>
 
 ##### New Response Codes #####
 
 <table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>202 Accepted</td>
-  <td>Service instance update is in progress. This triggers Cloud Controller to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
-</tr>
-</tbody>
+  <thead>
+  <tr>
+    <th>Status Code</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>202 Accepted</td>
+    <td>Service instance update is in progress. This triggers Cloud Controller to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
+  </tr>
+  </tbody>
 </table>
 
 ##### Updated Response Codes #####
 
 <table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>422 Unprocessable Entity</td>
-  <td>In addition to the behavior described in <a href="api.html#updating_service_instance">the stable API spec</a>, a <code>422</code> can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.</td>
-</tr>
-</tbody>
+  <thead>
+  <tr>
+    <th>Status Code</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>422 Unprocessable Entity</td>
+    <td>In addition to the behavior described in <a href="api.html#updating_service_instance">the stable API spec</a>, a <code>422</code> can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.</td>
+  </tr>
+  </tbody>
 </table>
 
 ### <a id='deprovision'></a> Deprovision ###

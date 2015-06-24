@@ -21,11 +21,9 @@ that do not understand them.
 
 ### <a id='api-changes-since-v2-4'></a>Changes Since v2.4 ###
 
-The key change from v2.4 to v2.5 is support for users to send service-specific configuration parameters along with provision, update and bind requests.
-
-The service_id is now included with update service instance requests.
-
-The app_guid is no longer guaranteed to be included with create service binding requests.
+1. Added support for users to send service-specific configuration parameters along with provision, update and bind requests.
+1. The `service_id` field is now included with update service instance requests.
+1. The `app_guid` is no longer guaranteed to be included with create service binding requests.
 
 ## <a id='dependencies'></a>Dependencies ##
 
@@ -33,7 +31,6 @@ v2.5 of the services API has been supported since:
 
 * [Final build 211](https://github.com/cloudfoundry/cf-release/tree/v211) of [cf-release](https://github.com/cloudfoundry/cf-release/)
 * v2.27.0 of the Cloud Controller API
-* v6.11.3 of the Cloud Foundry [Command Line Interface (CLI)](https://github.com/cloudfoundry/cli)
 
 ## <a id='api-overview'></a>API Overview ##
 
@@ -353,7 +350,7 @@ existing system.
 <tr>
   <td>parameters</td>
   <td>JSON object</td>
-  <td>Service-specific configuration parameters specified by the user. For a list of supported configuration parameters, see documentation for the particular service offering.</td>
+  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
 </tr>
 </tbody>
 </table>
@@ -381,7 +378,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
   "parameters":        {
     "parameter1": 1,
     "parameter2": "value"
-  }  
+  }
 }' -X PUT -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
 </pre>
 
@@ -463,7 +460,7 @@ To enable this functionality, a broker declares support for each service by incl
 
 ##### Body #####
 
-<table class="nice">
+<table border="1" class="nice">
 <thead>
 <tr>
   <th>Request Field</th>
@@ -480,7 +477,12 @@ To enable this functionality, a broker declares support for each service by incl
 <tr>
   <td>parameters</td>
   <td>JSON object</td>
-  <td>Service-specific configuration parameters specified by the user. For a list of supported configuration parameters, see documentation for the particular service offering.</td>
+  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
+</tr>
+<tr>
+  <td>service_id</td>
+  <td>string</td>
+  <td>The ID of the service within the catalog above. While not strictly necessary, some brokers might make use of this ID.</td>
 </tr>
 </tbody>
 </table>
@@ -499,6 +501,7 @@ To enable this functionality, a broker declares support for each service by incl
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
   "plan_id": "plan-guid-here",
+  "service_id": "service-guid-here",
   "parameters":        {
     "parameter1": 1,
     "parameter2": "value"
@@ -508,7 +511,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
 
 ### Response ###
 
-<table class="nice">
+<table border="1" class="nice">
 <thead>
 <tr>
   <th>Status Code</th>
@@ -577,14 +580,14 @@ the resource it creates.</p>
   <td>ID of the plan from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
 </tr>
 <tr>
-  <td>app_guid*</td>
+  <td>app_guid</td>
   <td>string</td>
-  <td>GUID of the application that you want to bind your service to.</td>
+  <td>GUID of the application that you want to bind your service to. Will be included when users bind applications to service instances. Will not be included when users create service keys.</td>
 </tr>
 <tr>
   <td>parameters</td>
   <td>JSON object</td>
-  <td>Service-specific configuration parameters specified by the user. For a list of supported configuration parameters, see documentation for the particular service offering.</td>
+  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
 </tr>
 </tbody>
 </table>
@@ -640,6 +643,10 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 <tr>
   <td>409 Conflict</td>
   <td>Should be returned if the requested binding already exists. The expected response body is `{}`, though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
+</tr>
+<tr>
+  <td>422 Unprocessable Entity</td>
+  <td>Should be returned if the broker requires that <code>app_guid</code> be included in the request body. The expected response body is: <code>{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }</code></td>
 </tr>
 </tbody>
 </table>

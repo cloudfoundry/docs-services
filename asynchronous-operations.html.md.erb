@@ -49,12 +49,12 @@ Service brokers should respond to all Cloud Controller requests within 60 second
 
 ##  <a id='updated-apis'></a>Changes to existing APIs ##
 
-Below are the changes to existing Broker API endpoints to include asynchronous operations. Note that these only include changes (such as new parameters, status codes, etc.), and do not represent the complete API. The latest stable broker API specification can be found [here](api.html).
+Below are the changes to existing Broker API endpoints to include asynchronous operations. Note that these only include changes (such as new fields, status codes, etc.), and do not represent the complete API. The latest stable broker API specification can be found [here](api.html).
 
 
 ### <a id='provision'></a> Provision ###
 
-##### New Parameters #####
+##### New Fields #####
 
 <table border="1" class="nice">
 <thead>
@@ -70,11 +70,6 @@ Below are the changes to existing Broker API endpoints to include asynchronous o
   <td>boolean</td>
   <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous provisioning. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
 </tr>
-<tr>
-  <td>parameters</td>
-  <td>JSON Object</td>
-  <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
-</tr>
 </tbody>
 </table>
 
@@ -84,9 +79,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
   "service_id":        "service-guid-here",
   "plan_id":           "plan-guid-here",
   "organization_guid": "org-guid-here",
-  "space_guid":        "space-guid-here",
-  "parameters":        "parameters":{"param1-name-here": "param1-value-here",
-                                     "param2-name-here": "param2-value-here"}
+  "space_guid":        "space-guid-here"
 }' -X PUT -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
 </pre>
 
@@ -113,7 +106,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 ### <a id='update'></a> Update Service ###
 
-##### New Parameters #####
+##### New Fields #####
 
 <table border="1" class="nice">
   <thead>
@@ -129,24 +122,13 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
     <td>boolean</td>
     <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous update. If this parameter is not included in the request, and the broker can only update an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
   </tr>
-  <tr>
-    <td>service_id</td>
-    <td>string</td>
-  </tr>
-  <tr>
-    <td>parameters</td>
-    <td>JSON Object/td>
-    <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
-  </tr>
   </tbody>
 </table>
 
 ##### cURL #####
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
-  "plan_id":           "plan-guid-here",
-  "parameters":        "parameters":{"param1-name-here": "param1-value-here",
-                                     "param2-name-here": "param2-value-here"}
+  "plan_id":           "plan-guid-here"
 }' -X PATCH -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
 </pre>
 
@@ -186,7 +168,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 ### <a id='deprovision'></a> Deprovision ###
 
-##### New Parameters #####
+##### New Fields #####
 
 <table border="1" class="nice">
 <thead>

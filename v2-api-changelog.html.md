@@ -3,11 +3,11 @@ title: v2 API Change Log
 ---
 
 ## 2015-06-23 ##
-service_id now included with update service instance request
-app_guid is no longer guaranteed to be included with create service binding request
+Bump API version to 2.5
 
-## 2015-05-19 ##
-Add support for arbitrary params; users can send service-specific configuration parameters along with provision, update and bind requests.
+* Add support for arbitrary parameters: service-specific configuration parameters that can be included with provision, update and bind requests
+* `app_guid` field is no longer guaranteed to be included with create service binding request
+* `service_id` field is now included with update service instance request
 
 ## 2015-05-15 ##
 Made it explicit that specified fields are supported for responses to create and bind requests, and that others will be ignored.

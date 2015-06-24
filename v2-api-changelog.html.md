@@ -2,6 +2,11 @@
 title: v2 API Change Log
 ---
 
+## 2015-06-23 ##
+Bump API version to 2.5
+
+Add support for arbitrary parameters: service-specific configuration parameters that can be included with provision, update and bind requests
+
 ## 2015-05-15 ##
 Made it explicit that specified fields are supported for responses to create and bind requests, and that others will be ignored.
 

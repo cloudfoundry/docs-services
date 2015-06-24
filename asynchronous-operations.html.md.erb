@@ -49,12 +49,12 @@ Service brokers should respond to all Cloud Controller requests within 60 second
 
 ##  <a id='updated-apis'></a>Changes to existing APIs ##
 
-Below are the changes to existing Broker API endpoints to include asynchronous operations. Note that these only include changes (such as new parameters, status codes, etc.), and do not represent the complete API. The latest stable broker API specification can be found [here](api.html).
+Below are the changes to existing Broker API endpoints to include asynchronous operations. Note that these only include changes (such as new fields, status codes, etc.), and do not represent the complete API. The latest stable broker API specification can be found [here](api.html).
 
 
 ### <a id='provision'></a> Provision ###
 
-##### New Parameters #####
+##### New Fields #####
 
 <table border="1" class="nice">
 <thead>
@@ -106,69 +106,69 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id?acc
 
 ### <a id='update'></a> Update Service ###
 
-##### New Parameters #####
+##### New Fields #####
 
 <table border="1" class="nice">
-<thead>
-<tr>
-  <th>Query-String Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>accepts_incomplete</td>
-  <td>boolean</td>
-  <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous update. If this parameter is not included in the request, and the broker can only update an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
-</tr>
-</tbody>
+  <thead>
+  <tr>
+    <th>Query-String Field</th>
+    <th>Type</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>accepts_incomplete</td>
+    <td>boolean</td>
+    <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous update. If this parameter is not included in the request, and the broker can only update an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
+  </tr>
+  </tbody>
 </table>
 
 ##### cURL #####
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id?accepts_incomplete=true -d '{
-  "plan_id":           "plan-guid-here",
+  "plan_id":           "plan-guid-here"
 }' -X PATCH -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
 </pre>
 
 ##### New Response Codes #####
 
 <table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>202 Accepted</td>
-  <td>Service instance update is in progress. This triggers Cloud Controller to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
-</tr>
-</tbody>
+  <thead>
+  <tr>
+    <th>Status Code</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>202 Accepted</td>
+    <td>Service instance update is in progress. This triggers Cloud Controller to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
+  </tr>
+  </tbody>
 </table>
 
 ##### Updated Response Codes #####
 
 <table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>422 Unprocessable Entity</td>
-  <td>In addition to the behavior described in <a href="api.html#updating_service_instance">the stable API spec</a>, a <code>422</code> can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.</td>
-</tr>
-</tbody>
+  <thead>
+  <tr>
+    <th>Status Code</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>422 Unprocessable Entity</td>
+    <td>In addition to the behavior described in <a href="api.html#updating_service_instance">the stable API spec</a>, a <code>422</code> can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.</td>
+  </tr>
+  </tbody>
 </table>
 
 ### <a id='deprovision'></a> Deprovision ###
 
-##### New Parameters #####
+##### New Fields #####
 
 <table border="1" class="nice">
 <thead>

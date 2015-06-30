@@ -401,7 +401,7 @@ Responses with any other status code will be interpreted as a failure and an unb
 <tr>
   <td>syslog_drain_url</td>
   <td>string</td>
-  <td>A URL to which Cloud Foundry should drain logs to for the bound application. For details, see <a href="app-log-streaming.html">Application Log Streaming</a>.</td>
+  <td>A URL to which Cloud Foundry should drain logs for the bound application. <code>requires:syslog_drain</code> must be declared in the <a href="#catalog-mgmt">catalog endpoint</a> or Cloud Foundry will consider the response invalid. For details, see <a href="app-log-streaming.html">Application Log Streaming</a>.</td>
 </tr>
 </tbody>
 </table>

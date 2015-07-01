@@ -1,0 +1,414 @@
+---
+title: Brooklyn Service Broker (Experimental)
+---
+
+<p class='note'><strong>Warning:</strong> Brooklyn Service Broker is currently in the Cloud Foundry Incubator and is subject to backwards incompatible changes.</p>
+
+## <a id='summary'></a>Summary ##
+The Brooklyn Service Broker enables Cloud Foundry users to create and manage services with Apache Brooklyn. Rather than creating a new Service Broker, users create service specifications to be added to the Brooklyn catalog.  Instances of these services are then created using the Service Broker API.
+
+In addition to creating instances of services, the Brooklyn Service Broker interacts with the Brooklyn Server to manage the service's lifecycle.  This is implemented through a number of additional API endpoints, which are described below.  There is also a Cloud Foundry [CLI plugin](http://plugins.cloudfoundry.org/ui/) that makes use of these endpoints.
+
+## <a id='installation'></a>Installation ##
+<p class='note'><strong>Note:</strong> This assumes a running instance of Apache Brooklyn.  If not, please follow the links at the bottom to get set up.</p>
+First an application manifest is required, which contains environment variables that describe the connection and authentication details for Brookyln and that set those for the broker.
+
+```
+applications:
+- name: Brooklyn-Service-Broker
+  env:
+    BROOKLYN_URI: http://brooklyn-uri:8081
+    BROOKLYN_USERNAME: brooklyn-username
+    BROOKLYN_PASSWORD: brooklyn-password
+    SECURITY_USER_NAME: username
+    SECURITY_USER_PASSWORD: password
+```
+
+Then push the application:
+<pre class="terminal">
+$ cf push -p path/to/brooklyn-service-broker.war -b https://github.com/cloudfoundry/java-buildpack.git
+</pre>
+and register it with the Cloud Controller:
+<pre class="terminal">
+$ cf create-service-broker brooklyn username password http://broker-url
+</pre>
+## <a id='create'></a>Creating a New Catalog Item ##
+<p class='note'><strong>Note:</strong> For more information on writing Blueprints for Apache Brooklyn visit <a href='http://brooklyn.incubator.apache.org/v/latest/yaml/creating-yaml.html'>here</a></p>
+The first of the additional endpoints allows Brooklyn Blueprints to be added to the Brooklyn catalog.  Whenever additional catalog items are added, it is important to run the `update-service-broker` command to allow these to be brought into the marketplace.
+
+### Request ###
+
+##### Route #####
+`POST /create`
+
+##### Body #####
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Request field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>brooklyn.catalog*</td>
+  <td>JSON object</td>
+  <td>Schema of brooklyn.catalog objects defined below:</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;id*</td>
+  <td>string</td>
+  <td>An identifier used to correlate this service in future requests to the catalog. This must be unique within Brooklyn, using a GUID is recommended. </td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;version*</td>
+  <td>string</td>
+  <td>An identifier used distinguish between multiple versions of the same blueprint. </td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;iconUrl</td>
+  <td>string</td>
+  <td>The uri to an icon for this service.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;itemType*</td>
+  <td>string</td>
+  <td>The type of catalog entry. To show up in the service broker this must be set to `template`. </td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;name*</td>
+  <td>string</td>
+  <td>The name of the catalog entry. </td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;description</td>
+  <td>string</td>
+  <td>A description of the blueprint being added to the brooklyn catalog. </td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;item*</td>
+  <td>JSON object</td>
+  <td>An object representing a brooklyn blueprint to be stored as a catalog item. See Brooklyn help for instructions on writing blueprints.</td>
+</tr>
+</tbody>
+</table>
+
+\* Fields with an asterisk are required.
+
+<pre class="terminal">
+{ 
+  "brooklyn.catalog": { 
+    "id": "datastore", 
+    "version": "1.1", 
+    "itemType": "template", 
+    "iconUrl": "classpath://brooklyn/entity/nosql/riak/riak.png", 
+    "name": "Datastore (Riak)", 
+    "description": "Riak is an open-source NoSQL key-value data store.", 
+    "item": { 
+      "services":[{ 
+        "name": "Riak Node", 
+        "type": "brooklyn.entity.nosql.riak.RiakNode"
+      }] 
+    } 
+  } 
+}
+</pre>
+
+##### cURL #####
+<pre class="terminal">
+ $ curl http://user:password@broker-url/create -d '{ 
+  "brooklyn.catalog": { 
+    "id": "datastore", 
+    "version": "1.1", 
+    "itemType": "template", 
+    "iconUrl": "classpath://brooklyn/entity/nosql/riak/riak.png", 
+    "name": "Datastore (Riak)", 
+    "description": "Riak is an open-source NoSQL key-value data store.", 
+    "item": { 
+      "services":[{ 
+        "name": "Riak Node", 
+        "type": "brooklyn.entity.nosql.riak.RiakNode"
+      }] 
+    } 
+  } 
+}' -X POST
+</pre>
+
+### Response ###
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>The expected response body is below</td>
+</tr>
+</tbody>
+</table>
+
+## <a id='delete'></a>Deleting a Catalog Item ##
+Brooklyn Catalog items can also be deleted, a version is specified to distinguish between different items with the same id.
+
+### Request ###
+
+##### Route #####
+`DELETE /delete/:id/:version`
+
+The `:id` is the ID of the blueprint to be deleted from the brooklyn catalog, and the `:version` is the version of the specified blueprint to be deleted.
+
+##### cURL #####
+<pre class="terminal">
+ $ curl -X DELETE http://user:password@broker-url/delete/datastore/1.0/
+</pre>
+
+### Response ###
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>The expected response body is below</td>
+</tr>
+</tbody>
+</table>
+
+## <a id='sensors'></a>Getting Sensor Data ##
+Running instances of services in Brooklyn emit sensor data about various aspects relating its management, which can also be accessed through the Broker.  These data are also used to populate `VCAP_SERVICES` when the instance is bound to an application, but given that they are liable to change, it is useful to be able to get up-to-date information about services at any time.
+
+### Request ###
+
+##### Route #####
+`GET /sensors/:instance_id`
+
+The `:instance_id` is the ID of a previously-provisioned service instance.
+
+##### cURL #####
+<pre class="terminal">
+ $ curl http://user:password@brooklyn-url/sensors/riak
+</pre>
+
+### Response ###
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>The expected response body is below</td>
+</tr>
+</tbody>
+</table>
+
+##### Body #####
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>services*</td>
+  <td>array-of-objects</td>
+  <td>Schema of service objects defined below:</td>
+</tr>
+</tbody>
+</table>
+
+\* Fields with an asterisk are required.
+
+<pre class="terminal">
+{
+  Riak Node: {
+    host.name: "127.0.0.1",
+    riak.webPort: 8098,
+    service.state: "RUNNING",
+    riak.node: "riak@127.0.0.1",
+    host.address: "127.0.0.1",
+    main.uri: "http://127.0.0.1:8098/admin",
+	...
+  }
+}
+</pre>
+
+## <a id='effectors'></a>Getting Effectors ##
+Every service in Brooklyn has a set of effectors which can effect change in that service, such as scaling out, cluster management, or restarting nodes.  This endpoint allows the user to view which effectors are available for all of the entities that make up the service.
+
+### Request ###
+
+##### Route #####
+`GET /effectors/:instance_id`
+
+The `:instance_id` is the ID of a previously-provisioned service instance.
+
+##### cURL #####
+<pre class="terminal">
+ $ curl http://user:password@broker-url/effectors/riak
+</pre>
+
+### Response ###
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>The expected response body is below</td>
+</tr>
+</tbody>
+</table>
+
+##### Body #####
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>children*</td>
+  <td>JSON Object</td>
+  <td>Schema of service objects defined below:</td>
+</tr>
+</tbody>
+</table>
+
+<pre class="terminal">
+{
+  "children": {
+    "Riak Node": {
+      ...
+	  "Sy3S0TrD:bucketTypeCreate": {
+	    "name": "bucketTypeCreate",
+	    "returnType": "void",
+	    "parameters": [{
+	      "name": "bucketTypeName",
+	      "type": "java.lang.String",
+	      "description": null,
+	      "defaultValue": null
+	    },
+	    {
+	      "name": "bucketTypeProperties",
+	      "type": "java.lang.String",
+	      "description": null,
+	      "defaultValue": null
+	    }],
+	    "description": "Create or modify a bucket type before activation",
+	    "links": {
+	      "self": "/v1/applications/SYiKl6re/entities/Sy3S0TrD/effectors/bucketTypeCreate",
+	      "entity": "/v1/applications/SYiKl6re/entities/Sy3S0TrD",
+	      "application": "/v1/applications/SYiKl6re"
+	    }
+	  },
+	  ...
+    }
+  }
+}
+</pre>
+## <a id='invoke_effectors'></a>Invoking Effectors ##
+Once an effector has been identified, it can be invoked to effect the change in that service.  Most effectors come with additional optional parameters that may be set.
+
+### Request ###
+
+##### Route #####
+`POST /invoke/:instance_id/:entity/:effector`
+
+The `:instance_id` is the ID of a previously-provisioned service instance.  The `:entity` is the Brooklyn entity, and the `:effector` corresponds to the effector for that entity.
+
+##### cURL #####
+<pre class="terminal">
+ $ curl http://user:password@brooklyn-url/invoke/riak/Sy3S0TrD/bucketTypeCreate -d '{
+  "stopMachineMode": "NEVER" 
+}' -X POST -H "Content-Type: application/json"
+
+</pre>
+
+### Response ###
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>The expected response body is below</td>
+</tr>
+</tbody>
+</table>
+
+## <a id='running_status'></a>Running Status ##
+Although the running status of a service can be determined throught the call to the sensors endpoint, as a convenience this endpoint returns only the sensor which specifies whether it is running.
+
+### Request ###
+
+##### Route #####
+`GET /is-running/:instance_id`
+
+
+##### cURL #####
+<pre class="terminal">
+ $ curl http://user:password@brooklyn-url/is-running/riak
+</pre>
+
+### Response ###
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Status Code</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>200 OK</td>
+  <td>The expected response body is below</td>
+</tr>
+</tbody>
+</table>
+
+##### Body #####
+
+<pre class="terminal">
+true
+</pre>
+
+
+## <a id='additional-resources'></a>Additional Resources ##
+
+* More information on [Apache Brooklyn](http://brooklyn.incubator.apache.org/).
+* A Blog with demo video of the CLI user experience using the above broker can be found [here](http://www.cloudsoftcorp.com/blog/2015/02/integrating-cloud-foundry-apache-brooklyn-part-1-service-broker/).

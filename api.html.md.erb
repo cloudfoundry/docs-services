@@ -477,6 +477,31 @@ To enable this functionality, a broker declares support for each service by incl
   <td>JSON object</td>
   <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
 </tr>
+<tr>
+  <td>previous_values</td>
+  <td>object</td>
+  <td>Information about the instance prior to the update.</td>
+</tr>
+<tr>
+  <td>previous_values.plan_id</td>
+  <td>string</td>
+  <td>ID of the plan prior to the update.</td>
+</tr>
+<tr>
+  <td>previous_values.service_id</td>
+  <td>string</td>
+  <td>ID of the service for the instance.</td>
+</tr>
+<tr>
+  <td>previous_values.organization_id</td>
+  <td>string</td>
+  <td>ID of the organization containing the instance.</td>
+</tr>
+<tr>
+  <td>previous_values.space_id</td>
+  <td>string</td>
+  <td>ID of the space containing the instance..</td>
+</tr>
 </tbody>
 </table>
 
@@ -486,6 +511,12 @@ To enable this functionality, a broker declares support for each service by incl
   "parameters":        {
     "parameter1": 1,
     "parameter2": "value"
+  },
+  "previous_values": {
+    "plan_id": "old-plan-guid-here",
+    "service_id": "service-guid-here",
+    "organization_id": "org-guid-here",
+    "space_id": "space-guid-here"
   }
 }
 </pre>

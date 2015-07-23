@@ -1,17 +1,18 @@
 ---
 title: v2 API Change Log
 ---
+
+## 2015-07-23 ##
+Bump API version to 2.6
+
+* `app_guid` field is no longer guaranteed to be included with create service binding request
+* `service_id` field is now included with update service instance request
+
 ## 2015-07-15 ##
 Add compatible CLI version for API version 2.5
 
 ## 2015-07-2 ##
 Add missing documentation for service instance update `previous_values` field to API versions 2.4 and 2.5.
-
-## 2015-06-24 ##
-Bump API version to 2.6
-
-* `app_guid` field is no longer guaranteed to be included with create service binding request
-* `service_id` field is now included with update service instance request
 
 ## 2015-06-23 ##
 Bump API version to 2.5

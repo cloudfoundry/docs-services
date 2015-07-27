@@ -21,16 +21,15 @@ that do not understand them.
 
 ### <a id='api-changes-since-v2-4'></a>Changes Since v2.4 ###
 
-1. Added support for users to send service-specific configuration parameters along with provision, update and bind requests.
-1. The `service_id` field is now included with update service instance requests.
-1. The `app_guid` is no longer guaranteed to be included with create service binding requests.
+Added support for users to send service-specific configuration parameters along with provision, update and bind requests.
 
 ## <a id='dependencies'></a>Dependencies ##
 
 v2.5 of the services API has been supported since:
 
-* [Final build 211](https://github.com/cloudfoundry/cf-release/tree/v211) of [cf-release](https://github.com/cloudfoundry/cf-release/)
+* [Final build 209](https://github.com/cloudfoundry/cf-release/tree/v209) of [cf-release](https://github.com/cloudfoundry/cf-release/)
 * v2.27.0 of the Cloud Controller API
+* CLI [v6.12.1](https://github.com/cloudfoundry/cli/releases/tag/v6.12.1)
 
 ## <a id='api-overview'></a>API Overview ##
 
@@ -480,9 +479,29 @@ To enable this functionality, a broker declares support for each service by incl
   <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
 </tr>
 <tr>
-  <td>service_id</td>
+  <td>previous_values</td>
+  <td>object</td>
+  <td>Information about the instance prior to the update.</td>
+</tr>
+<tr>
+  <td>previous_values.plan_id</td>
   <td>string</td>
-  <td>The ID of the service within the catalog above. While not strictly necessary, some brokers might make use of this ID.</td>
+  <td>ID of the plan prior to the update.</td>
+</tr>
+<tr>
+  <td>previous_values.service_id</td>
+  <td>string</td>
+  <td>ID of the service for the instance.</td>
+</tr>
+<tr>
+  <td>previous_values.organization_id</td>
+  <td>string</td>
+  <td>ID of the organization containing the instance.</td>
+</tr>
+<tr>
+  <td>previous_values.space_id</td>
+  <td>string</td>
+  <td>ID of the space containing the instance..</td>
 </tr>
 </tbody>
 </table>
@@ -493,6 +512,12 @@ To enable this functionality, a broker declares support for each service by incl
   "parameters":        {
     "parameter1": 1,
     "parameter2": "value"
+  },
+  "previous_values": {
+    "plan_id": "old-plan-guid-here",
+    "service_id": "service-guid-here",
+    "organization_id": "org-guid-here",
+    "space_id": "space-guid-here"
   }
 }
 </pre>
@@ -501,10 +526,15 @@ To enable this functionality, a broker declares support for each service by incl
 <pre class="terminal">
 $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d '{
   "plan_id": "plan-guid-here",
-  "service_id": "service-guid-here",
   "parameters":        {
     "parameter1": 1,
     "parameter2": "value"
+  },
+  "previous_values": {
+    "plan_id": "old-plan-guid-here",
+    "service_id": "service-guid-here",
+    "organization_id": "org-guid-here",
+    "space_id": "space-guid-here"
   }
 }' -X PATCH -H "X-Broker-API-Version: 2.5" -H "Content-Type: application/json"
 </pre>
@@ -580,7 +610,7 @@ the resource it creates.</p>
   <td>ID of the plan from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
 </tr>
 <tr>
-  <td>app_guid</td>
+  <td>app_guid*</td>
   <td>string</td>
   <td>GUID of the application that you want to bind your service to. Will be included when users bind applications to service instances. Will not be included when users create service keys.</td>
 </tr>
@@ -644,10 +674,6 @@ In this case, `instance_id` refers to the id of an existing service instance in 
   <td>409 Conflict</td>
   <td>Should be returned if the requested binding already exists. The expected response body is `{}`, though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
 </tr>
-<tr>
-  <td>422 Unprocessable Entity</td>
-  <td>Should be returned if the broker requires that <code>app_guid</code> be included in the request body. The expected response body is: <code>{ "error": "RequiresApp", "description": "This service supports generation of credentials through binding an application only." }</code></td>
-</tr>
 </tbody>
 </table>
 
@@ -676,7 +702,7 @@ For success responses, the following fields are supported. Others will be ignore
 <tr>
   <td>syslog_drain_url</td>
   <td>string</td>
-  <td>A URL to which Cloud Foundry should drain logs to for the bound application. For details, see <a href="app-log-streaming.html">Application Log Streaming</a>.</td>
+  <td>A URL to which Cloud Foundry should drain logs for the bound application. <code>requires:syslog_drain</code> must be declared in the <a href="#catalog-mgmt">catalog endpoint</a> or Cloud Foundry will consider the response invalid. For details, see <a href="app-log-streaming.html">Application Log Streaming</a>.</td>
 </tr>
 </tbody>
 </table>

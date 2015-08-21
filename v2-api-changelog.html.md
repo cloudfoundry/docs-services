@@ -34,7 +34,7 @@ Updated Orphans section of the API to document the new behavior of reducing like
 Bug fix in documentation. Clarified what valid JSON is for API responses expected: valid JSON are JSON Objects ({}) and not arrays.
 
 ## 2015-01-05 ##
-Bug found in [the v2 doc](api.html). It refers to the service broker API Catalog attribute `plan_updateable` as `plan_updatable` (correct spelling). This is an unfortunate mispelling. Instead of correcting the spelling and breaking backward compatibility, we have opted to keep that misspelling and change the docs to use the misspelled attribute. We have also added a note to explain the issue.
+Bug found in [the v2 doc](api.html). It refers to the service broker API Catalog attribute `plan_updateable` as `plan_updatable` (correct spelling). This is an unfortunate misspelling. Instead of correcting the spelling and breaking backward compatibility, we have opted to keep that misspelling and change the docs to use the misspelled attribute. We have also added a note to explain the issue.
 
 ## 2014-09-26 ##
 Bug found in [the v2 doc](api.html). It indicated that the broker would try to

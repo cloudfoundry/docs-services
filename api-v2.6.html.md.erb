@@ -1,5 +1,5 @@
 ---
-title: Service Broker API v2.7
+title: Service Broker API v2.6
 ---
 
 ## <a id='changelog'></a>Document Changelog ##
@@ -19,17 +19,17 @@ added to enable support for new features.
 These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-### <a id='api-changes-since-v2-6'></a>Changes Since v2.6 ###
+### <a id='api-changes-since-v2-4'></a>Changes Since v2.5 ###
 
-1. [Asynchronous operations](#asynchronous-operations) for [provisioning](#provisioning), [updating](#updating_service_instance), and [deprovisioning](#deprovisioning) are no longer experimental.
-1. Added support for querying `last_operation` status at new [endpoint](#polling) `GET /v2/service_instances/:guid/last_operation`
+1. The `service_id` field is now included with update service instance requests.
+1. The `app_guid` is no longer guaranteed to be included with create service binding requests.
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.7 of the services API has been supported since:
+v2.6 of the services API has been supported since:
 
-* [Final build 218](https://github.com/cloudfoundry/cf-release/tree/v218) of [cf-release](https://github.com/cloudfoundry/cf-release/)
-* v2.37.0 of the Cloud Controller API
+* [Final build 213](https://github.com/cloudfoundry/cf-release/tree/v213) of [cf-release](https://github.com/cloudfoundry/cf-release/)
+* v2.33.0 of the Cloud Controller API
 * CLI [v6.12.1](https://github.com/cloudfoundry/cli/releases/tag/v6.12.1)
 
 ## <a id='api-overview'></a>API Overview ##
@@ -64,7 +64,7 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
 such that 2.9 comes before 2.10.
 An example of this header as of publication time is:
 
-`X-Broker-Api-Version: 2.7`
+`X-Broker-Api-Version: 2.6`
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -114,7 +114,7 @@ no longer be visible in the marketplace catalog or be provisionable.
 
 ##### cURL #####
 <pre class="terminal">
- $ curl -H "X-Broker-API-Version: 2.7" http://username:password@broker-url/v2/catalog
+ $ curl -H "X-Broker-API-Version: 2.6" http://username:password@broker-url/v2/catalog
 </pre>
 
 ### Response ###
@@ -288,127 +288,6 @@ Once you've implemented the first endpoint `GET /v2/catalog` above, you'll want
 to [register the broker with CF](managing-service-brokers.html#register-broker)
 to make your services and plans available to end users.
 
-## <a id='asynchronous-operations'></a>Asynchronous Operations ##
-
-Previously, Cloud Foundry only supported synchronous integration with service brokers. Brokers must return a valid response within 60 seconds and if the response is `201 CREATED`, users expect a service instance to be usable. This limits the services brokers can offer to those that can be provisioned in 60 seconds; brokers could return a success prematurely, but this leaves users wondering why their service instance is not usable and when it will be.
-
-With support for Asynchronous Operations, brokers still must respond within 60 seconds but may now return a `202 ACCEPTED`, indicating that the requested operation has been accepted but is not complete. This triggers Cloud Foundry to poll a new endpoint `/v2/service_instances/:guid/last_operation` until the broker indicates that the requested operation has succeeded or failed. During the intervening time, end users are able to discover the state of the requested operation using Cloud Foundry API clients such as the CLI.
-
-For an operation to be executed asynchronously, all three components (CF API client, CF, and broker) must support the feature. The parameter `accepts_incomplete=true` must be passed in a request by the CF API client, triggering CF to include the same parameter in a request to the broker. The broker can then choose to execute the request synchronously or asynchronously.
-
-If the broker executes the request asynchronously, the response must use the status code `202 ACCEPTED`; the response body should be the same as if the broker were serving the request synchronously.
-
-<p class='note'><strong>Note:</strong> Asynchronous Operations are currently supported only for provision, update, and deprovision. Bind and unbind will be added once the feature is considered stable.</p>
-
-If the `accepts_incomplete=true` parameter is not included, and the broker can not fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request with the status code `422 UNPROCESSABLE ENTITY` and the following body:
-
-<pre class="terminal">
-{
-  "error": "AsyncRequired",
-  "description": "This service plan requires client support for asynchronous service operations."
-}
-</pre>
-
-To execute a request synchronously, the broker need only return the usual status codes; `201 CREATED` for create, and `200 OK` for update and delete.
-
-### <a id='sequence-diagram'></a>Sequence Diagram ###
-<a href='images/async-service-broker-flow.png' target='_blank'>
-  <%= image_tag("images/async-service-broker-flow.png", :width =>"1250", :height =>"823", :style => 'background-color:#fff') %>
-</a>
-
-### <a id='blocking'></a>Blocking Operations ###
-
-The Cloud Controller ensures that service brokers do not receive requests for an instance while an asynchronous operation is in progress. For example, if a broker is in the process of provisioning an instance asynchronously, the Cloud Controller will not allow any update, bind, unbind, or deprovision requests to be made through the platform. A user who attempts to perform one of these actions while an operation is already in progress will get an HTTP 400 with error message "Another operation for this service instance is in progress."
-
-### <a id='when-to-use-async'></a>When to use Asynchronous Service Operations ###
-
-Service brokers should respond to all Cloud Controller requests within 60 seconds. Brokers that can guarantee completion of the requested operation with the response may return the synchronous response (e.g. `201 CREATED` for a provision request). Brokers that can not guarantee completion of the operation with the response should implement support for asynchronous provisioning. Support for asynchronous or asynchronous responses may vary by service offering, even by service plan.
-
-## <a id='polling'></a>Polling Last Operation (async only) ##
-
-When a broker returns status code `202 ACCEPTED` for [provision](#provision), [update](#update), or [deprovision](#deprovision), Cloud Foundry will begin to poll the `/v2/service_instances/:guid/last_operation` endpoint to obtain the state of the last requested operation. The broker response must contain the field `state` and an optional field `description`.
-
-Valid values for `state` are `in progress`, `succeeded`, and `failed`. Cloud Foundry will poll the `last_operation` endpoint as long as the broker returns `"state": "in progress"`. Returning `"state": "succeeded"` or `"state": "failed"` will cause Cloud Foundry to cease polling. The value provided for `description` will be passed through to the CF API client and can be used to provide additional detail for users about the state of the operation.
-
-### Request ###
-
-##### Route #####
-`GET /v2/service_instances/:instance_id/last_operation`
-
-##### cURL #####
-<pre class="terminal">
-$ curl http://username:password@broker-url/v2/service_instances/:instance_id/last_operation
-</pre>
-
-### Response ###
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Status Code</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>200 OK</td>
-  <td>The expected response body is below.</td>
-</tr>
-<tr>
-  <td>410 GONE</td>
-  <td>Appropriate only for asynchronous delete requests. Cloud Foundry will consider this response a success and remove the resource from its database. The expected response body is <code>{}</code>. Returning this while Cloud Foundry is polling for create or update operations will be interpreted as an invalid response and Cloud Foundry will continue polling.</td>
-</tr>
-</tbody>
-</table>
-
-Responses with any other status code will be interpreted as an error or invalid response; Cloud Foundry will continue polling until the broker returns a valid response or the [maximum polling duration](#max-polling-duration) is reached. Brokers may use the `description` field to expose user-facing error messages about the operation state; for more info see [Broker Errors](api.html#broker-errors).
-
-##### Body #####
-
-All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
-
-For success responses, the following fields are valid.
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>state*</td>
-  <td>string</td>
-  <td>Valid values are <code>in progress</code>, <code>succeeded</code>, and <code>failed</code>. While <code>"state": "in progress"</code>, Cloud Foundry will continue polling. A response with <code>"state": "succeeded"</code> or <code>"state": "failed"</code> will cause Cloud Foundry to cease polling.</td>
-</tr>
-<tr>
-  <td>description</td>
-  <td>string</td>
-  <td>Optional field. A user-facing message displayed to the Cloud Foundry API client. Can be used to tell the user details about the status of the operation.</td>
-</tr>
-</tboby>
-</table>
-
-<pre class="terminal">
-{
-  "state": "in progress",
-  "description": "Creating service (10% complete)."
-}
-</pre>
-
-### <a id='polling-interval'></a> Polling Interval ###
-When a broker responds asynchronously to a request from Cloud Foundry containing the `accepts_incomplete=true` parameter, Cloud Foundry will poll the broker for the operation state at a configured interval. The Cloud Foundry operator can configure this interval in the BOSH deployment manifest using the property `properties.cc.broker_client_default_async_poll_interval_seconds` (defaults to 60 seconds). The maximum supported polling interval is 86400 seconds (24 hours).
-
-### <a id='max-polling-duration'></a>Maximum Polling Duration ###
-When a broker responds asynchronously to a request from Cloud Foundry containing the `accepts_incomplete=true` parameter, Cloud Foundry will poll the broker for the operation state until the broker response includes `"state":"succeeded"` or `"state":"failed"`, or until a maximum polling duration is reached. If the max polling duration is reached, Cloud Foundry will cease polling and the operation state will be considered `failed`. The Cloud Foundry operator can configure this max polling duration in the BOSH deployment manifest using the property `properties.cc.broker_client_max_async_poll_duration_minutes` (defaults to 10080 minutes or 1 week).
-
-### <a id='additional-resources'></a>Additional Resources ###
-
-* An example broker that implements this feature can be found at [Example Service Brokers](examples.html).
-* A demo video of the CLI user experience using the above broker can be found [here](https://youtu.be/Ij5KSKrAq9Q).
-
 ## <a id='provisioning'></a>Provisioning ##
 
 When the broker receives a provision request from Cloud Controller, it should
@@ -473,11 +352,6 @@ existing system.
   <td>JSON object</td>
   <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
 </tr>
-<tr>
-  <td>accepts_incomplete</td>
-  <td>boolean</td>
-  <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous provisioning. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
-</tr>
 </tbody>
 </table>
 
@@ -505,7 +379,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
     "parameter1": 1,
     "parameter2": "value"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.7" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.6" -H "Content-Type: application/json"
 </pre>
 
 In this case, `instance_id` refers to the service instance id generated by Cloud
@@ -533,16 +407,8 @@ Controller
   </td>
 </tr>
 <tr>
-  <td>202 Accepted</td>
-  <td>Service instance creation is in progress. This triggers Cloud Controller to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
-</tr>
-<tr>
   <td>409 Conflict</td>
   <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
-</tr>
-<tr>
-  <td>422 Unprocessable Entity</td>
-  <td>Should be returned if the broker only supports asynchronous provisioning for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.</td>
 </tr>
 </tbody>
 </table>
@@ -643,11 +509,6 @@ To enable this functionality, a broker declares support for each service by incl
   <td>string</td>
   <td>ID of the space containing the instance..</td>
 </tr>
-<tr>
-  <td>accepts_incomplete</td>
-  <td>boolean</td>
-  <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous update. If this parameter is not included in the request, and the broker can only update an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
-</tr>
 </tbody>
 </table>
 
@@ -683,7 +544,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
-}' -X PATCH -H "X-Broker-API-Version: 2.7" -H "Content-Type: application/json"
+}' -X PATCH -H "X-Broker-API-Version: 2.6" -H "Content-Type: application/json"
 </pre>
 
 ### Response ###
@@ -701,13 +562,9 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
   <td>New plan is effective. The expected response body is `{}`.</td>
 </tr>
 <tr>
-  <td>202 Accepted</td>
-  <td>Service instance update is in progress. This triggers Cloud Controller to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
-</tr>
-<tr>
   <td>422 Unprocessable entity</td>
   <td>
-    May be returned if the particular plan change requested is not supported or if the request can not currently be fulfilled due to the state of the instance (eg. instance utilization is over the quota of the requested plan). Broker should include a user-facing message in the body; for details see <a href="#broker-errors">Broker Errors</a>.  Additionally, a <code>422</code> can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code></a>.
+    May be returned if the particular plan change requested is not supported or if the request can not currently be fulfilled due to the state of the instance (eg. instance utilization is over the quota of the requested plan). Broker should include a user-facing message in the body; for details see <a href="#broker-errors">Broker Errors</a>.
   </td>
 </tr>
 </tbody>
@@ -919,7 +776,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.7"
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.6"
 </pre>
 
 ### Response ###
@@ -990,18 +847,13 @@ The request provides these query string parameters as useful hints for brokers.
   <td>string</td>
   <td>ID of the plan from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
 </tr>
-<tr>
-  <td>accepts_incomplete</td>
-  <td>boolean</td>
-  <td>A value of true indicates that both the Cloud Controller and the requesting client support asynchronous deprovisioning. If this parameter is not included in the request, and the broker can only deprovision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
-</tr>
 </tbody>
 </table>
 
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?service_id=
-    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.7"
+    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.6"
 </pre>
 
 ### Response ###
@@ -1019,16 +871,8 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?se
   <td>Service instance was deleted. The expected response body is "{}"</td>
 </tr>
 <tr>
-  <td>202 Accepted</td>
-  <td>Service instance deletion is in progress. This triggers Cloud Controller to poll the <a href="#polling">Service Instance Last Operation Endpoint</a> for operation status.</td>
-</tr>
-<tr>
   <td>410 Gone</td>
   <td>Should be returned if the service instance does not exist. The expected response body is "{}"</td>
-</tr>
-<tr>
-  <td>422 Unprocessable Entity</td>
-  <td>Should be returned if the broker only supports asynchronous deprovisioning for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code>, as described below.</td>
 </tr>
 </tbody>
 </table>

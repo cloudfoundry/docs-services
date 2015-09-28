@@ -326,7 +326,7 @@ Service brokers should respond to all Cloud Controller requests within 60 second
 
 ## <a id='polling'></a>Polling Last Operation (async only) ##
 
-When a broker returns status code `202 ACCEPTED` for [provision](#provision), [update](#update), or [deprovision](#deprovision), Cloud Foundry will begin to poll the `/v2/service_instances/:guid/last_operation` endpoint to obtain the state of the last requested operation. The broker response must contain the field `state` and an optional field `description`.
+When a broker returns status code `202 ACCEPTED` for [provision](#provisioning), [update](#updating_service_instance), or [deprovision](#deprovisioning), Cloud Foundry will begin to poll the `/v2/service_instances/:guid/last_operation` endpoint to obtain the state of the last requested operation. The broker response must contain the field `state` and an optional field `description`.
 
 Valid values for `state` are `in progress`, `succeeded`, and `failed`. Cloud Foundry will poll the `last_operation` endpoint as long as the broker returns `"state": "in progress"`. Returning `"state": "succeeded"` or `"state": "failed"` will cause Cloud Foundry to cease polling. The value provided for `description` will be passed through to the CF API client and can be used to provide additional detail for users about the state of the operation.
 

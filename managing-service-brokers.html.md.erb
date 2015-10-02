@@ -118,6 +118,16 @@ OK
 
 `purge-service-offering` requires cf-release v160 and edge of cf CLI 6.0.2.
 
+### <a id='purge-service-instance'></a>Purge a Service Instance###
+
+The following command will delete a single service instance, its service bindings and its service keys from the Cloud Controller database, without making any API calls to a service broker.
+This can be helpful in instances a Service Broker is not conforming to the Service Broker API and not returning a 200 or 410 to requests to delete the service instance.
+This requires cf-release v218.
+
+<pre class="terminal">
+$cf curl /v2/service_instances/my-service-guid?purge=true -X DELETE
+</pre>
+
 ## <a id='possible-errors'></a>Possible Errors ##
 
 If incorrect basic auth credentials are provided:

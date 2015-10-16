@@ -67,7 +67,10 @@ When a user navigates to the URL from `dashboard_url`, the service dashboard sho
 
 ```
 $ curl api.example-cf.com/info
-{"name":"vcap","build":"2222","support":"http://support.example-cf.com","version":2,"description":"Cloud Foundry sponsored by Pivotal","authorization_endpoint":"https://login.example-cf.com","token_endpoint":"https://uaa.example-cf.com","allow_debug":true}
+{"name":"vcap","build":"2222","support":"http://support.example-cf.com","version
+":2,"description":"Cloud Foundry sponsored by Pivotal","authorization_endpoint":
+"https://login.example-cf.com","token_endpoint":"https://uaa.example-cf.com",
+"allow_debug":true}
 ```
 
 <p class='note'>To enable service dashboards to support SSO for service instances created from different Cloud Foundry instances, the /v2/info url is sent to service brokers in the `X-Api-Info-Location` header of every API call. A service dashboard should be able to discover this URL from the broker, and enabling the dashboard to contact the appropriate UAA for a particular service instance.</p>

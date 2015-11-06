@@ -1,7 +1,7 @@
 ---
 title: v2 API Change Log
 ---
-## 2015-10-01 ##
+## 2015-10-08 ##
 Bump API version to 2.7
 
 Asynchronous Operations are now no longer experimental. The API allows for provisioning, updating, and deprovisioning of service instances in an asynchronous manner. The change includes a new endpoint for checking the status of service instance operations. It also allows brokers to return 202 Accepted in response to provision, update, or deprovision requests with an updated response body to communicate the status of the requested operation.  For an operation to be executed asynchronously, all three components (CF API client, CF, and broker) must support the feature. The parameter accepts_incomplete=true must be passed in a request by the CF API client, triggering CF to include the same parameter in a request to the broker. The broker can then choose to execute the request synchronously or asynchronously.

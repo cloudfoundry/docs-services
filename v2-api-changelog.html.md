@@ -1,6 +1,12 @@
 ---
 title: v2 API Change Log
 ---
+## 2015-11-8 ##
+
+Bump API version to 2.8
+
+Add support for route services. A service instance can now be bound to a route. A response body that contains a `route_service_url` will cause Clound Controller to provision the routing layer to proxy requests. A broker must specify `requires: ["route_forwarding"]` in its catalog in order to allow route bindings.
+
 ## 2015-10-08 ##
 Bump API version to 2.7
 

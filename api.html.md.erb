@@ -130,7 +130,7 @@ no longer be visible in the marketplace catalog or be provisionable.
 <tbody>
 <tr>
   <td>200 OK</td>
-  <td>The expected response body is below</td>
+  <td>The expected response body is below.</td>
 </tr>
 </tbody>
 </table>
@@ -539,7 +539,7 @@ Controller
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Should be returned if the requested service instance already exists. The expected response body is "{}"</td>
+  <td>Should be returned if the requested service instance already exists. The expected response body is <code>{}</code>.</td>
 </tr>
 <tr>
   <td>422 Unprocessable Entity</td>
@@ -699,7 +699,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
 <tbody>
 <tr>
   <td>200 OK</td>
-  <td>New plan is effective. The expected response body is `{}`.</td>
+  <td>New plan is effective. The expected response body is <code>{}</code>.</td>
 </tr>
 <tr>
   <td>202 Accepted</td>
@@ -724,7 +724,7 @@ For a success response, the expected response body is `{}`.
 
 ## <a id='binding'></a>Binding ##
 
-<p class="note"><strong>Note</strong>: Not all services must be bindable --- some deliver value just from being provisioned. Brokers that offer services that are not bindable should declare them as such using `bindable: false` in the [Catalog](#catalog-mgmt). Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
+<p class="note"><strong>Note</strong>: Not all services must be bindable --- some deliver value just from being provisioned. Brokers that offer services that are not bindable should declare them as such using <code>bindable: false</code> in the <a href="#catalog-mgmt">Catalog</a>. Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
 
 When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 
@@ -865,7 +865,7 @@ In this case, `instance_id` refers to the id of an existing service instance in 
 </tr>
 <tr>
   <td>409 Conflict</td>
-  <td>Should be returned if the requested binding already exists. The expected response body is `{}`, though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
+  <td>Should be returned if the requested binding already exists. The expected response body is <code>{}</code>, though the description field can be used to return a user-facing error message, as described in <a href="#broker-errors">Broker Errors</a>.</td>
 </tr>
 <tr>
   <td>422 Unprocessable Entity</td>
@@ -981,11 +981,11 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
 <tbody>
 <tr>
   <td>200 OK</td>
-  <td>Binding was deleted. The expected response body is `{}`</td>
+  <td>Binding was deleted. The expected response body is <code>{}</code>.</td>
 </tr>
 <tr>
   <td>410 Gone</td>
-  <td>Should be returned if the binding does not exist. The expected response body is `{}`</td>
+  <td>Should be returned if the binding does not exist. The expected response body is <code>{}</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -1063,7 +1063,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?se
 <tbody>
 <tr>
   <td>200 OK</td>
-  <td>Service instance was deleted. The expected response body is "{}"</td>
+  <td>Service instance was deleted. The expected response body is <code>{}</code>.</td>
 </tr>
 <tr>
   <td>202 Accepted</td>
@@ -1071,7 +1071,7 @@ $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?se
 </tr>
 <tr>
   <td>410 Gone</td>
-  <td>Should be returned if the service instance does not exist. The expected response body is "{}"</td>
+  <td>Should be returned if the service instance does not exist. The expected response body is <code>{}</code>.</td>
 </tr>
 <tr>
   <td>422 Unprocessable Entity</td>

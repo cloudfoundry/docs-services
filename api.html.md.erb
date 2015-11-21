@@ -724,13 +724,21 @@ For a success response, the expected response body is `{}`.
 
 ## <a id='binding'></a>Binding ##
 
-<p class="note"><strong>Note</strong>: Not all services must be bindable --- some deliver value just from being provisioned. Brokers that offer services that are not bindable should declare them as such using <code>bindable: false</code> in the <a href="#catalog-mgmt">Catalog</a>. Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
+<p class="note"><strong>Note</strong>: Not all services must be bindable --- some deliver value just from being provisioned. Brokers that offer services that are bindable should declare them as such using <code>bindable: true</code> in the <a href="#catalog-mgmt">Catalog</a>. Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
 
-When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
+### <a id='binding-types'></a>Types of Binding ###
 
-When binding a service instance to a route, the broker should return either a `route_service_url` or an empty hash (`{}`) on success. If a `route_service_url` is provided, the Cloud Controller will configure routing such that any request sent to that the bound route will be proxied through the service identified by the `route_service_url`.
+#### <a id='binding-credentials'></a>Credentials ####
 
-In addition, the bind operation can enable streaming of application logs from Cloud Foundry to a consuming service instance. For details, see [Application Log Streaming](app-log-streaming.html).
+Credentials are a set of information used by an application or a user to utilize the service instance. If `bindable:true` is declared for a service in the catalog endpoint, users may request generation of credentials either by binding the service instance to an application or by creating a service key. When a service instance is bound to an app, Cloud Foundry will send the app id with the request. When a service key is created, the app id is not included. If the broker supports generation of credentials it should return `credentials` in the response. Credentials should be unique whenever possible, so access can be revoked for one application or user without affecting another. For more information on credentials, see [Binding Credentials](binding-credentials.html).
+
+#### <a id='binding-syslog-drain'></a>Application Log Streaming ####
+
+In response to a bind request for an application (`app_id` included), a broker may also enable streaming of application logs from Cloud Foundry to a consuming service instance by returning `syslog_drain_url`. For details, see [Application Log Streaming](app-log-streaming.html).
+
+#### <a id='binding-route-services'></a>Route Services ####
+
+If a broker has declared `"requires":["route_forwarding"]` for a service in the Catalog endpoint, Cloud Foundry will permit a user to bind a service to a route. When bound to a route, the route itself will be sent with the bind request. A route is an address used by clients to reach apps mapped to the route. In response a broker may return a `route_service_url` which Cloud Foundry will use to proxy any request for the route to the service instance at URL specified by `route_service_url`. Broker may declare `"requires":["route_forwarding"]` but not return `route_service_url`; this enables a broker to dynamically configure a network component already in the request path for the route. For more information, see [Route Services](route-services.html).
 
 ### Request ###
 

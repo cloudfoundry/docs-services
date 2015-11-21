@@ -2,7 +2,7 @@
 title: Route Services (Experimental)
 ---
 
-<p class="note"><strong>Note</strong>: Service Instance responsibilities below are subject to change.</p>
+<p class="note"><strong>Note</strong>: Service Instance responsibilities below are experimental and subject to change.</p>
 
 ## <a id='introduction'></a>Introduction ##
 
@@ -54,4 +54,4 @@ In addition, all requests must respond in the number of seconds configured by th
 Timeouts are configurable for the router using the cf-release BOSH deployment manifest. For more information, see the [spec](https://github.com/cloudfoundry/cf-release/blob/master/jobs/gorouter/spec)
 
 ## Example Route Service
-- [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to Cloud Foundry. It fulfills the service instance responsibilities above. 
+- [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to Cloud Foundry. It fulfills the service instance responsibilities above.

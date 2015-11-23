@@ -738,7 +738,7 @@ In response to a bind request for an application (`app_id` included), a broker m
 
 #### <a id='binding-route-services'></a>Route Services ####
 
-If a broker has declared `"requires":["route_forwarding"]` for a service in the Catalog endpoint, Cloud Foundry will permit a user to bind a service to a route. When bound to a route, the route itself will be sent with the bind request. A route is an address used by clients to reach apps mapped to the route. In response a broker may return a `route_service_url` which Cloud Foundry will use to proxy any request for the route to the service instance at URL specified by `route_service_url`. Broker may declare `"requires":["route_forwarding"]` but not return `route_service_url`; this enables a broker to dynamically configure a network component already in the request path for the route. For more information, see [Route Services](route-services.html).
+If a broker has declared `"requires":["route_forwarding"]` for a service in the Catalog endpoint, Cloud Foundry will permit a user to bind a service to a route. When bound to a route, the route itself will be sent with the bind request. A route is an address used by clients to reach apps mapped to the route. In response a broker may return a `route_service_url` which Cloud Foundry will use to proxy any request for the route to the service instance at URL specified by `route_service_url`. A broker may declare `"requires":["route_forwarding"]` but not return `route_service_url`; this enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the Cloud Foundry router. For more information, see [Route Services](route-services.html).
 
 ### Request ###
 

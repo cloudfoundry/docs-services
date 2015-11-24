@@ -10,7 +10,7 @@ Cloud Foundry application developers may wish to inject various middleware tools
 
 ## <a id='enabling-route-services-in-cloudfoundry'></a>Enabling Route Services in Cloud Foundry ##
 
-To enable support for Route Services in a Cloud Foundry deployment, the operator must provide a passphrase used by Gorouter to encrypt a header that is sent with the request to the route service. This header is used by Gorouter to validate the request sent by the route service to the application route.
+To enable support for Route Services in a Cloud Foundry deployment, the operator must provide a passphrase used by GoRouter to encrypt a header that is sent with the request to the route service. This header is used by GoRouter to validate the request sent by the route service to the application route.
 
 This property can be configured in the cf-release manifest:
 
@@ -20,12 +20,12 @@ properties:
     route_services_secret: QgIp1D0LXRZhZOb+dSFoWw==
 ```
 
-This secret should be randomly generated for your deployment. See the [gorouter spec](https://github.com/cloudfoundry/cf-release/blob/master/jobs/gorouter/spec) in cf-release for more details.
+This secret should be randomly generated for your deployment. See the [GoRouter spec](https://github.com/cloudfoundry/cf-release/blob/master/jobs/gorouter/spec) in cf-release for more details.
 
 ## <a id='broker-responsibilities'></a>Broker Responsibilities ##
 
 #### <a id='catalog'></a>Catalog Endpoint ####
-Brokers must include `requires: [“route_forwarding”]` for a service in the catalog endpoint. If this is not present, Cloud Foundry will not permit users to bind an instance of the service to a route.
+Brokers must include `requires: ["route_forwarding"]` for a service in the catalog endpoint. If this is not present, Cloud Foundry will not permit users to bind an instance of the service to a route.
 
 #### <a id='binding'></a>Binding Endpoint ####
 When users bind a route to a service instance, Cloud Foundry will send a [bind request](http://docs.cloudfoundry.org/services/api.html#binding) to the broker, including the route address with `bind_resource.route`. A route is an address used by clients to reach apps mapped to the route. The broker may return `route_service_url`, containing a URL where Cloud Foundry should proxy requests for the route. This URL must have a `https` scheme, otherwise the Cloud Controller will reject the binding. `route_service_url` is optional; not returning this field enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the Cloud Foundry router.
@@ -51,7 +51,7 @@ Route services must forward the request to the application route within the numb
 
 In addition, all requests must respond in the number of seconds configured by the `request_timeout_in_seconds` property (default 900 seconds).
 
-Timeouts are configurable for the router using the cf-release BOSH deployment manifest. For more information, see the [spec](https://github.com/cloudfoundry/cf-release/blob/master/jobs/gorouter/spec)
+Timeouts are configurable for the router using the cf-release BOSH deployment manifest. For more information, see the [spec](https://github.com/cloudfoundry/cf-release/blob/master/jobs/gorouter/spec).
 
 #### <a id='examples'></a>Example Route Services ####
 - [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to Cloud Foundry. It fulfills the service instance responsibilities above.
@@ -64,7 +64,7 @@ Timeouts are configurable for the router using the cf-release BOSH deployment ma
     $ cf push my-route-service
     </pre>
 
-2. Get the guid for your space
+2. Get the guid for your space.
 
     <pre class="terminal">
     $ cf space my-space --guid
@@ -96,7 +96,7 @@ Timeouts are configurable for the router using the cf-release BOSH deployment ma
     $ cf curl /v2/user_provided_service_instances/your-instance-guid/routes/your-route-guid -X PUT
     </pre>
 
-7. Tail the logs for your route service
+7. Tail the logs for your route service.
 
     <pre class="terminal">
     $ cf logs spring-music

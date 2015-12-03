@@ -2,6 +2,8 @@
 title: Dashboard Single Sign-On
 ---
 
+<strong><%= modified_date %></strong>
+
 ## <a id='introduction'></a>Introduction ##
 
 Single sign-on (SSO) enables Cloud Foundry users to authenticate with third-party service dashboards using their Cloud Foundry credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth2 protocol handles authentication.
@@ -63,7 +65,7 @@ Users can then navigate to the service dashboard at the URL provided by `dashboa
 
 ### <a id='oauth2-flow'></a>OAuth2 Flow ###
 
-When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth2 login flow. A summary of the flow can be found in [section 1.2 of the OAuth2 RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth2 expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In Cloud Foundry, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field. 
+When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth2 login flow. A summary of the flow can be found in [section 1.2 of the OAuth2 RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth2 expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In Cloud Foundry, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field.
 
 ```
 $ curl api.example-cf.com/info

@@ -124,11 +124,17 @@ OK
 
 The following command will delete a single service instance, its service bindings and its service keys from the Cloud Controller database, without making any API calls to a service broker.
 This can be helpful in instances a Service Broker is not conforming to the Service Broker API and not returning a 200 or 410 to requests to delete the service instance.
-This requires cf-release v218.
 
 <pre class="terminal">
-$cf curl /v2/service_instances/my-service-guid?purge=true -X DELETE
+$ cf purge-service-instance mysql-dev
+WARNING: This operation assumes that the service broker responsible for this service instance is no longer available or is not responding with a 200 or 410, and the service instance has been deleted, leaving orphan records in Cloud Foundry's database. All knowledge of the service instance will be removed from Cloud Foundry, including service bindings and service keys.
+
+Really purge service instance mysql-dev from Cloud Foundry?> y
+Purging service mysql-dev...
+OK
 </pre>
+
+`purge-service-instance` requires cf-release v218 and cf CLI 6.14.0.
 
 ## <a id='possible-errors'></a>Possible Errors ##
 

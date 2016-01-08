@@ -24,7 +24,7 @@ properties:
 
 This secret should be randomly generated for your deployment. See the [GoRouter spec](https://github.com/cloudfoundry/cf-release/blob/master/jobs/gorouter/spec) in cf-release for more details.
 
-The CF router will only forward requests to Route Services over SSL. By default, certificates provided by Route Services must be signed by a trusted CA. If it is not, the CF router will reject the request. In development environments this may be unreasonable; to disable SSL cert validation, modify the following property:
+The CF router will only forward requests to Route Services over SSL. By default, certificates provided by Route Services must be signed by a trusted CA. If they are not, the CF router will reject the request. In development environments this concern may be unreasonable. To disable SSL cert validation, modify the following property:
 
 ```
 properties:

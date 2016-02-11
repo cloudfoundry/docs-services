@@ -1,14 +1,27 @@
 ---
-title: Route Services (Experimental)
+title: Route Services
 ---
 
 <strong><%= modified_date %></strong>
 
-<p class="note"><strong>Note</strong>: Service Instance responsibilities below are experimental and subject to change.</p>
+This documentation is intended for service authors who are interested in offering a service to a Cloud Foundry services marketplace. Documentation for developers interested in consuming these services will soon be available at [Develop and Manage Applications - Services](../devguide/services/).
 
 ## <a id='introduction'></a>Introduction ##
 
-Cloud Foundry application developers may wish to inject various middleware tools onto requests before they reach the application. Common examples of these are authentication, rate limiting, and caching services. Route Services allow Cloud Foundry users to apply various content transformations to their applications by binding the application's route to a service instance.
+Cloud Foundry application developers may wish to apply transformation or processing to requests before they reach an application. Common examples of use cases are authentication, rate limiting, and caching services. Route Services are a new kind of Marketplace Service that developers can use to apply various transformations to application requests by binding an application's route to a service instance. Through integrations with service brokers and optionally with the Cloud Foundry routing tier, providers can offer these services to developers with a familiar automated, self-service, and on-demand user experience.
+
+## <a id='architecture'></a>Architecture ##
+
+Three models are supported for Route Services.
+
+- <strong>Integration with CF Router but no Broker</strong><br/>
+For a service to be available to developers in the marketplace, a service broker must be implemented. However, route services not available in the marketplace can still be used by developers if they fulfill an integration with the Cloud Foundry routing tier; see [Service Instance Responsibilities](#service-instance-responsibilities) below. In this model, configuration of the Route Service to meet developer requirements is outside the context of Cloud Foundry.
+
+- <strong>Broker but no Integration with CF Router</strong><br/>
+Operators may have middleware components through which all requests to Cloud Foundry already pass, or are considering inserting such a component. Using a broker, the service provider can enable developers to dynamically configure this component to execute requests transformations specific to their routes and applications. Consider that in this model there may be a performance penalty imposed on applications that do not make use of the service.
+
+- <strong>Broker and Router Integration</strong><br/>
+A broker delivers a self-service user experience for developers and through an integration with the CF Router, only requests for routes that require transformation are proxied to the Route Service.
 
 ## <a id='enabling-route-services-in-cloudfoundry'></a>Enabling Route Services in Cloud Foundry ##
 

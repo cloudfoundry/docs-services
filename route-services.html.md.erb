@@ -27,6 +27,7 @@ A broker delivers a self-service user experience for developers and through an i
 
 ## <a id='enabling-route-services-in-cloudfoundry'></a>Enabling Route Services in Cloud Foundry ##
 To enable support for Route Services in a Cloud Foundry deployment, the operator must provide a passphrase used by GoRouter to encrypt a header that is sent with the request to the route service. This header is used by GoRouter to validate the request sent by the route service to the application route. The passphrase is configured in the cf-release manifest.
+
 ```
 properties:
  router:

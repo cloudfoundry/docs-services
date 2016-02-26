@@ -4,17 +4,21 @@ title: Managing Service Brokers
 
 <strong><%= modified_date %></strong>
 
-_This page assumes you are using cf CLI v6._
+_This page assumes you are using cf CLI v6.16
 
-In order to run any of the commands below, you must be authenticated with Cloud
+In order to run many of the commands below, you must be authenticated with Cloud
 Foundry as an admin user.
+
+In order to manage Space Scoped Private Service Brokers, you must be authenticated with Cloud Foundry as a space developer or as an admin user.
 
 ## <a id='quick-start'></a>Quick Start ##
 
-Given a service broker that has implemented the [Service Broker API](api.html), two steps are required to make its services available to end users.
+Given a service broker that has implemented the [Service Broker API](api.html), two steps are required to make its services available to end users in all organizations or a limited number of organizations by service plan.
 
 1. [Register a Broker](#register-broker)
 1. [Make Plans Public](#make-plans-public)
+
+Support for Space Scoped Private Brokers has been added as of cf-release 229, CC API 2.47.0.  Service Plans for Space Scoped Private Brokers are by default visible to all space users in the space the Private Broker has been registered to.
 
 ## <a id='register-broker'></a>Register a Broker ##
 
@@ -26,15 +30,26 @@ authenticate with the broker when making all API calls.
 Your service broker should validate the username and password sent in every
 request; otherwise, anyone could curl your broker to delete service instances.
 
+### Standard Private Brokers ###
+
 <pre class="terminal">
 $ cf create-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/
 </pre>
+
+### Space Scoped Private Brokers ###
+
+<pre class="terminal">
+$ cf create-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/ --space-scoped
+</pre>
+
 
 ### <a id='make-plans-public'></a>Make Plans Public ###
 New service plans are private by default.
 To make plans available to end users, see [Make Plans Public](./access-control.html#enable-access).
 Instances of a private plan can not be provisioned until either the plan is made
 public or is made available to an organization.
+For Space Scoped Private Brokers, this step is not necessary as all plans will be made visible to the space the broker is registered to.  
+It is not possible to manage visibility of a Space Scoped Private Broker at the Cloud Foundry instance or organization level.
 
 ### <a id='multiple-brokers'></a>Multiple Brokers, Services, Plans ###
 

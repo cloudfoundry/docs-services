@@ -25,32 +25,7 @@ Operators may have middleware components through which all requests to Cloud Fou
 - <strong>Broker and Router Integration</strong><br/>
 A broker delivers a self-service user experience for developers and through an integration with the CF Router, only requests for routes that require transformation are proxied to the Route Service.
 
-## <a id='enabling-route-services-in-cloudfoundry'></a>Enabling Route Services in Cloud Foundry ##
-To enable support for Route Services in a Cloud Foundry deployment, the operator must provide a passphrase used by GoRouter to encrypt a header that is sent with the request to the route service. This header is used by GoRouter to validate the request sent by the route service to the application route. The passphrase is configured in the cf-release manifest.
-
-```
-properties:
- router:
-   route_services_secret: YOUR-SECRET-PASSPHRASE
-```
-
-<p class="note"><strong>Note</strong>: The <code>route_services_secret</code> property should be a robust passphrase. See the <a href="https://github.com/cloudfoundry/cf-release/blob/master/jobs/gorouter/spec">GoRouter spec</a> in cf-release for more details.</p>
-
-Route Service instances should send requests to the value of x-cf-forwarded-url, obeying the scheme. The scheme is https by default; for environments that don't support TLS termination, this property can be set to false.
-
-```
-properties:
- router:
-   route_services_recommend_https: true
-```
-
-The CF router will only forward requests to Route Services over SSL. By default, certificates provided by Route Services must be signed by a trusted CA. If they are not, the CF router will reject the request. In development environments this concern may be unreasonable. To disable SSL cert validation, modify the following property:
-
-```
-properties:
-  router:
-    ssl_skip_validation: true
-```
+<%= vars.route_services_config %>
 
 ## <a id='broker-responsibilities'></a>Broker Responsibilities ##
 

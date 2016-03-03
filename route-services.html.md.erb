@@ -12,8 +12,6 @@ This documentation is intended for service authors who are interested in offerin
 
 Cloud Foundry application developers may wish to apply transformation or processing to requests before they reach an application. Common examples of use cases are authentication, rate limiting, and caching services. Route Services are a new kind of Marketplace Service that developers can use to apply various transformations to application requests by binding an application's route to a service instance. Through integrations with service brokers and optionally with the Cloud Foundry routing tier, providers can offer these services to developers with a familiar automated, self-service, and on-demand user experience.
 
-<%= vars.prod_full %>
-
 ## <a id='architecture'></a>Architecture ##
 
 Three models are supported for Route Services.
@@ -26,9 +24,6 @@ Operators may have middleware components through which all requests to Cloud Fou
 
 - <strong>Broker and Router Integration</strong><br/>
 A broker delivers a self-service user experience for developers and through an integration with the CF Router, only requests for routes that require transformation are proxied to the Route Service.
-
-<%= vars.product_full %>
-
 
 <%= vars.route_services_config %>
 

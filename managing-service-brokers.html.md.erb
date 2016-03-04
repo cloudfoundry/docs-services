@@ -1,5 +1,6 @@
 ---
 title: Managing Service Brokers
+owner: Core Services
 ---
 
 <strong><%= modified_date %></strong>
@@ -137,10 +138,10 @@ This can be helpful in instances a Service Broker is not conforming to the Servi
 
 <pre class="terminal">
 $ cf purge-service-instance mysql-dev
-WARNING: This operation assumes that the service broker responsible for this 
-service instance is no longer available or is not responding with a 200 or 410, 
-and the service instance has been deleted, leaving orphan records in Cloud 
-Foundry's database. All knowledge of the service instance will be removed from 
+WARNING: This operation assumes that the service broker responsible for this
+service instance is no longer available or is not responding with a 200 or 410,
+and the service instance has been deleted, leaving orphan records in Cloud
+Foundry's database. All knowledge of the service instance will be removed from
 Cloud Foundry, including service bindings and service keys.
 
 Really purge service instance mysql-dev from Cloud Foundry?> y
@@ -155,7 +156,7 @@ OK
 If incorrect basic auth credentials are provided:
 
 <pre class="terminal">
-Server error, status code: 500, error code: 10001, message: Authentication 
+Server error, status code: 500, error code: 10001, message: Authentication
 failed for the service broker API.
 Double-check that the username and password are correct:
     http://github-broker.a1-app.cf-app.com/v2/catalog

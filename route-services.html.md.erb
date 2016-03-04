@@ -95,13 +95,13 @@ Requires CLI version 6.16 or above.
 1. Push the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) as an app.
 
     <pre class="terminal">
-    $ cf push my-route-service
+    $ cf push logger
     </pre>
 
 2. Create a user-provided service instance, and include the route of the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) you pushed as `route_service_url`. Be sure to use `https` for the scheme.
 
     <pre class="terminal">
-    $ cf create-user-provided-service my-route-service -r https://my-route-service.cf.example.com
+    $ cf create-user-provided-service mylogger -r https://logger.cf.example.com
     </pre>
 
 3. Push a sample app like [Spring Music](https://github.com/cloudfoundry-samples/spring-music).
@@ -113,13 +113,13 @@ Requires CLI version 6.16 or above.
 4. Bind the user-provided service instance to the route of your sample app.
 
     <pre class="terminal">
-    $ cf bind-route-service cf.example.com my-route-service --hostname spring-music
+    $ cf bind-route-service cf.example.com mylogger --hostname spring-music
     </pre>
 
 5. Tail the logs for your route service.
 
     <pre class="terminal">
-    $ cf logs my-route-service
+    $ cf logs logger
     </pre>
 
 6. Send a request to the sample app and see in the route service logs that the request is forwarded to it.

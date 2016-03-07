@@ -90,52 +90,39 @@ Timeouts are configurable for the router using the cf-release BOSH deployment ma
 - [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to Cloud Foundry. It fulfills the service instance responsibilities above.
 
 ##### <a id='testing'></a>Testing #####
+Requires CLI version 6.16 or above.
 
 1. Push the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) as an app.
 
     <pre class="terminal">
-    $ cf push my-route-service
+    $ cf push logger
     </pre>
 
-2. Get the guid for your space.
+2. Create a user-provided service instance, and include the route of the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) you pushed as `route_service_url`. Be sure to use `https` for the scheme.
 
     <pre class="terminal">
-    $ cf space my-space --guid
+    $ cf create-user-provided-service mylogger -r https://logger.cf.example.com
     </pre>
 
-3. Create a user-provided service instance, and include the route of the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) you pushed as `route_service_url`. Be sure to use `https` for the scheme.
-
-    <pre class="terminal">
-    $ curl /v2/user_provided_service_instances -X POST -d '{"space_guid":"<your space guid>","name":"my-upsi","route_service_url":"https://my-route-service.cf.example.com"}'
-    </pre>
-
-    Make a note of the guid of the service instance.
-
-4. Push a sample app like [Spring Music](https://github.com/cloudfoundry-samples/spring-music).
+3. Push a sample app like [Spring Music](https://github.com/cloudfoundry-samples/spring-music).
 
     <pre class="terminal">
     $ cf push spring-music
     </pre>
 
-5. Get the guid of the route created for your sample app.
+4. Bind the user-provided service instance to the route of your sample app.
 
     <pre class="terminal">
-    $ cf curl /v2/routes?q=host:spring-music
+    $ cf bind-route-service cf.example.com mylogger --hostname spring-music
     </pre>
 
-6. Bind the user-provided service instance to the route of your sample app.
+5. Tail the logs for your route service.
 
     <pre class="terminal">
-    $ cf curl /v2/user_provided_service_instances/your-instance-guid/routes/your-route-guid -X PUT
+    $ cf logs logger
     </pre>
 
-7. Tail the logs for your route service.
-
-    <pre class="terminal">
-    $ cf logs my-route-service
-    </pre>
-
-8. Send a request to the sample app and see in the route service logs that the request is forwarded to it.
+6. Send a request to the sample app and see in the route service logs that the request is forwarded to it.
 
     <pre class="terminal">
     $ curl spring-music.cf.example.com

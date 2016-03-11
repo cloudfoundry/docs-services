@@ -87,12 +87,15 @@ Timeouts are configurable for the router using the cf-release BOSH deployment ma
 #### <a id='examples'></a>Example Route Services ####
 - [Rate Limiting Route Service](https://github.com/cloudfoundry-samples/ratelimit-service): This example route service is a simple Cloud Foundry app that provides rate limiting to control the rate of traffic to an application.
 
-- [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to Cloud Foundry. It fulfills the service instance responsibilities above.
+- [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to Cloud Foundry. It fulfills the service instance responsibilities above and logs requests received and sent. It can be used to see the route service integration in action by tailing its logs.
 
 ##### <a id='testing'></a>Testing #####
+
+The following instruction show how to the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) described in <a href="#examples">Examples</a> to verify that when a route service is bound to a route, requests for that route are proxied to the route service.
+
 Requires CLI version 6.16 or above.
 
-1. Push the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) as an app.
+1. Push the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) as an app. 
 
     <pre class="terminal">
     $ cf push logger
@@ -104,13 +107,13 @@ Requires CLI version 6.16 or above.
     $ cf create-user-provided-service mylogger -r https://logger.cf.example.com
     </pre>
 
-1. Push a sample app like [Spring Music](https://github.com/cloudfoundry-samples/spring-music).
+1. Push a sample app like [Spring Music](https://github.com/cloudfoundry-samples/spring-music). By default this will create a route `spring-music.cf.example.com`.
 
     <pre class="terminal">
     $ cf push spring-music
     </pre>
 
-1. Bind the user-provided service instance to the route of your sample app.
+1. Bind the user-provided service instance to the route of your sample app. The `bind-route-service` command takes a route and a service instance; the route is specified in the following example by domain `cf.example.com` and hostname `spring-music`.
 
     <pre class="terminal">
     $ cf bind-route-service cf.example.com mylogger --hostname spring-music

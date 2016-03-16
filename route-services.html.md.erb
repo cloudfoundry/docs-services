@@ -104,17 +104,9 @@ The models above require the [broker](#broker-responsibilities) and [service ins
 
 <%= vars.route_services_config %>
 
-## <a id='broker-responsibilities'></a>Broker Responsibilities ##
-
-#### <a id='catalog'></a>Catalog Endpoint ####
-Brokers must include `requires: ["route_forwarding"]` for a service in the catalog endpoint. If this is not present, Cloud Foundry will not permit users to bind an instance of the service to a route.
-
-#### <a id='binding'></a>Binding Endpoint ####
-When users bind a route to a service instance, Cloud Foundry will send a [bind request](http://docs.cloudfoundry.org/services/api.html#binding) to the broker, including the route address with `bind_resource.route`. A route is an address used by clients to reach apps mapped to the route. The broker may return `route_service_url`, containing a URL where Cloud Foundry should proxy requests for the route. This URL must have a `https` scheme, otherwise the Cloud Controller will reject the binding. `route_service_url` is optional; not returning this field enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the Cloud Foundry router.
-
 ## <a id='service-instance-responsibilities'></a>Service Instance Responsibilities ##
 
-The following applies only when a broker returns `route_service_url` in the bind response.
+The following applies for the [fully-brokered](#fully-brokered) and [user-provided](#user-provided) models above. When all requests to apps on CF pass through a statically-deployed networking component, as described by the [static, brokered](#static-brokered) model, no integration with the CF Router is necessary.
 
 #### <a id='how-it-works'></a>How It Works ####
 
@@ -191,3 +183,11 @@ Timeouts are configurable for the router using the cf-release BOSH deployment ma
     <pre class="terminal">
     $ curl spring-music.cf.example.com
     </pre>
+
+## <a id='broker-responsibilities'></a>Broker Responsibilities ##
+
+#### <a id='catalog'></a>Catalog Endpoint ####
+Brokers must include `requires: ["route_forwarding"]` for a service in the catalog endpoint. If this is not present, Cloud Foundry will not permit users to bind an instance of the service to a route.
+
+#### <a id='binding'></a>Binding Endpoint ####
+When users bind a route to a service instance, Cloud Foundry will send a [bind request](http://docs.cloudfoundry.org/services/api.html#binding) to the broker, including the route address with `bind_resource.route`. A route is an address used by clients to reach apps mapped to the route. The broker may return `route_service_url`, containing a URL where Cloud Foundry should proxy requests for the route. This URL must have a `https` scheme, otherwise the Cloud Controller will reject the binding. `route_service_url` is optional; not returning this field enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the Cloud Foundry router.

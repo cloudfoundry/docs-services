@@ -94,12 +94,12 @@ you can use `update-service-broker` with no changes to force a catalog refresh.
 
 When Cloud Controller fetches a catalog from a broker, it will compare the
 broker's id for services and plans with the `unique_id` values for services and
-plan in the  Cloud Controller database.
+plans in the  Cloud Controller database.
 If a service or plan in the broker catalog has an id that is not present
 amongst the `unique_id` values in the database, a new record will be added to
 the database.
 If services or plans in the database are found with `unique_id`s that match the
-broker catalog's id, Cloud Controller will update update the records to match
+broker catalog's id, Cloud Controller will update the records to match
 the broker’s catalog.
 
 If the database has plans which are not found in the broker catalog, and there
@@ -304,7 +304,7 @@ If the broker executes the request asynchronously, the response must use the sta
 
 <p class='note'><strong>Note:</strong> Asynchronous Operations are currently supported only for provision, update, and deprovision. Bind and unbind will be added once the feature is considered stable.</p>
 
-If the `accepts_incomplete=true` parameter is not included, and the broker can not fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request with the status code `422 UNPROCESSABLE ENTITY` and the following body:
+If the `accepts_incomplete=true` parameter is not included, and the broker cannot fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request with the status code `422 UNPROCESSABLE ENTITY` and the following body:
 
 <pre class="terminal">
 {
@@ -326,7 +326,7 @@ The Cloud Controller ensures that service brokers do not receive requests for an
 
 ### <a id='when-to-use-async'></a>When to use Asynchronous Service Operations ###
 
-Service brokers should respond to all Cloud Controller requests within 60 seconds. Brokers that can guarantee completion of the requested operation with the response may return the synchronous response (e.g. `201 CREATED` for a provision request). Brokers that can not guarantee completion of the operation with the response should implement support for asynchronous provisioning. Support for asynchronous or asynchronous responses may vary by service offering, even by service plan.
+Service brokers should respond to all Cloud Controller requests within 60 seconds. Brokers that can guarantee completion of the requested operation with the response may return the synchronous response (e.g. `201 CREATED` for a provision request). Brokers that cannot guarantee completion of the operation with the response should implement support for asynchronous provisioning. Support for synchronous or asynchronous responses may vary by service offering, even by service plan.
 
 ## <a id='polling'></a>Polling Last Operation (async only) ##
 
@@ -711,7 +711,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
 <tr>
   <td>422 Unprocessable entity</td>
   <td>
-    May be returned if the particular plan change requested is not supported or if the request can not currently be fulfilled due to the state of the instance (eg. instance utilization is over the quota of the requested plan). Broker should include a user-facing message in the body; for details see <a href="#broker-errors">Broker Errors</a>.  Additionally, a <code>422</code> can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code></a>.
+    May be returned if the particular plan change requested is not supported or if the request cannot currently be fulfilled due to the state of the instance (eg. instance utilization is over the quota of the requested plan). Broker should include a user-facing message in the body; for details see <a href="#broker-errors">Broker Errors</a>.  Additionally, a <code>422</code> can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code></a>.
   </td>
 </tr>
 </tbody>

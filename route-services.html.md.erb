@@ -161,12 +161,12 @@ In addition, all requests must respond in the number of seconds configured by th
 
 Timeouts are configurable for the router using the cf-release BOSH deployment manifest. For more information, see the [spec](https://github.com/cloudfoundry/cf-release/blob/master/jobs/gorouter/spec).
 
-#### <a id='examples'></a>Example Route Services ####
-- [Rate Limiting Route Service](https://github.com/cloudfoundry-samples/ratelimit-service): This example route service is a simple Cloud Foundry app that provides rate limiting to control the rate of traffic to an application.
-
+## <a id='examples'></a>Example Route Services ##
 - [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to Cloud Foundry. It fulfills the service instance responsibilities above and logs requests received and sent. It can be used to see the route service integration in action by tailing its logs.
+- [Rate Limiting Route Service](https://github.com/cloudfoundry-samples/ratelimit-service): This example route service is a simple Cloud Foundry app that provides rate limiting to control the rate of traffic to an application.
+- [Spring Boot Example](https://github.com/nebhale/route-service-example): Logs requests received and sent; written in Spring Boot
 
-##### <a id='testing'></a>Testing #####
+#### <a id='testing'></a>Testing ####
 
 The following instructions show how to use the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) described in <a href="#examples">Examples</a> to verify that when a route service is bound to a route, requests for that route are proxied to the route service.
 

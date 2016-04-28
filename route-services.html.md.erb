@@ -153,6 +153,10 @@ The `X-CF-Forwarded-Url` header contains the URL of the application route. The r
 
 The route service should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata`, as the GoRouter relies on these headers to validate that the request.
 
+#### <a id='ssl-certs'></a>SSL Certificates ####
+
+When Cloud Foundry is deployed in a development environment, certificates hosted by the load balancer will be self-signed (not signed by a trusted certificate authority). When the route service has finished processing an inbound request, and makes a call to the value of `X-CF-Forwarded-Url`, be prepared to accept the self-signed certificate when integrating with a non-production deployment of Cloud Foundry.
+
 #### <a id='timeouts'></a>Timeouts ####
 
 Route services must forward the request to the application route within the number of seconds configured by the `router.route_service_timeout` property (default 60 seconds).

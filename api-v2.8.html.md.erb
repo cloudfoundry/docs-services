@@ -1,5 +1,5 @@
 ---
-title: Service Broker API v2.9
+title: Service Broker API v2.8
 owner: Services API
 ---
 
@@ -22,16 +22,18 @@ added to enable support for new features.
 These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-### <a id='api-changes-since-v2-8'></a>Changes Since v2.8 ###
+### <a id='api-changes-since-v2-7'></a>Changes Since v2.7 ###
 
-1. Querying `last_operation` now supports `service_id` and `plan_id` query parameters.
+1. Brokers may now include a requires: ["route_forwarding"] on their catalog endpoint.
+1. On bind, the Cloud Controller will now send a new top-level key, `bind_resource`, under which the required parameters of the binding are found. This would include, for example, `app_guid` for an app binding and `route` for a route binding. For backwards compatibility, `app_guid` will remain a top-level key in addition to being included in the `bind_resource`.
+1. Adds support for a `route_service_url` key in the binding response.
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.9 of the services API has been supported since:
+v2.8 of the services API has been supported since:
 
-* [Final build 238](https://github.com/cloudfoundry/cf-release/tree/v238) of [cf-release](https://github.com/cloudfoundry/cf-release/)
-* v2.57.0 of the Cloud Controller API
+* [Final build 226](https://github.com/cloudfoundry/cf-release/tree/v226) of [cf-release](https://github.com/cloudfoundry/cf-release/)
+* v2.44.0 of the Cloud Controller API
 * CLI [v6.14.0](https://github.com/cloudfoundry/cli/releases/tag/v6.14.0)
 
 ## <a id='api-overview'></a>API Overview ##
@@ -66,7 +68,7 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
 such that 2.9 comes before 2.10.
 An example of this header as of publication time is:
 
-`X-Broker-Api-Version: 2.9`
+`X-Broker-Api-Version: 2.8`
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -111,12 +113,12 @@ no longer be visible in the marketplace catalog or be provisionable.
 
 ### Request ###
 
-#### Route ####
+##### Route #####
 `GET /v2/catalog`
 
-#### cURL ####
+##### cURL #####
 <pre class="terminal">
- $ curl -H "X-Broker-API-Version: 2.9" http://username:password@broker-url/v2/catalog
+ $ curl -H "X-Broker-API-Version: 2.8" http://username:password@broker-url/v2/catalog
 </pre>
 
 ### Response ###
@@ -136,7 +138,7 @@ no longer be visible in the marketplace catalog or be provisionable.
 </tbody>
 </table>
 
-#### Body - Schema of Service Objects ####
+##### Body #####
 
 CLI and web clients have different needs with regard to service and plan names.
 A CLI-friendly string is all lowercase, with no spaces.
@@ -155,27 +157,8 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tbody>
 <tr>
   <td>services*</td>
-  <td>array-of-service-objects</td>
-  <td>Schema of service objects defined below.</td>
-</tr>
-</tbody>
-</table>
-
-<h5> Service Objects </h5>
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;name*</td>
-  <td>string</td>
-  <td>The CLI-friendly name of the service that will appear in the catalog. All lowercase, no spaces.</td>
+  <td>array-of-objects</td>
+  <td>Schema of service objects defined below:</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;id*</td>
@@ -183,9 +166,19 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>An identifier used to correlate this service in future requests to the catalog. This must be unique within Cloud Foundry, using a GUID is recommended. </td>
 </tr>
 <tr>
+  <td>&nbsp;&nbsp;&nbsp;name*</td>
+  <td>string</td>
+  <td>The CLI-friendly name of the service that will appear in the catalog. All lowercase, no spaces.</td>
+</tr>
+<tr>
   <td>&nbsp;&nbsp;&nbsp;description*</td>
   <td>string</td>
   <td>A short description of the service that will appear in the catalog.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;bindable*</td>
+  <td>boolean</td>
+  <td>Whether the service can be bound to applications.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;tags</td>
@@ -193,185 +186,105 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp.</td>
 </tr>
 <tr>
-  <td>&nbsp;&nbsp;&nbsp;requires</td>
-  <td>array-of-strings</td>
-  <td>A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <tt>syslog_drain</tt> and <tt>route_forwarding</tt>; for more info see <a href="app-log-streaming.html">Application Log Streaming</a> and <a href="route-services.html">Route Services</a>.</td>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;max_db_per_node:</td>
-  <td>strings</td>
-  <td></td>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;bindable*</td>
-  <td>boolean</td>
-  <td>Whether the service can be bound to applications.</td>
-</tr>
-<tr>
   <td>&nbsp;&nbsp;&nbsp;metadata</td>
   <td>object</td>
   <td>A list of metadata for a service offering. For more information, see <a href="catalog-metadata.html">Service Metadata</a>.</td>
 </tr>
 <tr>
-  <td><a href="#DObject">&nbsp;&nbsp;&nbsp;dashboard_client</a></td>
-  <td>object</td>
-  <td>Contains the data necessary to activate the <a href="dashboard-sso.html">Dashboard SSO feature</a> for this service</td>
+  <td>&nbsp;&nbsp;&nbsp;requires</td>
+  <td>array-of-strings</td>
+  <td>A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <tt>syslog_drain</tt> and <tt>route_forwarding</tt>; for more info see <a href="app-log-streaming.html">Application Log Streaming</a> and <a href="route-services.html">Route Services</a>.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plan_updateable</td>
   <td>boolean</td>
   <td>
-    Whether the service supports upgrade/downgrade for some plans.
-    <br/>
-    Please note that the misspelling of the attribute <i>plan_updatable</i> to <i>plan_updateable</i> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.
+	  Whether the service supports upgrade/downgrade for some plans.
+	  <br/>
+	  Please note that the misspelling of the attribute <i>plan_updatable</i> to <i>plan_updateable</i> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.
   </td>
 </tr>
 <tr>
-  <td><a href="#PObject">&nbsp;&nbsp;&nbsp;plans*</a></td>
-  <td>array-of-objects</td>
-  <td>A list of plans for this service, schema is defined below.</td>
+  <td>&nbsp;&nbsp;&nbsp;plans*</td>
+  <td>array-of-objects
+</td>
+  <td>A list of plans for this service, schema defined below:</td>
 </tr>
-</tbody>
-</table>
-
-<h5> Dashboard Client Object <a name="DObject"></a> </h5>
-
-<table border="1" class="nice">
-<thead>
 <tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;id</td>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id*</td>
   <td>string</td>
-  <td>The id of the Oauth2 client that the service intends to use. The name may be taken, in which case the updat will return an error to the operator</td>
+  <td>An identifier used to correlate this plan in future requests to the catalog. This must be unique within Cloud Foundry, using a GUID is recommended.</td>
 </tr>
 <tr>
-  <td>&nbsp;&nbsp;&nbsp;secret</td>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name*</td>
+  <td>string</td>
+  <td>The CLI-friendly name of the plan that will appear in the catalog. All lowercase, no spaces.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;description*</td>
+  <td>string</td>
+  <td>A short description of the service that will appear in the catalog.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;metadata</td>
+  <td>object</td>
+  <td>A list of metadata for a service plan. For more information, see <a href="catalog-metadata.html">Service Metadata</a>.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;free</td>
+  <td>boolean</td>
+  <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.html">Quota Plans</a>. Default: true</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;dashboard_client</td>
+  <td>object</td>
+  <td>Contains the data necessary to activate the <a href="dashboard-sso.html">Dashboard SSO feature</a> for this service</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id</td>
+  <td>string</td>
+  <td>The id of the Oauth2 client that the service intends to use. The name may be taken, in which case the API will return an error to the operator</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secret</td>
   <td>string</td>
   <td>A secret for the dashboard client</td>
 </tr>
 <tr>
-  <td>&nbsp;&nbsp;&nbsp;redirect_uri</td>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redirect_uri</td>
   <td>string</td>
   <td>A domain for the service dashboard that will be whitelisted by the UAA to enable SSO</td>
 </tr>
 </tbody>
 </table>
 
-
-<h5> Plan Object <a name="PObject"></a> </h5>
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;id*</td>
-  <td>string</td>
-  <td>An identifier used to correlate this plan in future requests to the catalog. This must be unique within Cloud Foundry, using a GUID is recommended.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;name*</td>
-  <td>string</td>
-  <td>The CLI-friendly name of the plan that will appear in the catalog. All lowercase, no spaces.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;description*</td>
-  <td>string</td>
-  <td>A short description of the service that will appear in the catalog.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;metadata</td>
-  <td>object</td>
-  <td>A list of metadata for a service plan. For more information, see <a href="catalog-metadata.html">Service Metadata</a>.</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;free</td>
-  <td>boolean</td>
-  <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.html">Quota Plans</a>. Default: true</td>
-</tr>
-</tbody>
-</table>
-
 \* Fields with an asterisk are required.
 
-<pre>
+<pre class="terminal">
 {
   "services": [{
-    "name": "fake-service",
-    "id": "acb56d7c-XXXX-XXXX-XXXX-feb140a59a66",
-    "description": "fake service",
-    "tags": ["no-sql", "relational"],
-    "requires": ["route_forwarding"],
-    "max_db_per_node": 5,
+    "id": "service-guid-here",
+    "name": "mysql",
+    "description": "A MySQL-compatible relational database",
     "bindable": true,
-    "metadata": {
-      "provider": {
-        "name": "The name"
-      },
-      "listing": {
-        "imageUrl": "http://catgifpage.com/cat.gif",
-        "blurb": "Add a blurb here",
-        "longDescription": "A long time ago, in a galaxy far far away..."
-      },
-      "displayName": "The Fake Broker"
-    },
-    "dashboard_client": {
-      "id": "398e2f8e-XXXX-XXXX-XXXX-19a71ecbcf64",
-      "secret": "277cabb0-XXXX-XXXX-XXXX-7822c0a90e5d",
-      "redirect_uri": "http://localhost:1234"
-    },
-    "plan_updateable": true,
     "plans": [{
-      "name": "fake-plan",
-      "id": "d3031751-XXXX-XXXX-XXXX-a42377d3320e",
-      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections",
-      "max_storage_tb": 5,
-      "metadata": {
-        "cost": 0,
-        "bullets": [{
-          "content": "Shared fake server"
-        }, {
-          "content": "5 TB storage"
-        }, {
-          "content": "40 concurrent connections"
-        }]
-      }
-    }, {
-      "name": "fake-async-plan",
-      "id": "0f4008b5-XXXX-XXXX-XXXX-dace631cd648",
-      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async",
-      "max_storage_tb": 5,
-      "metadata": {
-        "cost": 0,
-        "bullets": [{
-          "content": "40 concurrent connections"
-        }]
-      }
-    }, {
-      "name": "fake-async-only-plan",
-      "id": "8d415f6a-XXXX-XXXX-XXXX-e61f3baa1c77",
-      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async",
-      "max_storage_tb": 5,
-      "metadata": {
-        "cost": 0,
-        "bullets": [{
-          "content": "40 concurrent connections"
-        }]
-      }
-    }]
+      "id": "plan1-guid-here",
+      "name": "small",
+      "description": "A small shared database with 100mb storage quota and 10 connections"
+    },{
+      "id": "plan2-guid-here",
+      "name": "large",
+      "description": "A large dedicated database with 10GB storage quota, 512MB of RAM, and 100 connections",
+      "free": false
+    }],
+    "dashboard_client": {
+      "id": "client-id-1",
+      "secret": "secret-1",
+      "redirect_uri": "https://dashboard.service.com"
+    }
   }]
 }
 </pre>
-
 
 ### <a id='create-broker'></a>Adding a Broker to Cloud Foundry ###
 
@@ -425,32 +338,6 @@ Valid values for `state` are `in progress`, `succeeded`, and `failed`. Cloud Fou
 
 ##### Route #####
 `GET /v2/service_instances/:instance_id/last_operation`
-
-##### Parameters #####
-
-The request provides these query string parameters as useful hints for brokers.
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Query-String Field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>service_id*</td>
-  <td>string</td>
-  <td>ID of the service from the catalog. While not strictly necessary, some brokers might make use of this ID. </td>
-</tr>
-<tr>
-  <td>plan_id*</td>
-  <td>string</td>
-  <td>ID of the plan from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
-</tr>
-</tbody>
-</table>
 
 ##### cURL #####
 <pre class="terminal">
@@ -622,7 +509,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
     "parameter1": 1,
     "parameter2": "value"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.9" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.8" -H "Content-Type: application/json"
 </pre>
 
 In this case, `instance_id` refers to the service instance id generated by Cloud
@@ -800,7 +687,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
-}' -X PATCH -H "X-Broker-API-Version: 2.9" -H "Content-Type: application/json"
+}' -X PATCH -H "X-Broker-API-Version: 2.8" -H "Content-Type: application/json"
 </pre>
 
 ### Response ###
@@ -1077,22 +964,20 @@ The request provides these query string parameters as useful hints for brokers.
 <tr>
   <td>service_id*</td>
   <td>string</td>
-  <td>ID of the service from the catalog.</td>
+  <td>ID of the service from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
 </tr>
 <tr>
   <td>plan_id*</td>
   <td>string</td>
-  <td>ID of the plan from the catalog.</td>
+  <td>ID of the plan from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
 </tr>
 </tbody>
 </table>
 
-\* Query parameters with an asterisk are required.
-
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.9"
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.8"
 </pre>
 
 ### Response ###
@@ -1171,12 +1056,10 @@ The request provides these query string parameters as useful hints for brokers.
 </tbody>
 </table>
 
-\* Query parameters with an asterisk are required.
-
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?service_id=
-    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.9"
+    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.8"
 </pre>
 
 ### Response ###

@@ -442,15 +442,17 @@ The request provides these query string parameters as useful hints for brokers.
 <tr>
   <td>service_id*</td>
   <td>string</td>
-  <td>ID of the service from the catalog. While not strictly necessary, some brokers might make use of this ID. </td>
+  <td>ID of the service from the catalog.</td>
 </tr>
 <tr>
   <td>plan_id*</td>
   <td>string</td>
-  <td>ID of the plan from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
+  <td>ID of the plan from the catalog.</td>
 </tr>
 </tbody>
 </table>
+
+\* Query parameters with an asterisk are required.
 
 ##### cURL #####
 <pre class="terminal">
@@ -507,6 +509,8 @@ For success responses, the following fields are valid.
 </tr>
 </tboby>
 </table>
+
+\* Fields with an asterisk are required.
 
 <pre class="terminal">
 {
@@ -578,7 +582,7 @@ existing system.
 <tr>
   <td>service_id*</td>
   <td>string</td>
-  <td>The ID of the service within the catalog above. While not strictly necessary, some brokers might make use of this ID.</td>
+  <td>The ID of the service within the catalog above.</td>
 </tr>
 <tr>
   <td>space_guid*</td>
@@ -597,6 +601,8 @@ existing system.
 </tr>
 </tbody>
 </table>
+
+\* Fields with an asterisk are required.
 
 <pre class="terminal">
 {
@@ -723,7 +729,7 @@ To enable this functionality, a broker declares support for each service by incl
 <tr>
   <td>service_id*</td>
   <td>string</td>
-  <td>The ID of the service within the catalog above. While not strictly necessary, some brokers might make use of this ID.</td>
+  <td>The ID of the service within the catalog above.</td>
 </tr>
 <tr>
   <td>plan_id</td>
@@ -767,6 +773,8 @@ To enable this functionality, a broker declares support for each service by incl
 </tr>
 </tbody>
 </table>
+
+\* Fields with an asterisk are required.
 
 <pre class="terminal">
 {
@@ -880,12 +888,12 @@ the resource it creates.</p>
 <tr>
   <td>service_id*</td>
   <td>string</td>
-  <td>ID of the service from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
+  <td>ID of the service from the catalog.</td>
 </tr>
 <tr>
   <td>plan_id*</td>
   <td>string</td>
-  <td>ID of the plan from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
+  <td>ID of the plan from the catalog.</td>
 </tr>
 <tr>
   <td>app_guid</td>
@@ -904,6 +912,8 @@ the resource it creates.</p>
 </tr>
 </tbody>
 </table>
+
+\* Fields with an asterisk are required.
 
 <pre class="terminal">
 {
@@ -1156,12 +1166,12 @@ The request provides these query string parameters as useful hints for brokers.
 <tr>
   <td>service_id*</td>
   <td>string</td>
-  <td>ID of the service from the catalog. While not strictly necessary, some brokers might make use of this ID. </td>
+  <td>ID of the service from the catalog.</td>
 </tr>
 <tr>
   <td>plan_id*</td>
   <td>string</td>
-  <td>ID of the plan from the catalog. While not strictly necessary, some brokers might make use of this ID.</td>
+  <td>ID of the plan from the catalog.</td>
 </tr>
 <tr>
   <td>accepts_incomplete</td>

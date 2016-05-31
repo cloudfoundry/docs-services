@@ -138,7 +138,7 @@ no longer be visible in the marketplace catalog or be provisionable.
 </tbody>
 </table>
 
-##### Body #####
+##### Body - Schema of Service Objects #####
 
 CLI and web clients have different needs with regard to service and plan names.
 A CLI-friendly string is all lowercase, with no spaces.
@@ -176,14 +176,14 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>A short description of the service that will appear in the catalog.</td>
 </tr>
 <tr>
-  <td>&nbsp;&nbsp;&nbsp;bindable*</td>
-  <td>boolean</td>
-  <td>Whether the service can be bound to applications.</td>
-</tr>
-<tr>
   <td>&nbsp;&nbsp;&nbsp;tags</td>
   <td>array-of-strings</td>
   <td>Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp.</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;bindable*</td>
+  <td>boolean</td>
+  <td>Whether the service can be bound to applications.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;metadata</td>
@@ -194,16 +194,25 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>&nbsp;&nbsp;&nbsp;requires</td>
   <td>array-of-strings</td>
   <td>A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <tt>syslog_drain</tt> and <tt>route_forwarding</tt>; for more info see <a href="app-log-streaming.html">Application Log Streaming</a> and <a href="route-services.html">Route Services</a>.</td>
-</tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plan_updateable</td>
   <td>boolean</td>
   <td>
-	  Whether the service supports upgrade/downgrade for some plans.
-	  <br/>
-	  Please note that the misspelling of the attribute <i>plan_updatable</i> to <i>plan_updateable</i> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.
+    Whether the service supports upgrade/downgrade for some plans.
+    <br/>
+    Please note that the misspelling of the attribute <i>plan_updatable</i> to <i>plan_updateable</i> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.
   </td>
 </tr>
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plans*</td>
   <td>array-of-objects
@@ -235,6 +244,16 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>boolean</td>
   <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.html">Quota Plans</a>. Default: true</td>
 </tr>
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;dashboard_client</td>
   <td>object</td>
@@ -266,11 +285,31 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
     "id": "service-guid-here",
     "name": "mysql",
     "description": "A MySQL-compatible relational database",
+    "tags":[  
+        "no-sql",
+        "relational"
+     ],
     "bindable": true,
+    "metadata":{  
+        "provider":{  
+        "name":"The name"
+        },
+    "requires":[  
+        "route_forwarding"
+     ],
+    "plan_updateable":true,
     "plans": [{
       "id": "plan1-guid-here",
       "name": "small",
       "description": "A small shared database with 100mb storage quota and 10 connections"
+      "metadata":{  
+        "cost":0,
+        "bullets":[  
+          {  
+            "content":"40 concurrent connections"
+          }
+        ]
+      }
     },{
       "id": "plan2-guid-here",
       "name": "large",

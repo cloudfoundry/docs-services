@@ -5,7 +5,7 @@ owner: Core Services
 
 <strong><%= modified_date %></strong>
 
-This documentation is intended for service authors who are interested in offering a service to a Cloud Foundry services marketplace. Developers interested in consuming these services can read the  [Manage Application Requests with Route Services](../devguide/services/route-binding.html) topic. 
+This documentation is intended for service authors who are interested in offering a service to a Cloud Foundry services marketplace. Developers interested in consuming these services can read the  [Manage Application Requests with Route Services](../devguide/services/route-binding.html) topic.
 
 <%= vars.route_services %>
 
@@ -42,7 +42,7 @@ Developers configure the service either through the service provider's web inter
 
 ### <a id="static-brokered"></a>Static, Brokered Service ###
 
-In this model, an operator installs a static routing service, which might be a piece of hardware, in front of the Load Balancer. The routing service runs outside of Cloud Foundry and receives traffic to all apps running in the CF deployment. The service provider creates a service broker to publish the service to the CF marketplace. As with a [fully-brokered service](#fully-brokered), a developer can use the service by instantiating it with `cf create-service` and binding it to an app with `cf bind-route-service`. 
+In this model, an operator installs a static routing service, which might be a piece of hardware, in front of the Load Balancer. The routing service runs outside of Cloud Foundry and receives traffic to all apps running in the CF deployment. The service provider creates a service broker to publish the service to the CF marketplace. As with a [fully-brokered service](#fully-brokered), a developer can use the service by instantiating it with `cf create-service` and binding it to an app with `cf bind-route-service`.
 
 ![Static, brokered](images/route-services-static-brokered.png)
 
@@ -145,13 +145,13 @@ When users bind a route to a service instance, Cloud Foundry will send a [bind r
 - [Rate Limiting Route Service](https://github.com/cloudfoundry-samples/ratelimit-service): This example route service is a simple Cloud Foundry app that provides rate limiting to control the rate of traffic to an application.
 - [Spring Boot Example](https://github.com/nebhale/route-service-example): Logs requests received and sent; written in Spring Boot
 
-#### <a id='testing'></a>Testing ####
+## <a id='tutorial'></a>Tutorial ##
 
-The following instructions show how to use the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) described in <a href="#examples">Examples</a> to verify that when a route service is bound to a route, requests for that route are proxied to the route service.
+The following instructions show how to use the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) described in <a href="#examples">Example Route Services</a> to verify that when a route service is bound to a route, requests for that route are proxied to the route service.
 
 Requires CLI version 6.16 or above.
 
-1. Push the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) as an app. 
+1. Push the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) as an app.
 
     <pre class="terminal">
     $ cf push logger
@@ -186,4 +186,3 @@ Requires CLI version 6.16 or above.
     <pre class="terminal">
     $ curl spring-music.cf.example.com
     </pre>
-

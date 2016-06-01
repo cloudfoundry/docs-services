@@ -160,6 +160,8 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>array-of-service-objects</td>
   <td>Schema of service objects defined below.</td>
 </tr>
+</tbody>
+</table>
 
 <h5> Service Objects </h5>
 
@@ -229,7 +231,8 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 </td>
   <td>A list of plans for this service, schema defined below:</td>
 </tr>
-</tr>
+</tbody>
+</table>
 
 <h5> Dashboard Client Object </h5>
 
@@ -261,7 +264,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 </table>
 
 
-<h5> Plan Object <h5>
+<h5> Plan Object </h5>
 
 <table border="1" class="nice">
 <thead>
@@ -297,54 +300,60 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>boolean</td>
   <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.html">Quota Plans</a>. Default: true</td>
 </tr>
+</tbody>
+</table>
 
 \* Fields with an asterisk are required.
 
-<pre class="terminal">
+<pre>
 {
-  "services": [{
-    "id": "service-guid-here",
-    "name": "mysql",
-    "description": "A MySQL-compatible relational database",
-    "tags":[  
+  - services: [
+    - {
+          name: "mysql",
+          id: "service-guid-here",
+          description: "A MySQL-compatible relational database",
+  - tags:[  
         "no-sql",
         "relational"
      ],
-    "bindable": true,
-    "metadata":{  
-        "provider":{  
-        "name":"The name"
-        },
-    "requires":[  
+  - requires:[  
         "route_forwarding"
      ],
-    "plan_updateable":true,
-    "plans": [{
-      "id": "plan1-guid-here",
-      "name": "small",
-      "description": "A small shared database with 100mb storage quota and 10 connections"
-      "metadata":{  
-        "cost":0,
-        "bullets":[  
-          {  
-            "content":"40 concurrent connections"
-          }
-        ]
-      }
-    },{
-      "id": "plan2-guid-here",
-      "name": "large",
-      "description": "A large dedicated database with 10GB storage quota, 512MB of RAM, and 100 connections",
-      "free": false
-    }],
-    "dashboard_client": {
-      "id": "client-id-1",
-      "secret": "secret-1",
-      "redirect_uri": "https://dashboard.service.com"
+    max_db_per_node: 5,
+    bindable: true,
+  + metadata: {...},
+  - dashboard_client: {
+      id: "client-id-1",
+      secret: "secret-1",
+      redirect_uri: "https://dashboard.service.com"
+    },
+    plan_updateable: true,
+  - plans: [
+      - {
+            name: "small",
+            id: "plan1-guid-here",
+            description: "A small shared database with 100mb storage quota and 10 connections"
+          - metadata:{  
+                cost:0,
+              - bullets:[  
+                  - {  
+                      content:"40 concurrent connections"
+                    }
+                ]
+            }
+        },
+      - {
+            name: "large",
+            id: "plan2-guid-here",
+            description: "A large dedicated database with 10GB storage quota, 512MB of RAM, and 100 connections",
+            metadata: {...}
+        }       
+      ]
     }
-  }]
+  ]
 }
 </pre>
+
 
 ### <a id='create-broker'></a>Adding a Broker to Cloud Foundry ###
 

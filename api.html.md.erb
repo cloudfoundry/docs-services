@@ -113,10 +113,10 @@ no longer be visible in the marketplace catalog or be provisionable.
 
 ### Request ###
 
-##### Route #####
+#### Route ####
 `GET /v2/catalog`
 
-##### cURL #####
+#### cURL ####
 <pre class="terminal">
  $ curl -H "X-Broker-API-Version: 2.8" http://username:password@broker-url/v2/catalog
 </pre>
@@ -138,7 +138,7 @@ no longer be visible in the marketplace catalog or be provisionable.
 </tbody>
 </table>
 
-##### Body - Schema of Service Objects #####
+#### Body - Schema of Service Objects ####
 
 CLI and web clients have different needs with regard to service and plan names.
 A CLI-friendly string is all lowercase, with no spaces.
@@ -157,18 +157,30 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tbody>
 <tr>
   <td>services*</td>
-  <td>array-of-objects</td>
-  <td>Schema of service objects defined below:</td>
+  <td>array-of-service-objects</td>
+  <td>Schema of service objects defined below.</td>
+</tr>
+
+<h5> Service Objects </h5>
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;name*</td>
+  <td>string</td>
+  <td>The CLI-friendly name of the service that will appear in the catalog. All lowercase, no spaces.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;id*</td>
   <td>string</td>
   <td>An identifier used to correlate this service in future requests to the catalog. This must be unique within Cloud Foundry, using a GUID is recommended. </td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;name*</td>
-  <td>string</td>
-  <td>The CLI-friendly name of the service that will appear in the catalog. All lowercase, no spaces.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;description*</td>
@@ -181,6 +193,14 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>Tags provide a flexible mechanism to expose a classification, attribute, or base technology of a service, enabling equivalent services to be swapped out without changes to dependent logic in applications, buildpacks, or other services. E.g. mysql, relational, redis, key-value, caching, messaging, amqp.</td>
 </tr>
 <tr>
+  <td>&nbsp;&nbsp;&nbsp;requires</td>
+  <td>array-of-strings</td>
+  <td>A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <tt>syslog_drain</tt> and <tt>route_forwarding</tt>; for more info see <a href="app-log-streaming.html">Application Log Streaming</a> and <a href="route-services.html">Route Services</a>.</td>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;max_db_per_node:</td>
+  <td>strings</td>
+  <td></td>
+<tr>
   <td>&nbsp;&nbsp;&nbsp;bindable*</td>
   <td>boolean</td>
   <td>Whether the service can be bound to applications.</td>
@@ -191,9 +211,10 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>A list of metadata for a service offering. For more information, see <a href="catalog-metadata.html">Service Metadata</a>.</td>
 </tr>
 <tr>
-  <td>&nbsp;&nbsp;&nbsp;requires</td>
-  <td>array-of-strings</td>
-  <td>A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <tt>syslog_drain</tt> and <tt>route_forwarding</tt>; for more info see <a href="app-log-streaming.html">Application Log Streaming</a> and <a href="route-services.html">Route Services</a>.</td>
+  <td>&nbsp;&nbsp;&nbsp;dashboard_client</td>
+  <td>object</td>
+  <td>Contains the data necessary to activate the <a href="dashboard-sso.html">Dashboard SSO feature</a> for this service</td>
+</tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plan_updateable</td>
   <td>boolean</td>
@@ -202,7 +223,15 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
     <br/>
     Please note that the misspelling of the attribute <i>plan_updatable</i> to <i>plan_updateable</i> was done by mistake. We have opted to keep that misspelling instead of fixing it and thus breaking backward compatibility.
   </td>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;plans*</td>
+  <td>array-of-objects
+</td>
+  <td>A list of plans for this service, schema defined below:</td>
 </tr>
+</tr>
+
+<h5> Dashboard Client Object </h5>
 
 <table border="1" class="nice">
 <thead>
@@ -214,11 +243,35 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 </thead>
 <tbody>
 <tr>
-  <td>&nbsp;&nbsp;&nbsp;plans*</td>
-  <td>array-of-objects
-</td>
-  <td>A list of plans for this service, schema defined below:</td>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id</td>
+  <td>string</td>
+  <td>The id of the Oauth2 client that the service intends to use. The name may be taken, in which case the updat will return an error to the operator</td>
 </tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secret</td>
+  <td>string</td>
+  <td>A secret for the dashboard client</td>
+</tr>
+<tr>
+  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redirect_uri</td>
+  <td>string</td>
+  <td>A domain for the service dashboard that will be whitelisted by the UAA to enable SSO</td>
+</tr>
+</tbody>
+</table>
+
+
+<h5> Plan Object <h5>
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id*</td>
   <td>string</td>
@@ -244,38 +297,6 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>boolean</td>
   <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.html">Quota Plans</a>. Default: true</td>
 </tr>
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;dashboard_client</td>
-  <td>object</td>
-  <td>Contains the data necessary to activate the <a href="dashboard-sso.html">Dashboard SSO feature</a> for this service</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id</td>
-  <td>string</td>
-  <td>The id of the Oauth2 client that the service intends to use. The name may be taken, in which case the API will return an error to the operator</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secret</td>
-  <td>string</td>
-  <td>A secret for the dashboard client</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;redirect_uri</td>
-  <td>string</td>
-  <td>A domain for the service dashboard that will be whitelisted by the UAA to enable SSO</td>
-</tr>
-</tbody>
-</table>
 
 \* Fields with an asterisk are required.
 

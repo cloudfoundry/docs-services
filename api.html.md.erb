@@ -307,50 +307,70 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 
 <pre>
 {
-  - services: [
-    - {
-          name: "mysql",
-          id: "service-guid-here",
-          description: "A MySQL-compatible relational database",
-  - tags:[  
-        "no-sql",
-        "relational"
-     ],
-  - requires:[  
-        "route_forwarding"
-     ],
-    max_db_per_node: 5,
-    bindable: true,
-  + metadata: {...},
-  - dashboard_client: {
-      id: "client-id-1",
-      secret: "secret-1",
-      redirect_uri: "https://dashboard.service.com"
+  "services": [{
+    "name": "fake-service-51908062-f20f-46ed-9718-cc4351c7575a",
+    "id": "acb56d7c-5597-4031-a0ca-feb140a59a66",
+    "description": "fake service",
+    "tags": ["no-sql", "relational"],
+    "requires": ["route_forwarding"],
+    "max_db_per_node": 5,
+    "bindable": true,
+    "metadata": {
+      "provider": {
+        "name": "The name"
+      },
+      "listing": {
+        "imageUrl": "http://catgifpage.com/cat.gif",
+        "blurb": "fake broker that is fake",
+        "longDescription": "A long time ago, in a galaxy far far away..."
+      },
+      "displayName": "The Fake Broker"
     },
-    plan_updateable: true,
-  - plans: [
-      - {
-            name: "small",
-            id: "plan1-guid-here",
-            description: "A small shared database with 100mb storage quota and 10 connections"
-          - metadata:{  
-                cost:0,
-              - bullets:[  
-                  - {  
-                      content:"40 concurrent connections"
-                    }
-                ]
-            }
-        },
-      - {
-            name: "large",
-            id: "plan2-guid-here",
-            description: "A large dedicated database with 10GB storage quota, 512MB of RAM, and 100 connections",
-            metadata: {...}
-        }       
-      ]
-    }
-  ]
+    "dashboard_client": {
+      "id": "398e2f8e-1767-47e4-bee1-19a71ecbcf64",
+      "secret": "277cabb0-a4d5-4daa-9ca1-7822c0a90e5d",
+      "redirect_uri": "http://localhost:5551"
+    },
+    "plan_updateable": true,
+    "plans": [{
+      "name": "fake-plan",
+      "id": "d3031751-84e6-4119-ab7c-a42377d3320e",
+      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections",
+      "max_storage_tb": 5,
+      "metadata": {
+        "cost": 0,
+        "bullets": [{
+          "content": "Shared fake server"
+        }, {
+          "content": "5 TB storage"
+        }, {
+          "content": "40 concurrent connections"
+        }]
+      }
+    }, {
+      "name": "fake-async-plan",
+      "id": "0f4008b5-c6e6-4646-8c27-dace631cd648",
+      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async",
+      "max_storage_tb": 5,
+      "metadata": {
+        "cost": 0,
+        "bullets": [{
+          "content": "40 concurrent connections"
+        }]
+      }
+    }, {
+      "name": "fake-async-only-plan",
+      "id": "8d415f6a-c3cd-4c3c-b685-e61f3baa1c77",
+      "description": "Shared fake Server, 5tb persistent disk, 40 max concurrent connections. 100 async",
+      "max_storage_tb": 5,
+      "metadata": {
+        "cost": 0,
+        "bullets": [{
+          "content": "40 concurrent connections"
+        }]
+      }
+    }]
+  }]
 }
 </pre>
 

@@ -1,0 +1,107 @@
+---
+title: Volume Services (Experimental)
+owner: Core Services
+---
+
+<strong><%= modified_date %></strong>
+
+## <a id='introduction'></a>Introduction ##
+
+Cloud Foundry application developers may wish to have their applications mount one or more volumes in order to be able to write to a reliable (rather than ephemeral) file system.  Through integrations with service brokers and with the Cloud Foundry runtime, providers can offer these services to developers with a familiar automated, self-service, and on-demand user experience.
+
+This feature is <b><i>EXPERIMENTAL</i></b>.
+
+## <a id='schema'></a>Schema ##
+
+### Service Broker Bind Response ###
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>volume_mounts*</td>
+  <td>volume_mount[]</td>
+  <td>An array of <i>volume_mount</i> JSON objects</td>
+</tr>
+</tbody>
+</table>
+
+### volume_mount ###
+<table border="1" class="nice">
+ <thead>
+ <tr>
+   <th>Field</th>
+   <th>Type</th>
+   <th>Description</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+   <td>container_path</td>
+   <td>string</td>
+   <td>The path to mount inside the application container</td>
+ </tr>
+ <tr>
+   <td>mode</td>
+   <td>string</td>
+   <td>Indicates whether the volume should be read-only or read-write</td>
+ </tr>
+ <tr>
+   <td>private</td>
+   <td>private</td>
+   <td>A <i>private</i> JSON object</td>
+ </tr>
+ </tbody>
+ </table>
+
+### private ###
+<table border="1" class="nice">
+ <thead>
+ <tr>
+   <th>Field</th>
+   <th>Type</th>
+   <th>Description</th>
+ </tr>
+ </thead>
+ <tbody>
+ <tr>
+   <td>driver</td>
+   <td>string</td>
+   <td>The path to mount inside the application container</td>
+ </tr>
+ <tr>
+   <td>group_id</td>
+   <td>string</td>
+   <td>Indicates whether the volume should be read-only or read-write</td>
+ </tr>
+ <tr>
+   <td>config</td>
+   <td>object</td>
+   <td>An broker/driver specific JSON object.  The broker is free to return any valid JSON object here and it will be passed through the volume driver identified in the 'driver' field</td>
+ </tr>
+ </tbody>
+ </table>
+
+### Example ###
+<pre class="terminal">
+	{
+	  ...
+	  "volume_mounts": {
+	    "container_path": "/data/images",
+	    "mode": "r",
+	    "private": {
+	      "driver": "cephdriver",
+	      "group_id": "bc2c1eab-05b9-482d-b0cf-750ee07de311",
+	      "config": {
+	        "remote_mount_point": "/mnt/bc2c1eab-05b9-482d-b0cf-750ee07de311"
+	      }
+	    }
+	  }
+	}
+</pre>

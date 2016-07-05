@@ -454,7 +454,7 @@ The request provides these query string parameters as useful hints for brokers.
 <tr>
   <td>operation</td>
   <td>string</td>
-  <td>The field optionally returned by the service broker on Provision, Update, Deprovision async responses. Repesents any state the service broker responsed with as a URL encoded string.</a>.</td>
+  <td>The field optionally returned by the service broker on Provision, Update, Deprovision async responses. Represents any state the service broker responsed with as a URL encoded string.</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -1176,36 +1176,9 @@ Responses with any other status code will be interpreted as a failure and the bi
 
 ##### Body #####
 
-Responses with any other status code will be interpreted as a failure. Brokers can include a user-facing message in the `description` field; for details see [Broker Errors](#broker-errors).
-
-##### Body #####
-
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-For success responses, the following fields are supported. Others will be ignored. For error responses, see [Broker Errors](#broker-errors).
-
-<table border="1" class="nice">
-<thead>
-<tr>
-  <th>Response field</th>
-  <th>Type</th>
-  <th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>operation</td>
-  <td>string</td>
-  <td>For async responses, service brokers can return operation state as a string. This field will be provided back to the service broker on `last_operation` requests as a URL encoded query param.</a>.</td>
-</tr>
-</tboby>
-</table>
-\* Fields with an asterisk are required.
-<pre class="terminal">
-{
- "operation": "task_10"
-}
-</pre>
+For a success response, the expected response body is `{}`.
 
 ## <a id='deprovisioning'></a>Deprovisioning ##
 
@@ -1297,7 +1270,30 @@ Responses with any other status code will be interpreted as a failure and the se
 
 All response bodies must be a valid JSON Object (`{}`). This is for future compatibility; it will be easier to add fields in the future if JSON is expected rather than to support the cases when a JSON body may or may not be returned.
 
-For a success response, the expected response body is `{}`.
+For success responses, the following fields are supported. Others will be ignored. For error responses, see [Broker Errors](#broker-errors).
+
+<table border="1" class="nice">
+<thead>
+<tr>
+  <th>Response field</th>
+  <th>Type</th>
+  <th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>operation</td>
+  <td>string</td>
+  <td>For async responses, service brokers can return operation state as a string. This field will be provided back to the service broker on `last_operation` requests as a URL encoded query param.</a>.</td>
+</tr>
+</tboby>
+</table>
+\* Fields with an asterisk are required.
+<pre class="terminal">
+{
+ "operation": "task_10"
+}
+</pre>
 
 ## <a id='broker-errors'></a>Broker Errors ##
 

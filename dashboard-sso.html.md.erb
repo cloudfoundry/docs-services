@@ -69,10 +69,10 @@ Users can then navigate to the service dashboard at the URL provided by `dashboa
 When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth2 login flow. A summary of the flow can be found in [section 1.2 of the OAuth2 RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth2 expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In Cloud Foundry, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field.
 
 ```
-$ curl api.example-cf.com/info
-{"name":"vcap","build":"2222","support":"http://support.example-cf.com","version
+$ curl api.example.com/info
+{"name":"vcap","build":"2222","support":"http://support.example.com","version
 ":2,"description":"Cloud Foundry sponsored by Pivotal","authorization_endpoint":
-"https://login.example-cf.com","token_endpoint":"https://uaa.example-cf.com",
+"https://login.example.com","token_endpoint":"https://uaa.example.com",
 "allow_debug":true}
 ```
 

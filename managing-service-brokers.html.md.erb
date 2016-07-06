@@ -159,7 +159,7 @@ If incorrect basic auth credentials are provided:
 Server error, status code: 500, error code: 10001, message: Authentication
 failed for the service broker API.
 Double-check that the username and password are correct:
-    http://github-broker.a1-app.cf-app.com/v2/catalog
+    http://github-broker.a1-app.example.com/v2/catalog
 </pre>
 
 If you receive the following errors, check your broker logs.
@@ -171,11 +171,11 @@ Server error, status code: 500, error code: 10001, message:
 
 Server error, status code: 500, error code: 10001, message:
     The service broker API returned an error from
-    http://github-broker.a1-app.cf-app.com/v2/catalog: 404 Not Found
+    http://github-broker.a1-app.example.com/v2/catalog: 404 Not Found
 
 Server error, status code: 500, error code: 10001, message:
     The service broker API returned an error from
-    http://github-broker.primo.cf-app.com/v2/catalog: 500 Internal Server Error
+    http://github-broker.primo.example.com/v2/catalog: 500 Internal Server Error
 </pre>
 
 If your broker's catalog of services and plans violates validation of presence,

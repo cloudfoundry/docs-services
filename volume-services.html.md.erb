@@ -83,7 +83,7 @@ Cloud Foundry application developers may want their applications to mount one or
  <tr>
    <td>config</td>
    <td>string</td>
-   <td>An broker/driver specific string.  The broker is free to return any string here and it will be passed through the volume driver identified in the 'driver' field</td>
+   <td>A configuration string associated with a particular broker/driver pair.  The broker is free to return any string here and it will be passed through the volume driver identified in the 'driver' field</td>
  </tr>
  </tbody>
  </table>
@@ -98,7 +98,7 @@ Cloud Foundry application developers may want their applications to mount one or
 	    "private": {
 	      "driver": "cephdriver",
 	      "group_id": "bc2c1eab-05b9-482d-b0cf-750ee07de311",
-	      "config": "some value, possibly even marshalled json"
+	      "config": "some arbitrary configuration string, possibly even marshalled json"
 	    }
 	  }
 	}

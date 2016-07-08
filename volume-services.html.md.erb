@@ -90,16 +90,16 @@ Cloud Foundry application developers may want their applications to mount one or
 
 ### Example ###
 <pre class="terminal">
-	{
-	  ...
-	  "volume_mounts": {
-	    "container_path": "/data/images",
-	    "mode": "r",
-	    "private": {
-	      "driver": "cephdriver",
-	      "group_id": "bc2c1eab-05b9-482d-b0cf-750ee07de311",
-	      "config": "Some arbitrary configuration string. Could be a marshalled json"
-	    }
-	  }
-	}
+    {
+      ...
+      "volume_mounts": {
+        "container_path": "/data/images",
+        "mode": "r",
+        "private": {
+          "driver": "cephdriver",
+          "group_id": "bc2c1eab-05b9-482d-b0cf-750ee07de311",
+          "config": "Some arbitrary configuration string. Could be a marshalled json"
+        }
+      }
+    }
 </pre>

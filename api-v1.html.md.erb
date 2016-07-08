@@ -92,7 +92,7 @@ Generator](http://www.guidgenerator.com/ "Online GUID Generator").
   <td>label*</td>
   <td>string</td>
   <td>The type of service offered, like "mongodb".
-	This must match the name of the service used for the service-auth-token</td>
+    This must match the name of the service used for the service-auth-token</td>
 </tr>
 <tr>
   <td>provider*</td>
@@ -113,14 +113,14 @@ Generator](http://www.guidgenerator.com/ "Online GUID Generator").
   <td>version*</td>
   <td>string</td>
   <td>The version string of the service provided to be displayed to users, 5.5
-	for mysql "5.5".
-	Multiple of the same services can exist with different versions.</td>
+    for mysql "5.5".
+    Multiple of the same services can exist with different versions.</td>
 </tr>
 <tr>
   <td>info_url</td>
   <td>string</td>
   <td>(Currently unused) A URL that users can visit to determine more
-	information about a service offering</td>
+    information about a service offering</td>
 </tr>
 <tr>
   <td>acls</td>
@@ -131,13 +131,13 @@ Generator](http://www.guidgenerator.com/ "Online GUID Generator").
   <td>timeout</td>
   <td>integer</td>
   <td>(Currently unused) How long the Cloud Controller should wait for a broker
-	to finish an operation before giving up.</td>
+    to finish an operation before giving up.</td>
 </tr>
 <tr>
   <td>active</td>
   <td>bool</td>
   <td>Used as a hint to CF front-ends that a service is not active and can no
-	longer be provisioned (not enforced by the Cloud Controller)</td>
+    longer be provisioned (not enforced by the Cloud Controller)</td>
 </tr>
 <tr>
   <td>extra</td>
@@ -148,30 +148,30 @@ Generator](http://www.guidgenerator.com/ "Online GUID Generator").
   <td>unique_id</td>
   <td>string</td>
   <td>A new identifier that must be globally unique.
-	This ID will be passed to the service broker as part of provision, bind,
-	etc. requests.
-	This "primary key" is easier to work with than the combination of
-	<code>[label, provider, version]</code> which also forms a "primary
-	key".</td>
+    This ID will be passed to the service broker as part of provision, bind,
+    etc. requests.
+    This "primary key" is easier to work with than the combination of
+    <code>[label, provider, version]</code> which also forms a "primary
+    key".</td>
 </tr>
 <tr>
   <td>bindable</td>
   <td>bool</td>
   <td>If false, cloud controller will return an error to frontend clients when a
-	user requests to bind an app to an instance of the service.</td>
+    user requests to bind an app to an instance of the service.</td>
 </tr>
 <tr>
   <td>tags</td>
   <td>array of objects</td>
   <td>Used by buildpacks and application libraries to parse credentials from the
-	VCAP_SERVICES environment variable.
-	Could also be used by frontend clients to filter marketplace services.</td>
+    VCAP_SERVICES environment variable.
+    Could also be used by frontend clients to filter marketplace services.</td>
 </tr>
 <tr>
   <td>documentation_url</td>
   <td>string</td>
   <td>(Currently unused) Used by frontend clients to display a URL to
-	documentation for the service.</td>
+    documentation for the service.</td>
 </tr>
 <tr>
   <td>service_plans</td>
@@ -194,7 +194,7 @@ Generator](http://www.guidgenerator.com/ "Online GUID Generator").
   <td>metadata</td>
   <td>object</td>
   <td>Contains guid and the Cloud Controller URL for manipulating the newly
-	created resource</td>
+    created resource</td>
 </tr>
 <tr>
   <td>entity</td>
@@ -245,7 +245,7 @@ Generator](http://www.guidgenerator.com/ "Online GUID Generator").
   <td>400</td>
   <td>Bad request</td>
   <td>one of: already defined, bad request, invalid params, missing field (error
-	message in the Cloud Controller log will have details as to why)</td>
+    message in the Cloud Controller log will have details as to why)</td>
 </tr>
 <tr>
   <td>401/403</td>
@@ -277,7 +277,7 @@ Generator](http://www.guidgenerator.com/ "Online GUID Generator").
   <td>collection-method</td>
   <td>add<br/>replace</td>
   <td>Merge any supplied plans with existing plans<br/>Replace existing plans
-	with supplied plans </td>
+    with supplied plans </td>
 </tr>
 </tbody>
 </table>
@@ -295,11 +295,11 @@ Generator](http://www.guidgenerator.com/ "Online GUID Generator").
   <td>label*<br/>provider*</br>version*</td>
   <td>string</td>
   <td>If `unique_id` is not provided, used to find the existing service to be
-	updated</td>
+    updated</td>
 </tr>
 <tr>
   <td colspan="3"><em>Everything else same as create endpoint, except
-	`unique_id` cannot be included</em></td>
+    `unique_id` cannot be included</em></td>
 </tr>
 </tbody>
 </table>
@@ -336,7 +336,7 @@ Generator](http://www.guidgenerator.com/ "Online GUID Generator").
   <td>inline-relation-depth</td>
   <td>0-3</td>
   <td>Set to 1 to get plans as well<br/>Set to 2 to get plans &
-	instances<br/>Set to 3 to get plans & instances & bindings</td>
+    instances<br/>Set to 3 to get plans & instances & bindings</td>
 </tr>
 <tr>
   <td>q</td>
@@ -403,7 +403,7 @@ attached to this service, as they must be deleted first.
   <td>free*</td>
   <td>bool</td>
   <td>Displayed by frontends, used by quota_definitions to determine whether an
-	org can provision a service</td>
+    org can provision a service</td>
 </tr>
 <tr>
   <td>description*</td>
@@ -419,16 +419,16 @@ attached to this service, as they must be deleted first.
   <td>unique_id</td>
   <td>string</td>
   <td>A new identifier that must be unique.
-	This ID will be passed as part of provision, bind, etc. requests.
-	This "primary key" is easier to work with than the combination of [label,
-	provider, version] which also forms a "primary key".</td>
+    This ID will be passed as part of provision, bind, etc. requests.
+    This "primary key" is easier to work with than the combination of [label,
+    provider, version] which also forms a "primary key".</td>
 </tr>
 <tr>
   <td>public</td>
   <td>bool</td>
   <td>Whether a plan should be automatically visible for all users.
-	When false, the rules behind service_plan_visibilities are used to decide
-	visibility.</td>
+    When false, the rules behind service_plan_visibilities are used to decide
+    visibility.</td>
 </tr>
 <tr>
   <td>service_guid*</td>
@@ -451,7 +451,7 @@ attached to this service, as they must be deleted first.
   <td>metadata</td>
   <td>object</td>
   <td>Contains guid and the Cloud Controller URL for manipulating the newly
-	created resource</td>
+    created resource</td>
 </tr>
 <tr>
   <td>entity</td>
@@ -495,7 +495,7 @@ attached to this service, as they must be deleted first.
   <td>inline-relation-depth</td>
   <td>0-2</td>
   <td>Set to 1 to get instances & spaces & service as well<br/>Set to 2 to get
-	service & instances & spaces & bindings
+    service & instances & spaces & bindings
 </tr>
 <tr>
   <td>q</td>
@@ -549,11 +549,11 @@ service
   <td>service_guid*<br/>name*
   <td>string</td>
   <td>If `unique_id` is not provided, used to find the existing plan to be
-	updated</td>
+    updated</td>
 </tr>
 <tr>
   <td colspan="3"><em>Everything else same as create endpoint, except
-	`unique_id` cannot be provided</em></td>
+    `unique_id` cannot be provided</em></td>
 </tr>
 </tbody>
 </table>
@@ -606,7 +606,7 @@ path below.
   <td>unique_id*</td>
   <td>string</td>
   <td>The unique_id of the desired <strong>service_plan</strong> to be
-	provisioned</td>
+    provisioned</td>
 </tr>
 <tr>
   <td>name*</td>
@@ -622,13 +622,13 @@ path below.
   <td>provider</td>
   <td>string</td>
   <td>The provider of the service to provision, in case the broker is
-	responsible for multiple services</td>
+    responsible for multiple services</td>
 </tr>
 <tr>
   <td>label</td>
   <td>string</td>
   <td>The label of the service to provision, in case the broker is responsible
-	for multiple services</td>
+    for multiple services</td>
 </tr>
 <tr>
   <td>plan</td>
@@ -639,19 +639,19 @@ path below.
   <td>version</td>
   <td>string</td>
   <td>The version of the service to provision, in case the broker is responsible
-	for multiple versions</td>
+    for multiple versions</td>
 </tr>
 <tr>
   <td>organization_guid</td>
   <td>string</td>
   <td>The GUID of the organization under which the service will be provisioned
-	(try not to use this)</td>
+    (try not to use this)</td>
 </tr>
 <tr>
   <td>space_guid</td>
   <td>string</td>
   <td>The GUID of the space under which the service will be provisioned (try not
-	to use this)</td>
+    to use this)</td>
 </tr>
 <tr>
   <td>plan_option</td>
@@ -680,25 +680,25 @@ Asterisks denote required fields.
   <td>service_id*</td>
   <td>string</td>
   <td>A broker-generated identifier that represents the resource, and will be
-	passed to the broker for future bind/deprovision requests</td>
+    passed to the broker for future bind/deprovision requests</td>
 </tr>
 <tr>
   <td>configuration*</td>
   <td>object</td>
   <td>The configuration used to provision this service, usually a copy of the
-	request attributes</td>
+    request attributes</td>
 </tr>
 <tr>
   <td>credentials*</td>
   <td>object</td>
   <td>Any credentials that were generated as a result of provisioning, that the
-	broker would like to be stored in the Cloud Controller.</td>
+    broker would like to be stored in the Cloud Controller.</td>
 </tr>
 <tr>
   <td>dashboard_url</td>
   <td>string</td>
   <td>If applicable, the URL that an end-user can visit to monitor/manage the
-	provisioned instances</td>
+    provisioned instances</td>
 </tr>
 </tbody>
 </table>
@@ -741,7 +741,7 @@ For legacy reasons, a binding is known as a "handle" on the broker side.
   <td>service_id*</td>
   <td>string</td>
   <td>The broker-generated identifier that identifies the instance to be
-	bound</td>
+    bound</td>
 </tr>
 <tr>
   <td>label*</td>
@@ -759,9 +759,9 @@ For legacy reasons, a binding is known as a "handle" on the broker side.
   <td>app_id</td>
   <td>string</td>
   <td>The identifier of the application that will receive the binding
-	credentials.<br/>
+    credentials.<br/>
   <em>Included in the cloud controller in commit f577e8444 on 12/3/2013 (it will
-	be included in cf-release v15X)</em>
+    be included in cf-release v15X)</em>
   </td>
 </tr>
 <tr>
@@ -791,21 +791,21 @@ Asterisks denote required fields.
   <td>service_id*</td>
   <td>string</td>
   <td>An identifier that’s generated by the broker and will be passed to the
-	broker for future unbind requests, it’s really a "handle_id" not a
-	service_id.</td>
+    broker for future unbind requests, it’s really a "handle_id" not a
+    service_id.</td>
 </tr>
 <tr>
   <td>configuration*</td>
   <td>object</td>
   <td>The configuration used to provision this service, usually a copy of the
-	request attributes</td>
+    request attributes</td>
 </tr>
 <tr>
   <td>credentials*</td>
   <td>object</td>
   <td>The credentials that were generated as part of this binding.
-	These credentials will be passed to the bound application as part of the
-	VCAP_SERVICES environment variable.</td>
+    These credentials will be passed to the bound application as part of the
+    VCAP_SERVICES environment variable.</td>
 </tr>
 </tbody>
 </table>
@@ -841,13 +841,13 @@ table:
   <td>service_id*</td>
   <td>string</td>
   <td>The broker service_id that was returned from the
-	<strong>provision</strong> response</td>
+    <strong>provision</strong> response</td>
 </tr>
 <tr>
   <td>handle_id*</td>
   <td>string</td>
   <td>The broker service_id that was returned from the <strong>binding</strong>
-	response</td>
+    response</td>
 </tr>
 <tr>
   <td>binding_options</td>

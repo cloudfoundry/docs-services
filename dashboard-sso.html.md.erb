@@ -34,25 +34,25 @@ When this client is not present in the cf-release manifest, Cloud Controller can
 
 1.  A service broker must include the `dashboard_client` field in the JSON response from its [catalog endpoint](api.html#catalog-mgmt) for each service implementing this feature. A valid response would appear as follows:
 
-	  ```
-	  {
-	    "services": [
-	      {
-	        "id": "44b26033-1f54-4087-b7bc-da9652c2a539",
-	        ...
-	        "dashboard_client": {
-	          "id": "p-mysql-client",
-	          "secret": "p-mysql-secret",
-	          "redirect_uri": "http://p-mysql.example.com"
-	        }
-	      }
-	    ]
-	  }
-	  ```
-	The `dashboard_client` field is a hash containing three fields:
-	- `id` is the unique identifier for the OAuth2 client that will be created for your service dashboard on the token server (UAA), and will be used by your dashboard to authenticate with the token server (UAA).
-	- `secret` is the shared secret your dashboard will use to authenticate with the token server (UAA).
-	- `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`.
+      ```
+      {
+        "services": [
+          {
+            "id": "44b26033-1f54-4087-b7bc-da9652c2a539",
+            ...
+            "dashboard_client": {
+              "id": "p-mysql-client",
+              "secret": "p-mysql-secret",
+              "redirect_uri": "http://p-mysql.example.com"
+            }
+          }
+        ]
+      }
+      ```
+    The `dashboard_client` field is a hash containing three fields:
+    - `id` is the unique identifier for the OAuth2 client that will be created for your service dashboard on the token server (UAA), and will be used by your dashboard to authenticate with the token server (UAA).
+    - `secret` is the shared secret your dashboard will use to authenticate with the token server (UAA).
+    - `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`.
 
 1. When a service broker which advertises the `dashboard_client` property for any of its services is [added or updated](managing-service-brokers.html), Cloud Controller will create or update UAA clients as necessary. This client will be used by the service dashboard to authenticate users.
 
@@ -82,16 +82,16 @@ A service dashboard should implement the OAuth2 Authorization Code Grant type ([
 
 1. When a user visits the service dashboard at the value of `dashboard_url`, the dashboard should redirect the user's browser to the Authorization Endpoint and include its `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and list of requested scopes.
 
-	Scopes are permissions included in the token a dashboard client will receive from UAA, and which Cloud Controller uses to enforce access. A client should request the minimum scopes it requires. The minimum scopes required for this workflow are `cloud_controller_service_permissions.read` and `openid`. For an explanation of the scopes available to dashboard clients, see [On Scopes](#on-scopes).
+    Scopes are permissions included in the token a dashboard client will receive from UAA, and which Cloud Controller uses to enforce access. A client should request the minimum scopes it requires. The minimum scopes required for this workflow are `cloud_controller_service_permissions.read` and `openid`. For an explanation of the scopes available to dashboard clients, see [On Scopes](#on-scopes).
 
 1. UAA authenticates the user by redirecting the user to the Login Server, where the user then approves or denies the scopes requested by the service dashboard. The user is presented with human readable descriptions for permissions representing each scope. After authentication, the user's browser is redirected back to the Authorization endpoint on UAA with an authentication cookie for the UAA.
 
 1. Assuming the user grants access, UAA redirects the user's browser back to the value of `redirect_uri` the dashboard provided in its request to the Authorization Endpoint.  The `Location` header in the response includes an authorization code.
 
-	```
-	HTTP/1.1 302 Found
-	Location: https://p-mysql.example.com/manage/auth?code=F45jH
-	```
+    ```
+    HTTP/1.1 302 Found
+    Location: https://p-mysql.example.com/manage/auth?code=F45jH
+    ```
 
 1. The dashboard UI should then request an access token from the Token Endpoint by including the authorization code received in the previous step.  When making the request the dashboard must authenticate with UAA by passing the client `id` and `secret` in a basic auth header. UAA will verify that the client id matches the client it issued the code to. The dashboard should also include the `redirect_uri` used to obtain the authorization code for verification.
 

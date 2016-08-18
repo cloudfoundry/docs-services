@@ -19,7 +19,7 @@ This page provides a place to publish the metadata fields required by popular cl
 
 **Before adding new fields, consider whether an existing one will suffice.**
 
-<p class="note"><strong>Note</strong>: “CLI strings” are all lowercase, no spaces.
+<p class="note"><strong>Note</strong>: "CLI strings" are all lowercase, no spaces.
 Keep it short; imagine someone having to type it as an argument for a longer CLI
 command.</p>
 
@@ -43,7 +43,7 @@ command.</p>
 | name | CLI string | A short name for the service plan to be displayed in a catalog. | name | X | |
 | description | string | A description of the service plan to be displayed in a catalog. | description | | |
 | metadata.bullets | array-of-strings | Features of this plan, to be displayed in a bulleted-list | extra.bullets | | X |
-| metadata.costs | cost object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once).  Each object must provide the following keys:<br/>`amount: { usd: float }, unit: string `<br/>This indicates the cost in USD of the service plan, and how frequently the cost is occurred, such as “MONTHLY” or “per 1000 messages”. | extra.costs | | X |
+| metadata.costs | cost object | An array-of-objects that describes the costs of a service, in what currency, and the unit of measure. If there are multiple costs, all of them could be billed to the user (such as a monthly + usage costs at once).  Each object must provide the following keys:<br/>`amount: { usd: float }, unit: string `<br/>This indicates the cost in USD of the service plan, and how frequently the cost is occurred, such as "MONTHLY" or "per 1000 messages". | extra.costs | | X |
 | metadata.displayName | string | Name of the plan to be display in graphical clients. | extra.displayName | | X |
 
 ## <a id='example-broker-response'></a>Example Broker Response Body ##

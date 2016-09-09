@@ -15,7 +15,8 @@ Service bind responses now include an experimental field called `volume_mounts`.
 
 Bump API version to 2.9
 
-Querying `last_operation` now supports query parameters `service_id` and `plan_id`. It also supports `operation` as a param back to the Service Broker. Provisioning, Deprovisioning, and Updating responses accept `operation` as an optional JSON param for async responses. Service Brokers may use this to return a state related to the operation. Provided back to the service broker via the `last_operation` call.
+* `last_operation` endpoint now supports `service_id` and `plan_id` as request parameters. 
+* Brokers may now optionally return `operation` field in responses for Provision, Update, and Deprovision. Broker clients may provide this same object as a request parameter when polling last operation. 
 
 ## 2016-08-18 ##
 

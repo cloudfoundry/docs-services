@@ -12,12 +12,10 @@ Foundry as an admin user or as a space developer.
 
 ## <a id='quick-start'></a>Quick Start ##
 
-Given a service broker that has implemented the [Service Broker API](api.html), two steps are required to make its services available to end users in all organizations or a limited number of organizations by service plan.
+Given a service broker that has implemented the [Service Broker API](api.html), two steps are required to make its services available to end users in all orgs or a limited number of orgs by service plan.
 
 1. [Register a Broker](#register-broker)
 1. [Make Plans Public](#make-plans-public)
-
-As of cf-release 229, CC API 2.47.0, Cloud Foundry supports both standard brokers and space-scoped private brokers. Standard private brokers can offer service plans privately or publish them to specific organizations or to all users. Space-scoped private brokers publish services only to users within the space they are registered to.
 
 ## <a id='register-broker'></a>Register a Broker ##
 
@@ -29,23 +27,34 @@ authenticate with the broker when making all API calls.
 Your service broker should validate the username and password sent in every
 request; otherwise, anyone could curl your broker to delete service instances.
 
-### Standard Private Brokers ###
+As of cf-release 229, CC API 2.47.0, Cloud Foundry supports two types of brokers: _standard brokers_ and _space-scoped brokers_. A list of their differences follows:
 
-<pre class="terminal">
-$ cf create-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/
-</pre>
+**Standard Brokers**
 
-### Space-Scoped Private Brokers ###
+* Publish service plans to specific orgs or all orgs in the deployment. Can also keep plans unavailable, or _private_.
+* Created by admins, with the command `cf create-service-broker`
+  <pre class="terminal">
+  $ cf create-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/
+  </pre>
+* Managed by admins
+* Service plans are created private. Before anyone can use them, an admin must explicitly [make them available](#make-plans-public) within an org or across all orgs.
 
-<pre class="terminal">
-$ cf create-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/ --space-scoped
-</pre>
+**Space-Scoped Brokers**
 
+* Publish service plans only to users within the space they are created. Plans are unavailable outside of this space.
+* Created by space developers using the command `cf create-service-broker` with the `--space-scoped` flag
+  <pre class="terminal">
+  $ cf create-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/ --space-scoped
+  </pre>
+  <p class="note"><strong>Note</strong>: If a space developer runs <code>cf create-service-broker</code> without the <code>--space-scoped</code> flag, they receive an error.
+* Managed by space developers
+* Newly-created plans automatically publish to all users in the their space.
 
 ### <a id='make-plans-public'></a>Make Plans Public ###
-New service plans from standard brokers are private by default. To make plans available to end users, see [Make Plans Public](./access-control.html#enable-access). Instances of a private plan cannot be provisioned until either the plan is made public or is made available to an organization.
 
-New service plans from space-scoped private brokers are automatically published to all users in the broker's space. It is not possible to manage visibility of a space-scoped private broker at the Cloud Foundry instance or organization level.
+After an admin creates a new service plan from a standard broker, no one can use it until the admin explicitly makes it available to users within a specific org or all orgs in the deployment.
+
+See the [Access Control](./access-control.html#enable-access) topic for how to make standard broker service plans available to users.
 
 ### <a id='multiple-brokers'></a>Multiple Brokers, Services, Plans ###
 

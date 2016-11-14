@@ -60,7 +60,7 @@ In this model, you configure route services on an app-by-app basis. When you bin
 
 ### <a id="user-provided"></a>User-Provided Service ###
 
-If a route service is not listed in the CF marketplace by a broker, a developer can still bind it to their app as a User-Provided service. The service can run anywhere, either inside or outside of CF, but it must fulfill the integration requirements described in [Service Instance Responsibilities](#service-instance-responsibilities). The service also needs to be reachable by an outbound connection from the CF Router.
+If a route service is not listed in the CF marketplace by a broker, a developer can still bind it to their app as a User-Provided service. The service can run anywhere, either inside or outside of CF, but it must fulfill the integration requirements described in [Service Instance Responsibilities](#service-instance-responsibilities). The service also needs to be reachable by an outbound connection from the CF router.
 
 ![User-provided](images/route-services-user-provided.png)
 
@@ -118,7 +118,7 @@ Once a route service completes its function, it is expected to forward the reque
 #### <a id='headers'></a>Headers ####
 The `X-CF-Forwarded-Url` header contains the URL of the application route. The route service should forward the request to this URL.
 
-The route service should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata`, as the GoRouter relies on these headers to validate that the request.
+The route service should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata`, as the Gorouter relies on these headers to validate that the request.
 
 #### <a id='ssl-certs'></a>SSL Certificates ####
 

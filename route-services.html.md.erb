@@ -118,7 +118,7 @@ Once a route service completes its function, it is expected to forward the reque
 #### <a id='headers'></a>Headers ####
 The `X-CF-Forwarded-Url` header contains the URL of the application route. The route service should forward the request to this URL.
 
-The route service should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata`, as the Gorouter relies on these headers to validate that the request.
+The route service should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata`, as the Gorouter relies on these headers to validate the request.
 
 #### <a id='ssl-certs'></a>SSL Certificates ####
 

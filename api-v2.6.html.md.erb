@@ -106,7 +106,7 @@ are no associated service instances, Cloud Controller will remove these plans
 from the database. Cloud Controller will then delete services that do not have associated plans
 from the database.
 If the database has plans which are not found in the broker catalog, and there
-**are** provisioned instances, the plan will be marked “inactive” and will
+**are** provisioned instances, the plan will be marked "inactive" and will
 no longer be visible in the marketplace catalog or be provisionable.
 
 
@@ -242,7 +242,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;id</td>
   <td>string</td>
-  <td>The id of the Oauth2 client that the service intends to use. The name may be taken, in which case the API will return an error to the operator</td>
+  <td>The id of the OAuth 2 client that the service intends to use. The name may be taken, in which case the API will return an error to the operator</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;secret</td>
@@ -934,7 +934,7 @@ Orphans can result if the broker does not return a response before a request fro
 
 To mitigate orphan instances and bindings, Cloud Controller will attempt to delete resources it cannot be sure were successfully created, and will keep trying to delete them until the broker responds with a success.
 
-More specifically, when a provision or bind request to the broker fails, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails, Cloud Controller will retry the delete or unbind request ten times with an exponental backoff schedule (over a period of 34 hours).
+More specifically, when a provision or bind request to the broker fails, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails, Cloud Controller will retry the delete or unbind request ten times with an exponential back off schedule (over a period of 34 hours).
 
 <table border="1" class="nice">
 <thead>

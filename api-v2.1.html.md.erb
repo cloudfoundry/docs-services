@@ -102,7 +102,7 @@ the broker’s catalog.
 If the database has plans which are not found in the broker catalog, and there
 are no associated service instances, Cloud Controller will remove these plans
 from the database.
-If there are provisioned instances, the plan will be marked “inactive” and will
+If there are provisioned instances, the plan will be marked "inactive" and will
 no longer be visible in the marketplace catalog or be provisionable.
 Cloud Controller will then delete services that do not have associated plans
 from the database.
@@ -140,7 +140,7 @@ CLI and web clients have different needs with regard to service and plan names.
 A CLI-friendly string is all lowercase, with no spaces.
 Keep it short -- imagine a user having to type it as an argument for a longer
 command.
-A web friendly display name is camelcase with spaces and punctuation supported.
+A web friendly display name is camel-cased with spaces and punctuation supported.
 
 <table border="1" class="nice">
 

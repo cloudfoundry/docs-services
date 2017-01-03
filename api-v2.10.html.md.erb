@@ -1,5 +1,5 @@
 ---
-title: Service Broker API v2.11
+title: Service Broker API v2.10
 owner: Services API
 ---
 
@@ -22,15 +22,16 @@ added to enable support for new features.
 These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-### <a id='api-changes-since-v2-10'></a>Changes Since v2.10 ###
-* Add <tt>bindable</tt> field to <a href="#PObject">Plan Object</a> to allow services to have both bindable and non-bindable plans.
+### <a id='api-changes-since-v2-9'></a>Changes Since v2.9 ###
+
+* Backward incompatible changes to `volume_mounts` field in service bind response from experimental 2.9 format to final format.
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.11 of the services API has been supported since:
+v2.10 of the services API has been supported since:
 
-* [v250](https://github.com/cloudfoundry/cf-release/tree/v250) of [cf-release](https://github.com/cloudfoundry/cf-release/)
-* v2.66 of the Cloud Controller API
+* [v240](https://github.com/cloudfoundry/cf-release/tree/v240) of [cf-release](https://github.com/cloudfoundry/cf-release/)
+* v2.61 of the Cloud Controller API
 * CLI [v6.14.0](https://github.com/cloudfoundry/cli/releases/tag/v6.14.0)
 
 ## <a id='api-overview'></a>API Overview ##
@@ -62,10 +63,10 @@ A broker should respond with a `412 Precondition Failed` message when rejecting
 a request.
 
 The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
-such that 2.10 comes before 2.11.
+such that 2.9 comes before 2.10.
 An example of this header as of publication time is:
 
-`X-Broker-Api-Version: 2.11`
+`X-Broker-Api-Version: 2.10`
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -104,7 +105,7 @@ are no associated service instances, Cloud Controller will remove these plans
 from the database. Cloud Controller will then delete services that do not have associated plans
 from the database.
 If the database has plans which are not found in the broker catalog, and there
-**are** provisioned instances, the plan will be marked "inactive" and will
+**are** provisioned instances, the plan will be marked “inactive” and will
 no longer be visible in the marketplace catalog or be provisionable.
 
 
@@ -115,7 +116,7 @@ no longer be visible in the marketplace catalog or be provisionable.
 
 #### cURL ####
 <pre class="terminal">
- $ curl -H "X-Broker-API-Version: 2.11" http://username:password@broker-url/v2/catalog
+ $ curl -H "X-Broker-API-Version: 2.10" http://username:password@broker-url/v2/catalog
 </pre>
 
 ### Response ###
@@ -202,7 +203,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;bindable*</td>
   <td>boolean</td>
-  <td>Specifies whether instances of the service can be bound to applications. This specifies the default for all plans of this service. Plans can override this field (see <a href="#PObject">Plan Object</a>).</td>
+  <td>Whether the service can be bound to applications.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;metadata</td>
@@ -245,7 +246,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;id</td>
   <td>string</td>
-  <td>The id of the OAuth 2 client that the service intends to use. The name may be taken, in which case the update will return an error to the operator</td>
+  <td>The id of the Oauth2 client that the service intends to use. The name may be taken, in which case the updat will return an error to the operator</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;secret</td>
@@ -296,11 +297,6 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
   <td>&nbsp;&nbsp;&nbsp;free</td>
   <td>boolean</td>
   <td>This field allows the plan to be limited by the non_basic_services_allowed field in a Cloud Foundry Quota, see <a href="http://docs.cloudfoundry.org/running/managing-cf/quota-plans.html">Quota Plans</a>. Default: true</td>
-</tr>
-<tr>
-  <td>&nbsp;&nbsp;&nbsp;bindable</td>
-  <td>boolean</td>
-  <td>Specifies whether instances of the service plan can be bound to applications. This field is optional. If specified, this takes precedence over the <tt>bindable</tt> attribute of the service. If not specified, the default is derived from the service.</td>
 </tr>
 </tbody>
 </table>
@@ -456,7 +452,7 @@ The request provides these query string parameters as useful hints for brokers.
 <tr>
   <td>operation</td>
   <td>string</td>
-  <td>The field optionally returned by the service broker on Provision, Update, Deprovision async responses. Represents any state the service broker responded with as a URL encoded string.</a>.</td>
+  <td>The field optionally returned by the service broker on Provision, Update, Deprovision async responses. Represents any state the service broker responsed with as a URL encoded string.</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -637,7 +633,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
     "parameter1": 1,
     "parameter2": "value"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.11" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.10" -H "Content-Type: application/json"
 </pre>
 
 In this case, `instance_id` refers to the service instance id generated by Cloud
@@ -823,7 +819,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
-}' -X PATCH -H "X-Broker-API-Version: 2.11" -H "Content-Type: application/json"
+}' -X PATCH -H "X-Broker-API-Version: 2.10" -H "Content-Type: application/json"
 </pre>
 
 ### Response ###
@@ -1150,7 +1146,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.11"
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.10"
 </pre>
 
 ### Response ###
@@ -1234,7 +1230,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?service_id=
-    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.11"
+    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.10"
 </pre>
 
 ### Response ###
@@ -1343,7 +1339,7 @@ Orphans can result if the broker does not return a response before a request fro
 
 To mitigate orphan instances and bindings, Cloud Controller will attempt to delete resources it cannot be sure were successfully created, and will keep trying to delete them until the broker responds with a success.
 
-More specifically, when a provision or bind request to the broker fails, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails, Cloud Controller will retry the delete or unbind request ten times with an exponential back off schedule (over a period of 34 hours).
+More specifically, when a provision or bind request to the broker fails, Cloud Controller will immediately send a corresponding delete or unbind request. If the delete or unbind request fails, Cloud Controller will retry the delete or unbind request ten times with an exponental backoff schedule (over a period of 34 hours).
 
 <table border="1" class="nice">
 <thead>

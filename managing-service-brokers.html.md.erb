@@ -48,7 +48,7 @@ As of cf-release 229, CC API 2.47.0, Cloud Foundry supports two types of brokers
   </pre>
   <p class="note"><strong>Note</strong>: If a space developer runs <code>cf create-service-broker</code> without the <code>--space-scoped</code> flag, they receive an error.
 * Managed by space developers
-* Newly-created plans automatically publish to all users in their space.
+* Newly-created plans automatically publish to all users in the their space.
 
 ### <a id='make-plans-public'></a>Make Plans Public ###
 
@@ -157,6 +157,38 @@ OK
 </pre>
 
 `purge-service-instance` requires cf-release v218 and cf CLI 6.14.0.
+
+## <a id='catalog-validation'></a> Catalog Validation Behaviors ##
+
+When Cloud Foundry fetches a catalog from a broker, it will compare the
+broker's id for services and plans with the `unique_id` values for services and
+plans in the Cloud Controller database. 
+
+<table>
+  <tr>
+    <th>Event</th>
+    <th>Action</th>
+  </tr>
+   <tr>
+    <td>The catalog fails to load or validate.</td>
+    <td>Cloud Foundry will return a meaningful error that the broker could not be reached or the catalog was not valid.</td>
+  </tr>
+  <tr>
+    <td>A service or plan in the broker catalog has an ID that is not present among the <code>unique_id</code> values in the marketplace database.</td>
+    <td>A new record must be added to the marketplace database.</td>
+  </tr>
+  <tr>
+    <td>A service or plan in the marketplace database are found with a <code>unique_id</code> that matches the broker catalog's ID.</td>
+    <td>The marketplace must update the records to match the broker's catalog.</td>
+  </tr>
+  <tr>
+    <td>The database has plans that are not found in the broker catalog, and there are no associated service instances.</td>
+    <td>The marketplace must remove these plans from the database, and then delete services that do not have associated plans from the database.
+  </tr>
+  <tr>
+    <td>The database has plans that are not found in the broker catalog, but there are provisioned instances.</td>
+    <td>The marketplace must mark the plan inactive and no longer display it or allow it to be provisionable.</td>
+</table>
 
 ## <a id='possible-errors'></a>Possible Errors ##
 

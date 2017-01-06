@@ -205,7 +205,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;id</td>
   <td>string</td>
-  <td>The id of the Oauth client that the service intends to use. The name may be taken, in which case the update will return an error to the operator</td>
+  <td>The id of the Oauth client that the dashboard will use.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;secret</td>
@@ -215,7 +215,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;redirect_uri</td>
   <td>string</td>
-  <td>A URI for the service dashboard</td>
+  <td>A URI for the service dashboard. Validated by the OAuth token server when the dashboard requests a token.</td>
 </tr>
 </tbody>
 </table>
@@ -528,7 +528,7 @@ The `:instance_id` of a service instance is provided by the platform. This ID wi
 <tr>
   <td>accepts_incomplete</td>
   <td>boolean</td>
-  <td>A value of true indicates that the marketplace and its clients support asychronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
+  <td>A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
 </tr>
 <tr>
   <td>organization_guid*</td>
@@ -689,7 +689,7 @@ Not all permutations of plan changes are expected to be supported. For example, 
 <tr>
   <td>accepts_incomplete</td>
   <td>boolean</td>
-  <td>A value of true indicates that the marketplace and its clients support asychronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
+  <td>A value of true indicates that the marketplace and its clients support asynchronous broker operations. If this parameter is not included in the request, and the broker can only provision an instance of the requested plan asynchronously, the broker should reject the request with a 422 as described below.</td>
 </tr>
 <tr>
   <td>previous_values</td>

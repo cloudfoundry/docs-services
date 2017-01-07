@@ -28,14 +28,6 @@ that do not understand them.
 1. Provision, Update, Deprovision responses now accepts an optional `operation` JSON param for async responses. This is used to by service brokers to return an state related to the operation. Provided back to the service broker via the `last_operation` call.
 1. Querying `last_operation` now supports `operation` param back to the service broker.
 
-## <a id='dependencies'></a>Dependencies ##
-
-v2.9 of the services API has been supported since:
-
-* [Final build 238](https://github.com/cloudfoundry/cf-release/tree/v238) of [cf-release](https://github.com/cloudfoundry/cf-release/)
-* v2.57.0 of the Cloud Controller API
-* CLI [v6.14.0](https://github.com/cloudfoundry/cli/releases/tag/v6.14.0)
-
 ## <a id='api-overview'></a>API Overview ##
 
 The Cloud Foundry services API defines the contract between the Cloud

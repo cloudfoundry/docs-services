@@ -5,15 +5,6 @@ owner: Core Services
 
 <strong><%= modified_date %></strong>
 
-## Dependencies
-
-v2.11 of the services API has been supported since:
-
-- [v250](https://github.com/cloudfoundry/cf-release/tree/v240) of [cf-release](https://github.com/cloudfoundry/cf-release/)
-- v2.66 of the Cloud Controller API
-- CLI [v6.14.0](https://github.com/cloudfoundry/cli/releases/tag/v6.14.0) or greater
-
-
 ## <a id='architecture-terminology'></a>Architecture & Terminology##
 
 Services are integrated with Cloud Foundry by implementing a documented API for which the cloud controller is the client; we call this the Service Broker API. This should not be confused with the cloud controller API, often used to refer to the version of Cloud Foundry itself; when one refers to "Cloud Foundry v2" they are referring to the version of the cloud controller API. The services API is versioned independently of the cloud controller API.

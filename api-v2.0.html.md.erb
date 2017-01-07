@@ -30,10 +30,6 @@ The key changes from v1 to v2 of the Services API are:
 * Orphan mitigation --- Orphan service instances and bindings are prevented to the extent possible, and automatically removed, when necessary.
 
 
-## <a id='dependencies'></a>Dependencies ##
-
-v2.0 of the services API has been supported since final build 148 of [cf-release](https://github.com/cloudfoundry/cf-release/).
-
 ## <a id='api-overview'></a>API Overview ##
 
 The Cloud Foundry services API defines the contract between the Cloud Controller and the service broker. The broker is expected to implement several HTTP (or HTTPS) endpoints underneath a URI prefix. One or more services can be provided by a single broker and load balancing enables horizontal scalability of redundant brokers. Multiple Cloud Foundry instances can be supported by a single broker using different URL prefixes and credentials.

@@ -28,14 +28,6 @@ that do not understand them.
 1. On bind, the Cloud Controller will now send a new top-level key, `bind_resource`, under which the required parameters of the binding are found. This would include, for example, `app_guid` for an app binding and `route` for a route binding. For backwards compatibility, `app_guid` will remain a top-level key in addition to being included in the `bind_resource`.
 1. Adds support for a `route_service_url` key in the binding response.
 
-## <a id='dependencies'></a>Dependencies ##
-
-v2.8 of the services API has been supported since:
-
-* [Final build 226](https://github.com/cloudfoundry/cf-release/tree/v226) of [cf-release](https://github.com/cloudfoundry/cf-release/)
-* v2.44.0 of the Cloud Controller API
-* CLI [v6.14.0](https://github.com/cloudfoundry/cli/releases/tag/v6.14.0)
-
 ## <a id='api-overview'></a>API Overview ##
 
 The Cloud Foundry services API defines the contract between the Cloud

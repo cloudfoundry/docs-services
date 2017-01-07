@@ -25,7 +25,7 @@ The basic auth username and password which are provided when adding a broker are
 encrypted in Cloud Controller database, and used by the Cloud Controller to
 authenticate with the broker when making all API calls.
 Your service broker should validate the username and password sent in every
-request; otherwise, anyone could curl your broker to delete service instances.
+request; otherwise, anyone could curl your broker to delete service instances. When the broker is registered with an URL having the scheme `https`, Cloud Controller will make all calls to the broker over HTTPS. 
 
 As of cf-release 229, CC API 2.47.0, Cloud Foundry supports two types of brokers: _standard brokers_ and _space-scoped brokers_. A list of their differences follows:
 
@@ -34,7 +34,7 @@ As of cf-release 229, CC API 2.47.0, Cloud Foundry supports two types of brokers
 * Publish service plans to specific orgs or all orgs in the deployment. Can also keep plans unavailable, or _private_.
 * Created by admins, with the command `cf create-service-broker`
   <pre class="terminal">
-  $ cf create-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/
+  $ cf create-service-broker mybrokername someuser somethingsecure <span>https</span>://mybroker.example.com/
   </pre>
 * Managed by admins
 * Service plans are created private. Before anyone can use them, an admin must explicitly [make them available](#make-plans-public) within an org or across all orgs.
@@ -44,7 +44,7 @@ As of cf-release 229, CC API 2.47.0, Cloud Foundry supports two types of brokers
 * Publish service plans only to users within the space they are created. Plans are unavailable outside of this space.
 * Created by space developers using the command `cf create-service-broker` with the `--space-scoped` flag
   <pre class="terminal">
-  $ cf create-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/ --space-scoped
+  $ cf create-service-broker mybrokername someuser somethingsecure <span>https</span>://mybroker.example.com/ --space-scoped
   </pre>
   <p class="note"><strong>Note</strong>: If a space developer runs <code>cf create-service-broker</code> without the <code>--space-scoped</code> flag, they receive an error.
 * Managed by space developers
@@ -77,7 +77,7 @@ Getting service brokers as admin...Cloud Controller
 OK
 
 Name            URL
-my-service-name http://mybroker.example.com
+my-service-name https://mybroker.example.com
 </pre>
 
 ## <a id='update-broker'></a>Update a Broker ##
@@ -93,7 +93,7 @@ controller uses to authenticate with a broker, as well as the base URL of the
 broker's API endpoints.
 
 <pre class="terminal">
-$ cf update-service-broker mybrokername someuser somethingsecure http://mybroker.example.com/
+$ cf update-service-broker mybrokername someuser somethingsecure <span>https</span>://mybroker.example.com/
 </pre>
 
 ## <a id='rename-broker'></a>Rename a Broker ##
@@ -198,7 +198,7 @@ If incorrect basic auth credentials are provided:
 Server error, status code: 500, error code: 10001, message: Authentication
 failed for the service broker API.
 Double-check that the username and password are correct:
-    http://github-broker.a1-app.example.com/v2/catalog
+    https://github-broker.a1-app.example.com/v2/catalog
 </pre>
 
 If you receive the following errors, check your broker logs.
@@ -210,11 +210,11 @@ Server error, status code: 500, error code: 10001, message:
 
 Server error, status code: 500, error code: 10001, message:
     The service broker API returned an error from
-    http://github-broker.a1-app.example.com/v2/catalog: 404 Not Found
+    https://github-broker.a1-app.example.com/v2/catalog: 404 Not Found
 
 Server error, status code: 500, error code: 10001, message:
     The service broker API returned an error from
-    http://github-broker.primo.example.com/v2/catalog: 500 Internal Server Error
+    https://github-broker.primo.example.com/v2/catalog: 500 Internal Server Error
 </pre>
 
 If your broker's catalog of services and plans violates validation of presence,

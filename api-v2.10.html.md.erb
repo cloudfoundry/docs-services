@@ -44,19 +44,14 @@ Requests from the platform to the service broker must contain a header that decl
 
 `X-Broker-Api-Version: 2.10`
 
-The version numbers are in the format `MAJOR.MINOR`, using semantic versioning such that 2.09 comes before 2.10.
+The version numbers are in the format `MAJOR.MINOR`, using semantic versioning such that 2.9 comes before 2.10.
 
 This header allows brokers to reject requests from marketplaces for versions they do not support. While minor API revisions will always be additive, it is possible that brokers depend on a feature from a newer version of the API that is supported by the platform. In this scenario the broker may reject the request with `412 Precondition Failed` and provide a message that informs the operator of the required API version.
 
 ## <a id='authentication'></a>Authentication ##
 
-Cloud Controller (final release v145+) authenticates with the Broker using HTTP
-basic authentication (the `Authorization:` header) on every request and will
-reject any broker registrations that do not contain a username and password.
-The broker is responsible for checking the username and password and returning
-a `401 Unauthorized` message if credentials are invalid.
-Cloud Controller supports connecting to a broker using SSL if additional
-security is desired.
+The marketplace must authenticate with the service broker using HTTP
+basic authentication (the `Authorization:` header) on every request. The broker is responsible for validating the username and password and returning a `401 Unauthorized` message if credentials are invalid. It is recommended that brokers support secure communication from platform marketplaces over TLS.
 
 ## <a id='catalog-mgmt'></a>Catalog Management ##
 

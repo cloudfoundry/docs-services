@@ -32,25 +32,32 @@ The key changes from v1 to v2 of the Services API are:
 
 ## <a id='api-overview'></a>API Overview ##
 
-The Cloud Foundry services API defines the contract between the Cloud Controller and the service broker. The broker is expected to implement several HTTP (or HTTPS) endpoints underneath a URI prefix. One or more services can be provided by a single broker and load balancing enables horizontal scalability of redundant brokers. Multiple Cloud Foundry instances can be supported by a single broker using different URL prefixes and credentials.
+The Service Broker API defines an HTTP interface between the services marketplace of a platform and service brokers.
 
-<%= image_tag("images/v2services-new.png", :width =>"960", :height =>"720", :style => 'background-color:#fff') %>
+The service broker is the component of the service that implements the Service Broker API, for which a platform's marketplace is a client. Service brokers are responsible for advertising a catalog of service offerings and service plans to the marketplace, and acting on requests from the marketplace for provisioning, binding, unbinding, and deprovisioning.
+
+In general, provisioning reserves a resource on a service; we call this reserved resource a service instance. What a service instance represents can vary by service. Examples include a single database on a multi-tenant server, a dedicated cluster, or an account on a web application.
+
+What a binding represents may also vary by service. In general creation of a binding either generates credentials necessary for accessing the resource or provides the service instance with information for a configuration change.
+
+A platform marketplace may expose services from one or many service brokers, and an individual service broker may support one or many platform marketplaces using different URL prefixes and credentials.
 
 ## <a id='api-version-header'></a>API Version Header ##
 
 
-Requests from the Cloud Controller to the broker contain a header that defines the version number of the Broker API that Cloud Controller will use. This header will be useful in future minor revisions of the API, to allow brokers to reject requests from Cloud Controllers that they do not understand. While minor API revisions will always be additive, it is possible that brokers will come to depend on a feature that was added after 2.0, so they may use this header to reject the request. Error messages from the broker in this situation should inform the operator of what the required and actual version numbers are, so that an operator can go upgrade Cloud Controller and resolve the issue. A broker should respond with a `412 Precondition Failed` message when rejecting a request.
-
-The version numbers are in the format `MAJOR.MINOR`, using semantic versioning such that 2.9 comes before 2.10. An example of this header, as of publication time is:
+Requests from the platform to the service broker must contain a header that declares the version number of the Service Broker API that the marketplace will use:
 
 `X-Broker-Api-Version: 2.0`
+
+The version numbers are in the format `MAJOR.MINOR`, using semantic versioning such that 2.0 comes before 2.1.
+
+This header allows brokers to reject requests from marketplaces for versions they do not support. While minor API revisions will always be additive, it is possible that brokers depend on a feature from a newer version of the API that is supported by the platform. In this scenario the broker may reject the request with `412 Precondition Failed` and provide a message that informs the operator of the required API version.
 
 
 ## <a id='authentication'></a>Authentication ##
 
-Cloud Controller (final release v145+) authenticates with the Broker using HTTP basic authentication (the `Authorization:` header) on every request, and will reject any broker registrations that do not contain a username and password. The broker is responsible for checking the username and password and returning a `401 Unauthorized` message if they are invalid. Cloud Controller supports connecting to a broker using SSL if additional security is desired.
-
-
+The marketplace must authenticate with the service broker using HTTP
+basic authentication (the `Authorization:` header) on every request. The broker is responsible for validating the username and password and returning a `401 Unauthorized` message if credentials are invalid. It is recommended that brokers support secure communication from platform marketplaces over TLS.
 
 ## <a id='catalog-mgmt'></a>Catalog Management ##
 

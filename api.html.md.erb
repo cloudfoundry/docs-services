@@ -195,7 +195,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;requires</td>
   <td>array-of-strings</td>
-  <td>A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <tt>syslog_drain</tt>, <tt>route_forwarding</tt> and <tt>volume_mount</tt>; for more info see <a href="app-log-streaming.html">Application Log Streaming</a>, <a href="route-services.html">Route Services</a> and <a href="volume-services-v2.10.html">Volume Services</a>.</td>
+  <td>A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <tt>syslog_drain</tt>, <tt>route_forwarding</tt> and <tt>volume_mount</tt>; for more info see <a href="app-log-streaming.html">Application Log Streaming</a> and <a href="route-services.html">Route Services</a>.</td>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;max_db_per_node:</td>
   <td>strings</td>
@@ -899,10 +899,6 @@ In response to a bind request for an application (`app_id` included), a broker m
 
 If a broker has declared `"requires":["route_forwarding"]` for a service in the Catalog endpoint, Cloud Foundry will permit a user to bind a service to a route. When bound to a route, the route itself will be sent with the bind request. A route is an address used by clients to reach apps mapped to the route. In response a broker may return a `route_service_url` which Cloud Foundry will use to proxy any request for the route to the service instance at URL specified by `route_service_url`. A broker may declare `"requires":["route_forwarding"]` but not return `route_service_url`; this enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the Cloud Foundry router. For more information, see [Route Services](route-services.html).
 
-#### <a id='binding-volume-services'></a>Volume Services (Experimental)####
-
-If a broker has declared `"requires":["volume_mount"]` for a service in the Catalog endpoint, Cloud Foundry will permit a user to bind one or more volumes to an application.  In response to a bind request a volume service broker should return a set of `volume_mount` instructions that Cloud Foundry will ensure are mounted into the application's containers.  For more information, see [Volume Services](volume-services-v2.10.html)
-
 ### Request ###
 
 ##### Route #####
@@ -1082,7 +1078,7 @@ For success responses, the following fields are supported. Others will be ignore
 <tr>
   <td>volume_mounts</td>
   <td>array-of-objects</td>
-  <td>An array of volume mount instructions.  <code>requires:volume_mount</code> must be declared in the <a href="#catalog-mgmt">catalog endpoint</a> or Cloud Foundry will consider the response invalid.  For more information, see <a href="volume-services-v2.10.html">Volume Services</a></td>
+  <td>An array of volume mount instructions.  <code>requires:volume_mount</code> must be declared in the <a href="#catalog-mgmt">catalog endpoint</a> or Cloud Foundry will consider the response invalid.</td>
 </tr>
 </tbody>
 </table>

@@ -1,5 +1,5 @@
 ---
-title: Service Broker API v2.8
+title: Service Broker API v2.7
 owner: Services API
 ---
 
@@ -8,8 +8,6 @@ owner: Services API
 ## <a id='changelog'></a>Document Changelog ##
 
 [v2 API Change Log](v2-api-changelog.html)
-
-<%= partial "version_table.html" %>
 
 ## <a id='changes'></a>Changes ##
 
@@ -22,19 +20,18 @@ added to enable support for new features.
 These fields must be optional and should be ignored by clients and servers
 that do not understand them.
 
-### <a id='api-changes-since-v2-7'></a>Changes Since v2.7 ###
+### <a id='api-changes-since-v2-6'></a>Changes Since v2.6 ###
 
-1. Brokers may now include a requires: ["route_forwarding"] on their catalog endpoint.
-1. On bind, the Cloud Controller will now send a new top-level key, `bind_resource`, under which the required parameters of the binding are found. This would include, for example, `app_guid` for an app binding and `route` for a route binding. For backwards compatibility, `app_guid` will remain a top-level key in addition to being included in the `bind_resource`.
-1. Adds support for a `route_service_url` key in the binding response.
+1. [Asynchronous operations](#asynchronous-operations) for [provisioning](#provisioning), [updating](#updating_service_instance), and [deprovisioning](#deprovisioning) are no longer experimental.
+1. Added support for querying `last_operation` status at new [endpoint](#polling) `GET /v2/service_instances/:guid/last_operation`
 
 ## <a id='dependencies'></a>Dependencies ##
 
-v2.8 of the services API has been supported since:
+v2.7 of the services API has been supported since:
 
-* [Final build 226](https://github.com/cloudfoundry/cf-release/tree/v226) of [cf-release](https://github.com/cloudfoundry/cf-release/)
-* v2.44.0 of the Cloud Controller API
-* CLI [v6.14.0](https://github.com/cloudfoundry/cli/releases/tag/v6.14.0)
+* [Final build 220](https://github.com/cloudfoundry/cf-release/tree/v220) of [cf-release](https://github.com/cloudfoundry/cf-release/)
+* v2.37.0 of the Cloud Controller API
+* CLI [v6.12.1](https://github.com/cloudfoundry/cli/releases/tag/v6.12.1)
 
 ## <a id='api-overview'></a>API Overview ##
 
@@ -68,7 +65,7 @@ The version numbers are in the format `MAJOR.MINOR`, using semantic versioning
 such that 2.9 comes before 2.10.
 An example of this header as of publication time is:
 
-`X-Broker-Api-Version: 2.8`
+`X-Broker-Api-Version: 2.7`
 
 ## <a id='authentication'></a>Authentication ##
 
@@ -94,12 +91,12 @@ you can use `update-service-broker` with no changes to force a catalog refresh.
 
 When Cloud Controller fetches a catalog from a broker, it will compare the
 broker's id for services and plans with the `unique_id` values for services and
-plans in the  Cloud Controller database.
+plan in the  Cloud Controller database.
 If a service or plan in the broker catalog has an id that is not present
 amongst the `unique_id` values in the database, a new record will be added to
 the database.
 If services or plans in the database are found with `unique_id`s that match the
-broker catalog's id, Cloud Controller will update the records to match
+broker catalog's id, Cloud Controller will update update the records to match
 the broker’s catalog.
 
 If the database has plans which are not found in the broker catalog, and there
@@ -118,7 +115,7 @@ no longer be visible in the marketplace catalog or be provisionable.
 
 ##### cURL #####
 <pre class="terminal">
- $ curl -H "X-Broker-API-Version: 2.8" http://username:password@broker-url/v2/catalog
+ $ curl -H "X-Broker-API-Version: 2.7" http://username:password@broker-url/v2/catalog
 </pre>
 
 ### Response ###
@@ -193,7 +190,7 @@ A web-friendly display name is camel-cased with spaces and punctuation supported
 <tr>
   <td>&nbsp;&nbsp;&nbsp;requires</td>
   <td>array-of-strings</td>
-  <td>A list of permissions that the user would have to give the service, if they provision it. The only permissions currently supported are <tt>syslog_drain</tt> and <tt>route_forwarding</tt>; for more info see <a href="app-log-streaming.html">Application Log Streaming</a> and <a href="route-services.html">Route Services</a>.</td>
+  <td>A list of permissions that the user would have to give the service, if they provision it. The only permission currently supported is <tt>syslog_drain</tt>; for more info see <a href="app-log-streaming.html">Application Log Streaming</a>.</td>
 </tr>
 <tr>
   <td>&nbsp;&nbsp;&nbsp;plan_updateable</td>
@@ -304,7 +301,7 @@ If the broker executes the request asynchronously, the response must use the sta
 
 <p class='note'><strong>Note:</strong> Asynchronous Operations are currently supported only for provision, update, and deprovision. Bind and unbind will be added once the feature is considered stable.</p>
 
-If the `accepts_incomplete=true` parameter is not included, and the broker cannot fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request with the status code `422 UNPROCESSABLE ENTITY` and the following body:
+If the `accepts_incomplete=true` parameter is not included, and the broker can not fulfill the request synchronously (guaranteeing that the operation is complete on response), then the broker should reject the request with the status code `422 UNPROCESSABLE ENTITY` and the following body:
 
 <pre class="terminal">
 {
@@ -326,7 +323,7 @@ The Cloud Controller ensures that service brokers do not receive requests for an
 
 ### <a id='when-to-use-async'></a>When to use Asynchronous Service Operations ###
 
-Service brokers should respond to all Cloud Controller requests within 60 seconds. Brokers that can guarantee completion of the requested operation with the response may return the synchronous response (e.g. `201 CREATED` for a provision request). Brokers that cannot guarantee completion of the operation with the response should implement support for asynchronous provisioning. Support for synchronous or asynchronous responses may vary by service offering, even by service plan.
+Service brokers should respond to all Cloud Controller requests within 60 seconds. Brokers that can guarantee completion of the requested operation with the response may return the synchronous response (e.g. `201 CREATED` for a provision request). Brokers that can not guarantee completion of the operation with the response should implement support for asynchronous provisioning. Support for asynchronous or asynchronous responses may vary by service offering, even by service plan.
 
 ## <a id='polling'></a>Polling Last Operation (async only) ##
 
@@ -509,7 +506,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
     "parameter1": 1,
     "parameter2": "value"
   }
-}' -X PUT -H "X-Broker-API-Version: 2.8" -H "Content-Type: application/json"
+}' -X PUT -H "X-Broker-API-Version: 2.7" -H "Content-Type: application/json"
 </pre>
 
 In this case, `instance_id` refers to the service instance id generated by Cloud
@@ -687,7 +684,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
     "organization_id": "org-guid-here",
     "space_id": "space-guid-here"
   }
-}' -X PATCH -H "X-Broker-API-Version: 2.8" -H "Content-Type: application/json"
+}' -X PATCH -H "X-Broker-API-Version: 2.7" -H "Content-Type: application/json"
 </pre>
 
 ### Response ###
@@ -711,7 +708,7 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id -d 
 <tr>
   <td>422 Unprocessable entity</td>
   <td>
-    May be returned if the particular plan change requested is not supported or if the request cannot currently be fulfilled due to the state of the instance (eg. instance utilization is over the quota of the requested plan). Broker should include a user-facing message in the body; for details see <a href="#broker-errors">Broker Errors</a>.  Additionally, a <code>422</code> can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code></a>.
+    May be returned if the particular plan change requested is not supported or if the request can not currently be fulfilled due to the state of the instance (eg. instance utilization is over the quota of the requested plan). Broker should include a user-facing message in the body; for details see <a href="#broker-errors">Broker Errors</a>.  Additionally, a <code>422</code> can also be returned if the broker only supports asynchronous update for the requested plan and the request did not include <code>?accepts_incomplete=true</code>. The expected response body is: <code>{ "error": "AsyncRequired", "description": "This service plan requires client support for asynchronous service operations." }</code></a>.
   </td>
 </tr>
 </tbody>
@@ -727,21 +724,11 @@ For a success response, the expected response body is `{}`.
 
 ## <a id='binding'></a>Binding ##
 
-<p class="note"><strong>Note</strong>: Not all services must be bindable --- some deliver value just from being provisioned. Brokers that offer services that are bindable should declare them as such using <code>bindable: true</code> in the <a href="#catalog-mgmt">Catalog</a>. Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
+<p class="note"><strong>Note</strong>: Not all services must be bindable. Some services deliver value just from being provisioned. Brokers that offer services that are not bindable should declare them as such using <code>bindable: false</code> in the <a href="#catalog-mgmt">Catalog</a>. Brokers that do not offer any bindable services do not need to implement the endpoint for bind requests.</p>
 
-### <a id='binding-types'></a>Types of Binding ###
+When the broker receives a bind request from the Cloud Controller, it should return information which helps an application to utilize the provisioned resource. This information is generically referred to as `credentials`. Applications should be issued unique credentials whenever possible, so one application's access can be revoked without affecting other bound applications. For more information on credentials, see [Binding Credentials](binding-credentials.html).
 
-#### <a id='binding-credentials'></a>Credentials ####
-
-Credentials are a set of information used by an application or a user to utilize the service instance. If `bindable:true` is declared for a service in the catalog endpoint, users may request generation of credentials either by binding the service instance to an application or by creating a service key. When a service instance is bound to an app, Cloud Foundry will send the app id with the request. When a service key is created, the app id is not included. If the broker supports generation of credentials it should return `credentials` in the response. Credentials should be unique whenever possible, so access can be revoked for one application or user without affecting another. For more information on credentials, see [Binding Credentials](binding-credentials.html).
-
-#### <a id='binding-syslog-drain'></a>Application Log Streaming ####
-
-In response to a bind request for an application (`app_id` included), a broker may also enable streaming of application logs from Cloud Foundry to a consuming service instance by returning `syslog_drain_url`. For details, see [Application Log Streaming](app-log-streaming.html).
-
-#### <a id='binding-route-services'></a>Route Services ####
-
-If a broker has declared `"requires":["route_forwarding"]` for a service in the Catalog endpoint, Cloud Foundry will permit a user to bind a service to a route. When bound to a route, the route itself will be sent with the bind request. A route is an address used by clients to reach apps mapped to the route. In response a broker may return a `route_service_url` which Cloud Foundry will use to proxy any request for the route to the service instance at URL specified by `route_service_url`. A broker may declare `"requires":["route_forwarding"]` but not return `route_service_url`; this enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the Cloud Foundry router. For more information, see [Route Services](route-services.html).
+In addition, the bind operation can enable streaming of application logs from Cloud Foundry to a consuming service instance. For details, see [Application Log Streaming](app-log-streaming.html).
 
 ### Request ###
 
@@ -780,11 +767,6 @@ the resource it creates.</p>
   <td>GUID of the application that you want to bind your service to. Will be included when users bind applications to service instances.</td>
 </tr>
 <tr>
-  <td>bind_resource</td>
-  <td>JSON object</td>
-  <td>A JSON object that contains the required fields of the resource being bound. Currently only <code>app_guid</code> for application bindings and <code>route</code> for route bindings are supported.</td>
-</tr>
-<tr>
   <td>parameters</td>
   <td>JSON object</td>
   <td>Cloud Foundry API clients can provide a JSON object of configuration parameters with their request and this value will be passed through to the service broker. Brokers are responsible for validation.</td>
@@ -797,23 +779,6 @@ the resource it creates.</p>
   "plan_id":      "plan-guid-here",
   "service_id":   "service-guid-here",
   "app_guid":     "app-guid-here",
-  "bind_resource":     {
-    "app_guid": "app-guid-here"
-  },
-  "parameters":        {
-    "parameter1-name-here": 1,
-    "parameter2-name-here": "parameter2-value-here"
-  }
-}
-</pre>
-
-<pre class="terminal">
-{
-  "plan_id":      "plan-guid-here",
-  "service_id":   "service-guid-here",
-  "bind_resource":     {
-    "route": "route-url-here"
-  },
   "parameters":        {
     "parameter1-name-here": 1,
     "parameter2-name-here": "parameter2-value-here"
@@ -827,23 +792,6 @@ $ curl http://username:password@broker-url/v2/service_instances/:instance_id/ser
   "plan_id":      "plan-guid-here",
   "service_id":   "service-guid-here",
   "app_guid":     "app-guid-here",
-  "bind_resource":     {
-    "app_guid": "app-guid-here"
-  },
-  "parameters":        {
-    "parameter1-name-here": 1,
-    "parameter2-name-here": "parameter2-value-here"
-  }
-}' -X PUT
-</pre>
-
-<pre class="terminal">
-$ curl http://username:password@broker-url/v2/service_instances/:instance_id/service_bindings/:binding_id -d '{
-  "plan_id":      "plan-guid-here",
-  "service_id":   "service-guid-here",
-  "bind_resource":     {
-    "route": "route-url-here"
-  },
   "parameters":        {
     "parameter1-name-here": 1,
     "parameter2-name-here": "parameter2-value-here"
@@ -912,11 +860,6 @@ For success responses, the following fields are supported. Others will be ignore
   <td>string</td>
   <td>A URL to which Cloud Foundry should drain logs for the bound application. <code>requires:syslog_drain</code> must be declared in the <a href="#catalog-mgmt">catalog endpoint</a> or Cloud Foundry will consider the response invalid. For details, see <a href="app-log-streaming.html">Application Log Streaming</a>.</td>
 </tr>
-<tr>
-  <td>route_service_url</td>
-  <td>string</td>
-  <td>A URL to which Cloud Foundry should proxy requests for the bound route. <code>requires:route_forwarding</code> must be declared in the <a href="#catalog-mgmt">catalog endpoint</a> or Cloud Foundry will consider the response invalid. For details, see <a href="route-services.html">Route Services</a>.</td>
-</tr>
 </tbody>
 </table>
 
@@ -977,7 +920,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id/
-  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.8"
+  service_bindings/:binding_id?service_id=service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.7"
 </pre>
 
 ### Response ###
@@ -1059,7 +1002,7 @@ The request provides these query string parameters as useful hints for brokers.
 ##### cURL #####
 <pre class="terminal">
 $ curl 'http://username:password@broker-url/v2/service_instances/:instance_id?service_id=
-    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.8"
+    service-id-here&plan_id=plan-id-here' -X DELETE -H "X-Broker-API-Version: 2.7"
 </pre>
 
 ### Response ###

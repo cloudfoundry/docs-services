@@ -668,7 +668,7 @@ For success responses, the following fields are supported. Others will be ignore
 <tr>
   <td>dashboard_url</td>
   <td>string</td>
-  <td>The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL should contain enough information for the dashboard to identify the resource being accessed ("9189kdfsk0vfnku" in the example below). For information on how users can authenticate with service dashboards via SSO, see <a href="dashboard-sso.html">Dashboard Single Sign-On</a>.</td>
+  <td>The URL of a web-based management user interface for the service instance; we refer to this as a service dashboard. The URL should contain enough information for the dashboard to identify the resource being accessed ("9189kdfsk0vfnku" in the example below). For information about how users can authenticate with service dashboards via SSO, see <a href="dashboard-sso.html">Dashboard Single Sign-On</a>.</td>
 </tr>
 <tr>
   <td>operation</td>
@@ -862,7 +862,7 @@ For success responses, the following fields are supported. Others will be ignore
 
 #### <a id='binding-credentials'></a>Credentials ####
 
-Credentials are a set of information used by an application or a user to utilize the service instance. If `bindable:true` is declared for a service in the catalog endpoint, users may request generation of credentials either by binding the service instance to an application or by creating a service key. When a service instance is bound to an app, Cloud Foundry will send the app id with the request. When a service key is created, the app id is not included. If the broker supports generation of credentials it should return `credentials` in the response. Credentials should be unique whenever possible, so access can be revoked for one application or user without affecting another. For more information on credentials, see [Binding Credentials](binding-credentials.html).
+Credentials are a set of information used by an application or a user to utilize the service instance. If `bindable:true` is declared for a service in the catalog endpoint, users may request generation of credentials either by binding the service instance to an application or by creating a service key. When a service instance is bound to an app, Cloud Foundry will send the app id with the request. When a service key is created, the app id is not included. If the broker supports generation of credentials it should return `credentials` in the response. Credentials should be unique whenever possible, so access can be revoked for one application or user without affecting another. For more information about credentials, see [Binding Credentials](binding-credentials.html).
 
 #### <a id='binding-syslog-drain'></a>Application Log Streaming ####
 

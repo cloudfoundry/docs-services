@@ -117,11 +117,16 @@ Response:
 
 ```
 {
-  "manage": true
+  "manage": true,
+  "read": true
 }
 ```
 
-The response will indicate to the service whether this user is allowed to manage the given instance. A `true` value for the `manage` key indicates sufficient permissions; `false` would indicate insufficient permissions.  Since administrators may change the permissions of users, the service should check this endpoint whenever a user uses the SSO flow to access the service's UI.
+The response includes the following fields which indicate the various user permissions for the given service instance:
+- `manage` -- a `true` value indicates that the user has sufficient permissions to make changes to and update the service instance; `false` indicates insufficient permissions.
+- `read` -- a `true` value indicates that the user has permission to access read-only diagnostic and monitoring information for the given service instance (e.g. permission to view a read-only dashboard); `false` indicates insufficient permissions.
+
+Since administrators may change the permissions of users at any time, the service should check this endpoint whenever a user uses the SSO flow to access the service's UI.
 
 ### <a id="on-scopes"></a> On Scopes
 

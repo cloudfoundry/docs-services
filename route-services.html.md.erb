@@ -56,7 +56,7 @@ create an instance of the service and bind it to their apps with the following
 commands:
 
 `cf create-service BROKER-SERVICE-PLAN SERVICE-INSTANCE`
-`cf bind-route-service YOUR-APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME]`
+`cf bind-route-service YOUR-APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME] [--path PATH]`
 
 Developers configure the service either through the service provider's web 
 interface or by passing [arbitrary parameters](../devguide/services/managing-services.html#arbitrary-params-create)

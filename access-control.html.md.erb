@@ -21,9 +21,9 @@ The `service-access` CLI command enables an admin to see the current access cont
 <pre class="terminal">
 $ cf service-access
 getting service access as admin...
-broker: p-riakcs
-   service    plan        access    orgs
-   p-riakcs   developer   limited
+broker: elasticsearch-broker
+   service        plan     access    orgs
+   elasticsearch  standard limited
 
 broker: p-mysql
    service   plan        access   orgs
@@ -60,18 +60,18 @@ When an org has access to a plan, its users see the plan in the services marketp
 
 #### Enable All-User Access to All Plans
 
-Running `cf enable-service-access SERVICE-NAME` without any flags lets all users access every plan carried by the service. For example, the following command grants all-user access to all `p-riakcs` service plans:
+Running `cf enable-service-access SERVICE-NAME` without any flags lets all users access every plan carried by the service. For example, the following command grants all-user access to all `p-mysql` service plans:
 
 <pre class="terminal">
-$ cf enable-service-access p-riakcs
-Enabling access to all plans of service p-riakcs for all orgs as admin...
+$ cf enable-service-access p-mysql
+Enabling access to all plans of service p-mysql for all orgs as admin...
 OK
 
 $ cf service-access
 getting service access as admin...
-broker: p-riakcs
-   service    plan        access   orgs
-   p-riakcs   developer   all
+broker: p-mysql
+   service   plan        access   orgs
+   p-mysql   100mb-dev   all
 </pre>
 
 #### Limit Access to Specific Orgs or Plans
@@ -90,18 +90,18 @@ Admins use the `cf disable-service-access` command to disable user access to ser
 
 #### Disable Access to All Plans for All Users
 
-Running `cf disable-service-access SERVICE-NAME` without any flags disables all user access to all plans carried by the service. For example, the following command denies any user access to all `p-riakcs` service plans:
+Running `cf disable-service-access SERVICE-NAME` without any flags disables all user access to all plans carried by the service. For example, the following command denies any user access to all `p-mysql` service plans:
 
 <pre class="terminal">
-$ cf disable-service-access p-riakcs
-Disabling access to all plans of service p-riakcs for all orgs as admin...
+$ cf disable-service-access p-mysql
+Disabling access to all plans of service p-mysql for all orgs as admin...
 OK
 
 $ cf service-access
 getting service access as admin...
-broker: p-riakcs
+broker: p-mysql
    service    plan        access   orgs
-   p-riakcs   developer   none
+   p-mysql    100mb-dev   none
 </pre>
 
 #### Disable Access for Specific Orgs or Plans

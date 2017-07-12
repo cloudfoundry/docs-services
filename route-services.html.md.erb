@@ -158,12 +158,29 @@ The following applies only when a broker returns `route_service_url` in the bind
 
 Binding a service instance to a route associates the `route_service_url` with the route in the Cloud Foundry router. All requests for the route are proxied to the URL specified by `route_service_url`.
 
-Once a route service completes its function, it is expected to forward the request to the route the original request was sent to. The Cloud Foundry router includes a header that provides the address of the route, as well as two headers that are used by the route itself to validate the request sent by the route service.
+Once a route service completes its function it may choose to forward the request to the originally requested URL or to another location, or it may choose to reject the request; rejected requests will be returned to the originating requestor. The Cloud Foundry router includes a header that provides the originally requested URL, as well as two headers that are used by the router itself to validate the request sent by the route service. These headers are described below in [Headers](#headers).
 
 #### <a id='headers'></a>Headers ####
-The `X-CF-Forwarded-Url` header contains the URL of the application route. The route service should forward the request to this URL.
 
-The route service should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata`, as the Gorouter relies on these headers to validate the request.
+The following HTTP headers are added by Gorouter to requests forwarded to route services.
+
+##### X-CF-Forwarded-Url #####
+
+The `X-CF-Forwarded-Url` header contains the originally requested URL. The route service may choose to forward the request to this URL or to another.
+
+##### X-CF-Proxy-Signature #####
+
+The `X-CF-Proxy-Signature` header contains an encypted value which only Gorouter can decrypt. 
+
+The header contains the originally requested URL and a timestamp. When this header is present, Gorouter will reject the request if the requested URL does not match that in the header, or if a timeout has expired.
+
+`X-CF-Proxy-Signature` also signals to Gorouter that a request has transited a route service. If this header is present Gorouter will not forward the request to a route service, preventing recursive loops. For this reason, route services should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers. 
+
+If the route service forwards the request to a URL different from the originally requested one, and the URL resolves to a route for an application on Cloud Foundry, the route must not have a bound route service or the request will be rejected, as the requested URL will not match the one in the `X-CF-Proxy-Signature` header.
+
+##### X-CF-Proxy-Metadata #####
+
+The `X-CF-Proxy-Metadata` header aids in the encryption and description of `X-CF-Proxy-Signature`. 
 
 #### <a id='ssl-certs'></a>SSL Certificates ####
 

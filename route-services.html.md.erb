@@ -156,13 +156,13 @@ The following applies only when a broker returns `route_service_url` in the bind
 
 #### <a id='how-it-works'></a>How It Works ####
 
-Binding a service instance to a route associates the `route_service_url` with the route in the Cloud Foundry router. All requests for the route are proxied to the URL specified by `route_service_url`.
+Binding a service instance to a route associates the `route_service_url` with the route in the CF router. All requests for the route are proxied to the URL specified by `route_service_url`.
 
-Once a route service completes its function it may choose to forward the request to the originally requested URL or to another location, or it may choose to reject the request; rejected requests will be returned to the originating requestor. The Cloud Foundry router includes a header that provides the originally requested URL, as well as two headers that are used by the router itself to validate the request sent by the route service. These headers are described below in [Headers](#headers).
+Once a route service completes its function it may choose to forward the request to the originally requested URL or to another location, or it may choose to reject the request; rejected requests will be returned to the originating requestor. The CF router includes a header that provides the originally requested URL, as well as two headers that are used by the router itself to validate the request sent by the route service. These headers are described below in [Headers](#headers).
 
 #### <a id='headers'></a>Headers ####
 
-The following HTTP headers are added by Gorouter to requests forwarded to route services.
+The following HTTP headers are added by the Gorouter to requests forwarded to route services.
 
 ##### X-CF-Forwarded-Url #####
 
@@ -170,11 +170,11 @@ The `X-CF-Forwarded-Url` header contains the originally requested URL. The route
 
 ##### X-CF-Proxy-Signature #####
 
-The `X-CF-Proxy-Signature` header contains an encypted value which only Gorouter can decrypt. 
+The `X-CF-Proxy-Signature` header contains an encypted value which only the Gorouter can decrypt. 
 
-The header contains the originally requested URL and a timestamp. When this header is present, Gorouter will reject the request if the requested URL does not match that in the header, or if a timeout has expired.
+The header contains the originally requested URL and a timestamp. When this header is present, the Gorouter will reject the request if the requested URL does not match that in the header, or if a timeout has expired.
 
-`X-CF-Proxy-Signature` also signals to Gorouter that a request has transited a route service. If this header is present Gorouter will not forward the request to a route service, preventing recursive loops. For this reason, route services should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers. 
+`X-CF-Proxy-Signature` also signals to the Gorouter that a request has transited a route service. If this header is present, the Gorouter will not forward the request to a route service, preventing recursive loops. For this reason, route services should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers. 
 
 If the route service forwards the request to a URL different from the originally requested one, and the URL resolves to a route for an application on Cloud Foundry, the route must not have a bound route service or the request will be rejected, as the requested URL will not match the one in the `X-CF-Proxy-Signature` header.
 
@@ -202,7 +202,7 @@ Brokers must include `requires: ["route_forwarding"]` for a service in the catal
 
 #### <a id='binding'></a>Binding Endpoint ####
 
-When users bind a route to a service instance, Cloud Foundry sends a [bind request](./api.html#binding) to the broker, including the route address with `bind_resource.route`. A route is an address used by clients to reach apps mapped to the route. The broker may return `route_service_url`, containing a URL where Cloud Foundry should proxy requests for the route. This URL must have an `https` scheme, otherwise the Cloud Controller rejects the binding. `route_service_url` is optional, and not returning this field enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the Cloud Foundry router.
+When users bind a route to a service instance, Cloud Foundry sends a [bind request](./api.html#binding) to the broker, including the route address with `bind_resource.route`. A route is an address used by clients to reach apps mapped to the route. The broker may return `route_service_url`, containing a URL where Cloud Foundry should proxy requests for the route. This URL must have an `https` scheme, otherwise the Cloud Controller rejects the binding. `route_service_url` is optional, and not returning this field enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the CF router.
 
 ## <a id='examples'></a>Example Route Services ##
 - [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to Cloud Foundry. It fulfills the service instance responsibilities above and logs requests received and sent. It can be used to see the route service integration in action by tailing its logs.

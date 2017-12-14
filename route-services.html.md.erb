@@ -126,11 +126,18 @@ When Cloud Foundry is deployed in a development environment, certificates hosted
 
 #### <a id='timeouts'></a>Timeouts ####
 
-Route services must forward the request to the application route within the number of seconds configured by the `router.route_service_timeout` property (default 60 seconds).
+<% if vars.product_name == "CF" %>
+Route services must forward the request to the application route within the number of seconds configured by the `router.route_service_timeout` property. The `router.route_service_timeout` property defaults to 60 seconds.
 
 In addition, all requests must respond in the number of seconds configured by the `request_timeout_in_seconds` property (default 900 seconds).
 
 Timeouts are configurable for the router using the cf-release BOSH deployment manifest. For more information, see the [spec](https://github.com/cloudfoundry-incubator/routing-release/blob/master/jobs/gorouter/spec).
+<% else %>
+Route services must forward the request to the application route within 60 seconds.
+
+In addition, all requests must respond in 900 seconds.
+
+<% end %>
 
 ## <a id='broker-responsibilities'></a>Broker Responsibilities ##
 

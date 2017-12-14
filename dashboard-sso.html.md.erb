@@ -5,13 +5,36 @@ owner: Core Services
 
 <strong><%= modified_date %></strong>
 
-## <a id='introduction'></a>Introduction ##
+<div id="js-quick-links">
+            <div class="quick-links"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<% if vars.product_name == "CF"  %><li><a href="#enabling-the-feature">Enabling the SSO Feature</a></li><% end %>
+<li>
+<a href="#broker-responsibilities">Service Broker Responsibilities</a><ul>
+<li><a href="#registering-dashboard-client">Registering the Dashboard Client</a></li>
+<li><a href="#dashboard-url">Dashboard URL</a></li>
+</ul>
+</li>
+<li>
+<a href="#dashboard-responsibilities">Service Dashboard Responsibilities</a><ul>
+<li><a href="#oauth2-flow">OAuth Flow</a></li>
+<li><a href="#checking-user-permissions">Checking User Permissions</a></li>
+<li><a href="#on-scopes">On Scopes</a></li>
+</ul>
+</li>
+<li><a href="#reference-implementation">Reference Implementation</a></li>
+<li><a href="#restrictions">Restrictions</a></li>
+<li><a href="#resources">Resources</a></li>
+</ul></div>
 
-Single sign-on (SSO) enables Cloud Foundry users to authenticate with third-party service dashboards using their Cloud Foundry credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth protocol handles authentication.
+## <a name='introduction'></a>Introduction ##
 
+Single Sign-On (SSO) enables <%= vars.first_product_name  %> users to authenticate with third-party service dashboards using their <%= vars.product_name %> credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth protocol handles authentication.
+
+<% if vars.product_name == "CF"  %>
 Dashboard SSO was introduced in [cf-release v169](https://github.com/cloudfoundry/cf-release/tree/v169) so this or a newer version is required to support the feature.
 
-## <a id='enabling-the-feature-in-cloudfoundry'></a>Enabling the feature in Cloud Foundry ##
+## <a name='enabling-the-feature'></a>Enabling the SSO Feature 
 
 To enable the SSO feature, the Cloud Controller requires a UAA client with sufficient permissions to create and delete clients for the service brokers that request them. This client can be configured by including the following snippet in the cf-release manifest:
 
@@ -27,10 +50,11 @@ To enable the SSO feature, the Cloud Controller requires a UAA client with suffi
   ```
 
 When this client is not present in the cf-release manifest, Cloud Controller cannot manage UAA clients and an operator will receive a warning when creating or updating service brokers that advertise the `dashboard_client` properties discussed below.
+<% end  %>
 
-## <a id='broker-responsibilities'></a>Service Broker Responsibilities ##
+## <a name='broker-responsibilities'></a>Service Broker Responsibilities ##
 
-### <a id='registering-dashboard-client'></a>Registering the Dashboard Client ###
+### <a name='registering-dashboard-client'></a>Registering the Dashboard Client ###
 
 1.  A service broker must include the `dashboard_client` field in the JSON response from its [catalog endpoint](api.html#catalog-mgmt) for each service implementing this feature. A valid response would appear as follows:
 
@@ -50,23 +74,23 @@ When this client is not present in the cf-release manifest, Cloud Controller can
       }
       ```
     The `dashboard_client` field is a hash containing three fields:
-    - `id` is the unique identifier for the OAuth client that will be created for your service dashboard on the token server (UAA), and will be used by your dashboard to authenticate with the token server (UAA). If the client id is already taken, CF will return an error when registering or updating the broker.
+    - `id` is the unique identifier for the OAuth client that will be created for your service dashboard on the token server (UAA), and will be used by your dashboard to authenticate with the token server (UAA). If the client id is already taken, <%= vars.product_name  %> will return an error when registering or updating the broker.
     - `secret` is the shared secret your dashboard will use to authenticate with the token server (UAA).
     - `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`.
 
 1. When a service broker which advertises the `dashboard_client` property for any of its services is [added or updated](managing-service-brokers.html), Cloud Controller will create or update UAA clients as necessary. This client will be used by the service dashboard to authenticate users.
 
-### <a id='dashboard-url'></a>Dashboard URL ###
+### <a name='dashboard-url'></a>Dashboard URL ###
 
 A service broker should return a URL for the `dashboard_url` field in response to a [provision request](./api.html#provisioning). Cloud Controller clients should expose this URL to users. `dashboard_url` can be found in the response from Cloud Controller to create a service instance, enumerate service instances, space summary, and other endpoints.
 
 Users can then navigate to the service dashboard at the URL provided by `dashboard_url`, initiating the OAuth login flow.
 
-## <a id='dashboard-responsibilities'></a>Service Dashboard Responsibilities ##
+## <a name='dashboard-responsibilities'></a>Service Dashboard Responsibilities ##
 
-### <a id='oauth2-flow'></a>OAuth Flow ###
+### <a name='oauth2-flow'></a>OAuth Flow ###
 
-When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth login flow. A summary of the flow can be found in [section 1.2 of the OAuth RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In Cloud Foundry, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field.
+When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth login flow. A summary of the flow can be found in [section 1.2 of the OAuth RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In <%= vars.product_name %>, these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field.
 
 ```
 $ curl api.example.com/info
@@ -76,7 +100,7 @@ $ curl api.example.com/info
 "allow_debug":true}
 ```
 
-<p class='note'>To enable service dashboards to support SSO for service instances created from different Cloud Foundry instances, the /v2/info url is sent to service brokers in the `X-Api-Info-Location` header of every API call. A service dashboard should be able to discover this URL from the broker, and enabling the dashboard to contact the appropriate UAA for a particular service instance.</p>
+<p class='note'>To enable service dashboards to support SSO for service instances created from different <%= vars.product_name %> instances, the /v2/info url is sent to service brokers in the `X-Api-Info-Location` header of every API call. A service dashboard should be able to discover this URL from the broker, and enabling the dashboard to contact the appropriate UAA for a particular service instance.</p>
 
 A service dashboard should implement the OAuth Authorization Code Grant type ([UAA docs](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC docs](http://tools.ietf.org/html/rfc6749#section-4.1)).
 
@@ -97,7 +121,7 @@ A service dashboard should implement the OAuth Authorization Code Grant type ([U
 
 1. UAA authenticates the dashboard client, validates the authorization code, and ensures that the redirect URI received matches the URI used to redirect the client when the authorization code was issues.  If valid, UAA responds back with an access token and a refresh token.
 
-### <a id='checking-user-permissions'></a>Checking User Permissions ###
+### <a name='checking-user-permissions'></a>Checking User Permissions ###
 
 UAA is responsible for authenticating a user and providing the service with an access token with the requested permissions. However, after the user has been logged in, it is the responsibility of the service dashboard to verify that the user making the request to manage an instance currently has access to that service instance.
 
@@ -128,7 +152,7 @@ The response includes the following fields which indicate the various user permi
 
 Since administrators may change the permissions of users at any time, the service should check this endpoint whenever a user uses the SSO flow to access the service's UI.
 
-### <a id="on-scopes"></a> On Scopes
+### <a name="on-scopes"></a> On Scopes
 
 Scopes let you specify exactly what type of access you need. Scopes limit access for OAuth tokens. They do not grant any additional permission beyond that which the user already has.
 
@@ -148,18 +172,18 @@ Dashboards with extended capabilities may need to request these additional scope
 | `cloud_controller.read`                          | Allows read access to all resources the user is authorized to read |
 | `cloud_controller.write`                         | Allows write access to all resources the user is authorized to update / create / delete |
 
-## <a id='reference-implementation'></a>Reference Implementation ##
+## <a name='reference-implementation'></a>Reference Implementation ##
 
 The [MySQL Service Broker][example-broker] is an example of a broker that also implements a SSO dashboard. The login flow is implemented using the [OmniAuth library](https://github.com/intridea/omniauth) and a custom [UAA OmniAuth Strategy](https://github.com/cloudfoundry/omniauth-uaa-oauth2). See this [OmniAuth wiki page](https://github.com/intridea/omniauth/wiki/Strategy-Contribution-Guide) for instructions on how to create your own strategy.
 
 The UAA OmniAuth strategy is used to first get an authorization code, as documented in [this section](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant) of the UAA documentation. The user is redirected back to the service (as specified by the `callback_path` option or the default `auth/cloudfoundry/callback` path) with the authorization code. Before the application / action is dispatched, the OmniAuth strategy uses the authorization code to [get a token](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#client-obtains-token-post-oauth-token) and uses the token to request information from UAA to fill the `omniauth.auth` environment variable. When OmniAuth returns control to the application, the `omniauth.auth` environment variable hash will be filled with the token and user information obtained from UAA as seen in the [Auth Controller](https://github.com/cloudfoundry/cf-mysql-broker/blob/master/app/controllers/manage/auth_controller.rb).
 
-## <a id='restrictions'></a>Restrictions ##
+## <a name='restrictions'></a>Restrictions ##
 
  * UAA clients are scoped to services.  There must be a `dashboard_client` entry for each service that uses SSO integration.
  * Each `dashboard_client id` must be unique across the CloudFoundry deployment.
 
-## <a id="resources"></a>Resources ##
+## <a name="resources"></a>Resources ##
 
   * [OAuth](http://oauth.net/2/)
   * [Example broker with SSO implementation][example-broker]

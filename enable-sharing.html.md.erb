@@ -5,17 +5,21 @@ owner: Core Services
 
 <strong><%= modified_date %></strong>
 
-This topic provides information on enabling sharing of service instances for authors of managed services for Cloud Foundry.
+This topic provides information about enabling service instance sharing in managed services.
 
 ## <a id="overview"></a> Overview
 
-Service authors can allow instances of their services to be shared across spaces and organizations within Cloud Foundry. This allows applications running in different spaces and organizations to bind and unbind to the same service instance. Developers with SpaceDeveloper permissions in the space where the service instance was created are responsible for unsharing, updating, and deleting the service instance.
+Service authors can allow instances of their services to be shared across spaces and orgs within Cloud Foundry.
+This enables apps running in different spaces and orgs to use the same service instance.
+Developers with Space Developer permissions in the space where the service instance was created are responsible for sharing, unsharing, updating, and deleting the service instance.
 
-For more information about the developer and administrator tasks related to service instance sharing, see [Sharing Service Instances](../devguide/services/sharing-instances.html).
+For more information about the developer and administrator tasks related to service instance sharing, see [Sharing Service Instances (Beta)](../devguide/services/sharing-instances.html).
 
 ## <a id="enabling"></a> Enabling Service Instance Sharing
 
-Service brokers must explicitly enable service instance sharing by setting a flag in their service-level metadata object. This allows service instances, of any service plan, to be shared across organizations and spaces. The `"shareable"` flag must be set to `true` in the service-level metadata to enable service instance sharing. If the flag is set to `false` or is absent, sharing is disabled.  
+Service brokers must explicitly enable service instance sharing by setting a flag in their service-level metadata object.
+This allows service instances, of any service plan, to be shared across orgs and spaces.
+The `"shareable"` flag must be set to `true` in the service-level metadata to enable service instance sharing. If the flag is set to `false` or is absent, sharing is disabled.
 
 An example catalog is shown below:
 
@@ -35,35 +39,34 @@ An example catalog is shown below:
 
 When a service instance is created in one space and shared into another, developers can bind their apps to the service instance from both spaces. 
 
-You may want to have the service broker return credentials with different permissions depending on which space an app is bound from. For example, a messaging service may permit writes from the originating space, but only reads from any spaces that the service is shared into.
+You may want to have the service broker return credentials with different permissions depending on which space an app is bound from. For example, a messaging service may permit writes from the originating space and only reads from any spaces that the service is shared into.
 
 To differentiate between the spaces, implement the following:
 
-1. During the provision request, the broker stores the organization and space GUIDs of the service instance by inspecting the `context` object. 
+1. During the provision request, the broker stores the org and space GUIDs of the service instance by inspecting the `context` object.
 
-1. On a subsequent bind request, the broker compares the new `context` object's organization and space GUIDs against the stored provision request information to determine if the bind request originated from a space the service instance is shared into.
+1. On a subsequent bind request, the broker compares the new `context` object's org and space GUIDs against the stored provision request information to determine if the bind request originated from a space the service instance is shared into.
 
 ## <a id="security"></a> Security Considerations
 
 Service authors must consider the following before enabling service instance sharing:
 
-* [Service keys](../devguide/services/service-keys.html) can only be generated 
-by users who have access to the space where the service instance was created. 
-This ensures that only developers with access to this space have visibility 
-into where, and how many times, the service instance is used.
+* [Service keys](../devguide/services/service-keys.html) can only be generated
+by users who have access to the space where the service instance was created.
+This ensures that only developers with access to this space have visibility
+into where and how many times the service instance is used.
 
-* Consider the impact of giving out excessive permissions for service bindings, 
-especially bindings that originate from spaces that the service instance has 
-been shared into. For example, a messaging service may permit writes from the 
-originating space but only reads from any shared spaces. For more information, 
+* Consider the impact of giving out excessive permissions for service bindings,
+especially bindings that originate from spaces that the service instance has
+been shared into. For example, a messaging service may permit writes from the
+originating space and only reads from any shared spaces. For more information,
 see [Binding Permissions Based on Instance Sharing](#binding-permissions).
 
-* You should generate unique credentials on each binding. This ensures that 
-developers can unshare a service instance at any time. Unsharing an instance 
-deletes any service bindings and revokes access for those credentials. 
-Unsharing an instance prevents unauthorized future access from developers and 
-applications that saved the credentials they were previously provided using the 
+* You should generate unique credentials for each binding. This ensures that
+developers can unshare a service instance at any time. Unsharing an instance
+deletes any service bindings and revokes access for those credentials.
+Unsharing an instance prevents unauthorized future access from developers and
+apps that saved the credentials they were previously provided using the
 service binding.
 
 * Consider the impact of a service instance dashboard being accessed by users of shared service instances. If authenticating through SSO, see [Dashboard Single Sign-On](./dashboard-sso.html).
-

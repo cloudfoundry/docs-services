@@ -100,7 +100,7 @@ $ curl api.example.com/info
 "allow_debug":true}
 ```
 
-<p class='note'>To enable service dashboards to support SSO for service instances created from different <%= vars.product_name %> instances, the /v2/info url is sent to service brokers in the `X-Api-Info-Location` header of every API call. A service dashboard should be able to discover this URL from the broker, and enabling the dashboard to contact the appropriate UAA for a particular service instance.</p>
+<p class='note'>To enable service dashboards to support SSO for service instances created from different <%= vars.product_name %> instances, the /v2/info url is sent to service brokers in the <code>X-Api-Info-Location</code> header of every API call. A service dashboard should be able to discover this URL from the broker, and enabling the dashboard to contact the appropriate UAA for a particular service instance.</p>
 
 A service dashboard should implement the OAuth Authorization Code Grant type ([UAA docs](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC docs](http://tools.ietf.org/html/rfc6749#section-4.1)).
 

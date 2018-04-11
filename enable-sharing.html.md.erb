@@ -41,11 +41,7 @@ When a service instance is created in one space and shared into another, develop
 
 You may want to have the service broker return credentials with different permissions depending on which space an app is bound from. For example, a messaging service may permit writes from the originating space and only reads from any spaces that the service is shared into.
 
-To differentiate between the spaces, implement the following:
-
-1. During the provision request, the broker stores the org and space GUIDs of the service instance by inspecting the `context` object.
-
-1. On a subsequent bind request, the broker compares the new `context` object's org and space GUIDs against the stored provision request information to determine if the bind request originated from a space the service instance is shared into.
+To determine whether the space of the app is the same as the originating space of the service instance, the service broker can compare the `context.space_guid` and `bind_resource.space_guid` fields in the binding request. The `context.space_guid` field represents the space where the service instance was created, and `bind_resource.space_guid` represents the space of the app involved in the binding.
 
 ## <a id="security"></a> Security Considerations
 

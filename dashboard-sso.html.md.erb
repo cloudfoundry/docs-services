@@ -102,7 +102,7 @@ $ curl api.example.com/info
 
 <p class='note'>To enable service dashboards to support SSO for service instances created from different <%= vars.product_name %> instances, the /v2/info url is sent to service brokers in the `X-Api-Info-Location` header of every API call. A service dashboard should be able to discover this URL from the broker, and enabling the dashboard to contact the appropriate UAA for a particular service instance.</p>
 
-A service dashboard should implement the OAuth Authorization Code Grant type ([UAA docs](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC docs](http://tools.ietf.org/html/rfc6749#section-4.1)).
+A service dashboard should implement the OAuth Authorization Code Grant type ([UAA documentation](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC documentation](http://tools.ietf.org/html/rfc6749#section-4.1)).
 
 1. When a user visits the service dashboard at the value of `dashboard_url`, the dashboard should redirect the user's browser to the Authorization Endpoint and include its `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and list of requested scopes.
 

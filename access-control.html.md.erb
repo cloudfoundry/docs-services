@@ -58,7 +58,30 @@ Admins use the `cf enable-service-access` command to give users access to servic
 
 When an org has access to a plan, its users see the plan in the services marketplace (`cf marketplace`) and its Space Developer users can provision instances of the plan in their spaces.
 
-#### Enable All-User Access to All Plans
+#### Enable Access to a Subset of Users
+
+The `-p` and `-o` flags to `cf enable-service-access` let the admin limit user access to specific service plans or orgs as follows:
+
+- `-p PLAN` grants all users access to one service plan (access:`all`)
+- `-o ORG` grants users in a specified org access to all plans (access: `limited`)
+- `-p PLAN -o ORG` grants users in one org access to one plan (access: `limited`)
+
+For example, the following command grants the org dev-user-org access to the p-mysql service. 
+
+<pre class="terminal">
+$ cf enable-service-access p-mysql -o dev-user-org 
+Enabling access to all plans of service p-mysql for the org dev-user-org as admin...
+OK
+
+$ cf service-access
+getting service access as admin...
+broker: p-mysql
+   service   plan        access   orgs
+   p-mysql                        dev-user-org
+</pre>
+
+Run `cf help enable-service-access` to review these options from the command line.
+
 
 Running `cf enable-service-access SERVICE-NAME` without any flags lets all users access every plan carried by the service. For example, the following command grants all-user access to all `p-mysql` service plans:
 
@@ -74,15 +97,6 @@ broker: p-mysql
    p-mysql   100mb-dev   all
 </pre>
 
-#### Limit Access to Specific Orgs or Plans
-
-The `-p` and `-o` flags to `cf enable-service-access` let the admin limit user access to specific service plans or orgs as follows:
-
-- `-p PLAN` grants all users access to one service plan (access:`all`)
-- `-o ORG` grants users in a specified org access to all plans (access: `limited`)
-- `-p PLAN -o ORG` grants users in one org access to one plan (access: `limited`)
-
-Run `cf help enable-service-access` to review these options from the command line.
 
 ## <a id='disable-access'></a>Disable Access to Service Plans ###
 

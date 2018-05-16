@@ -21,7 +21,7 @@ To enable this functionality, a service broker must implement the following:
 ## How does it work?
 
 1. Service broker returns a value for `syslog_drain_url` in response to bind
-1. Loggregator periodically polls CC `/v2/syslog_drain_urls` for updates
+1. Loggregator periodically polls an internal Cloud Controller endpoint for updates
 1. Upon discovering a new `syslog_drain_url`, Loggregator identifies the associated app
 1. Loggregator streams app logs for that app to the locations specified by the service instances' `syslog_drain_url`s
 

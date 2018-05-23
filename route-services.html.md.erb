@@ -274,7 +274,9 @@ For increased security, follow the recommendations below:
 * A load balancer configured for TCP passthrough should sanitize and reset the header based on whether the request it received was encrypted or not. Set the 
 `router.sanitize_forwarded_proto: true` manifest property for Gorouter.
 
+<% if vars.product_name.include? "CF" %>
 For more information about securing traffic into Cloud Foundry, see [Securing Traffic into Cloud Foundry](../adminguide/securing-traffic.html).
+<% end %>
 
 <p class='note'><strong>Note</strong>: When a route service is mapped to a route, Gorouter sanitizes the <code>X-Forwarded-Proto</code> header once, even though requests pass through Gorouter more than once.</p>
 

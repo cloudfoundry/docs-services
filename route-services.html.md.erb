@@ -264,7 +264,7 @@ These commands requires the Cloud Foundry Command Line Interface (cf CLI) versio
 
 The contract between route services and Gorouter, applicable for [Fully Brokered](#fully-brokered) and [User Provided](#user-provided) models, enables a Cloud Foundry operator to suggest whether or not requests forwarded from the route service to a load balancer are encrypted. The Cloud Foundry operator makes this suggestion by setting the `router.route_services_recommend_https` manifest property.
 
-This suggestion does not allow the platform to guarantee that a route service will obey the scheme of the `X-Forwarded-Url` header. If a route service ignores the scheme and downgrades the request to plain text, a malicious actor could intercept the request and use or modify the data within it..
+This suggestion does not allow the platform to guarantee that a route service obeys the scheme of the `X-Forwarded-Url` header. If a route service ignores the scheme and downgrades the request to plain text, a malicious actor can intercept the request and use or modify the data within it.
 
 For increased security, follow the recommendations below:
 

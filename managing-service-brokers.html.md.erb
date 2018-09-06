@@ -124,7 +124,7 @@ If a service broker has been shut down or removed without first deleting service
 The following command will delete a service offering, all of its plans, as well as all associated service instances and bindings from the Cloud Controller database, without making any API calls to a service broker. For services from v1 brokers, you must provide a provider with `-p PROVIDER`. Once all services for a broker have been purged, the broker can be removed normally.
 
 <pre class="terminal">
-$ cf purge-service-offering v1-test -p pivotal-software
+$ cf purge-service-offering v1-test -p example.com
 Warning: This operation assumes that the service broker responsible for this
 service offering is no longer available, and all service instances have been
 deleted, leaving orphan records in Cloud Foundry's database. All knowledge of

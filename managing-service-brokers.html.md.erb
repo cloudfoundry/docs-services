@@ -34,7 +34,7 @@ As of cf-release 229, CC API 2.47.0, Cloud Foundry supports two types of brokers
 * Publish service plans to specific orgs or all orgs in the deployment. Can also keep plans unavailable, or _private_.
 * Created by admins, with the command `cf create-service-broker`
   <pre class="terminal">
-  $ cf create-service-broker mybrokername someuser somethingsecure <span>https</span>://mybroker.example.com/
+  $ cf create-service-broker mybrokername someuser somethingsecure <span>https</span>://mybroker.example.com
   </pre>
 * Managed by admins
 * Service plans are created private. Before anyone can use them, an admin must explicitly [make them available](#make-plans-public) within an org or across all orgs.
@@ -44,7 +44,7 @@ As of cf-release 229, CC API 2.47.0, Cloud Foundry supports two types of brokers
 * Publish service plans only to users within the space they are created. Plans are unavailable outside of this space.
 * Created by space developers using the command `cf create-service-broker` with the `--space-scoped` flag
   <pre class="terminal">
-  $ cf create-service-broker mybrokername someuser somethingsecure <span>https</span>://mybroker.example.com/ --space-scoped
+  $ cf create-service-broker mybrokername someuser somethingsecure <span>https</span>://mybroker.example.com --space-scoped
   </pre>
   <p class="note"><strong>Note</strong>: If a space developer runs <code>cf create-service-broker</code> without the <code>--space-scoped</code> flag, they receive an error.
 * Managed by space developers
@@ -93,7 +93,7 @@ controller uses to authenticate with a broker, as well as the base URL of the
 broker's API endpoints.
 
 <pre class="terminal">
-$ cf update-service-broker mybrokername someuser somethingsecure <span>https</span>://mybroker.example.com/
+$ cf update-service-broker mybrokername someuser somethingsecure <span>https</span>://mybroker.example.com
 </pre>
 
 ## <a id='rename-broker'></a>Rename a Broker ##

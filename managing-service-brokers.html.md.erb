@@ -121,10 +121,10 @@ $ cf delete-service-broker mybrokername
 
 If a service broker has been shut down or removed without first deleting service instances from Cloud Foundry, you will be unable to remove the service broker or its services and plans from the Marketplace. In development environments, broker authors often destroy their broker deployments and need a way to clean up the Cloud Controller database.
 
-The following command will delete a service offering, all of its plans, as well as all associated service instances and bindings from the Cloud Controller database, without making any API calls to a service broker. For services from v1 brokers, you must provide a provider with `-p PROVIDER`. Once all services for a broker have been purged, the broker can be removed normally.
+The following command will delete a service offering, all of its plans, as well as all associated service instances and bindings from the Cloud Controller database, without making any API calls to a service broker. Once all services for a broker have been purged, the broker can be removed normally.
 
 <pre class="terminal">
-$ cf purge-service-offering v1-test -p example.com
+$ cf purge-service-offering service-test
 Warning: This operation assumes that the service broker responsible for this
 service offering is no longer available, and all service instances have been
 deleted, leaving orphan records in Cloud Foundry's database. All knowledge of
@@ -134,9 +134,11 @@ this command without destroying the service broker will cause orphan service
 instances. After running this command you may want to run either
 delete-service-auth-token or delete-service-broker to complete the cleanup.
 
-Really purge service offering v1-test from Cloud Foundry? y
+Really purge service offering service-test from Cloud Foundry? y
 OK
 </pre>
+
+<p class="note"><strong>Note</strong>: To purge services from v1 brokers, you must append your <code>cf purge-service-offering</code> command with <code>-p PROVIDER</code>.</p>
 
 ### <a id='purge-service-instance'></a>Purge a Service Instance###
 

@@ -65,7 +65,7 @@ The following constraints should be kept in mind:
 - It is not possible to have multiple brokers with the same name
 - The service ID and plan IDs of each service advertised by the broker must be unique across Cloud Foundry. GUIDs are recommended for these fields.
 
-<div class="note">
+<div class="note"><strong>Note</strong>: 
 If your deployment uses Cloud Foundry API (CAPI) v1.71 or later, you can add multiple brokers with the same URL. In this case, the brokers must have different names. CAPI v1.70 and earlier do not support this feature.
 </div>
 
@@ -118,7 +118,7 @@ Removing a service broker will remove all services and plans in the broker's cat
 $ cf delete-service-broker mybrokername
 </pre>
 
-<p class="note"><strong>Note</strong>: Attempting to remove a service broker will fail if there are service instances for any service plan in its catalog. When planning to shut down or delete a broker, make sure to remove all service instances first. Failure to do so will leave <a href="./api.html#orphans">orphaned service instances</a> in the Cloud Foundry database. If a service broker has been shut down without first deleting service instances, you can remove the instances with the CLI; see <a href="#purge-service">Purge a Service</a>.
+<p class="note"><strong>Note</strong>: Attempting to remove a service broker will fail if there are service instances for any service plan in its catalog. When planning to shut down or delete a broker, make sure to remove all service instances first. Failure to do so will leave <a href="./api.html#orphans">orphaned service instances</a> in the Cloud Foundry database. If a service broker has been shut down without first deleting service instances, you can remove the instances with the CLI; see <a href="#purge-service">Purge a Service</a>.</p>
 
 ### <a id='purge-service'></a>Purge a Service ###
 

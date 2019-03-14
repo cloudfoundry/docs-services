@@ -97,6 +97,8 @@ broker: p-mysql
    p-mysql   100mb-dev   all
 </pre>
 
+<p class="note"><strong>Note</strong>: When there are two or more services with the same name provided by multiple brokers, you must specify the broker using <code>-b BROKER</code> flag to the <code>cf enable-service-access</code> command.</p>
+
 
 ## <a id='disable-access'></a>Disable Access to Service Plans ###
 
@@ -127,6 +129,8 @@ The `-p` and `-o` flags to `cf disable-service-access` let the admin deny access
 - `-p PLAN -o ORG` prevents users in one org from accessing one plan
 
 Run `cf help disable-service-access` to review these options from the command line.
+
+<p class="note"><strong>Note</strong>: When there are two or more services with the same name provided by multiple brokers, you must specify the broker using <code>-b BROKER</code> flag to the <code>cf disable-service-access</code> command.</p>
 
 ### Limitations ####
 

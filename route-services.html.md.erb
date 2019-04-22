@@ -291,6 +291,7 @@ To best secure communications through route services, Cloud Foundry operators sh
 1. Confirm that route services do not modify the value of the `X-Forwarded-Proto` header.
 
 <% if vars.product_name == "CF" %>
+<% elsif vars.product_name.include? "W" %>
 <% else %>
 <%= partial vars.hairpinning %>
 <% end %>

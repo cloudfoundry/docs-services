@@ -289,10 +289,3 @@ To best secure communications through route services, Cloud Foundry operators sh
 1. Set the `router.disable_http: true` manifest property. Setting this property disables the HTTP listener, forcing all communication to Gorouter to be HTTPS. This assumes all route services will communicate over HTTPS with Gorouter. This causes requests from other clients made to port 80 to be rejected. You should confirm that clients of all applications make requests over TLS.
 
 1. Confirm that route services do not modify the value of the `X-Forwarded-Proto` header.
-
-<% if vars.product_name == "CF" %>
-<% elsif vars.product_name.include? "W" %>
-<% else %>
-<%= partial vars.hairpinning %>
-<% end %>
-

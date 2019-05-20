@@ -20,9 +20,7 @@ owner: Core Services
         <li><a href="#tutorial">Tutorial</a></li>
         <% if vars.product_name == "CF" %>
         <li><a href="#security-considerations">Security Considerations</a>
-            <ul>
-            <li><a href="#secure-route-services"></a>Recommendations for Securing Route Services</li>
-            </ul>
+        <li><a href="#secure-route-services">Recommendations for Securing Route Services</a>
         </li>
         <% end %>
     </ul>
@@ -305,7 +303,7 @@ For more information about securing traffic into Cloud Foundry, see [Securing Tr
 
 <p class='note'><strong>Note</strong>: When a route service is mapped to a route, Gorouter sanitizes the <code>X-Forwarded-Proto</code> header once, even though requests pass through Gorouter more than once.</p>
 
-### <a name='secure-route-services'></a>Recommendations for Securing Route Services ###
+## <a name='secure-route-services'></a> Recommendations for Securing Route Services
 
 To best secure communications through route services, Cloud Foundry operators should do the following: 
 

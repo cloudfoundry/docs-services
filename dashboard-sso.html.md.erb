@@ -29,12 +29,12 @@ owner: Core Services
 
 ## <a name='introduction'></a>Introduction ##
 
-Single Sign-On (SSO) enables <%= vars.first_product_name  %> users to authenticate with third-party service dashboards using their <%= vars.product_name %> credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth protocol handles authentication.
+Single Sign-On (SSO) enables <%= vars.product_name %> users to authenticate with third-party service dashboards using their <%= vars.product_name %> credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth protocol handles authentication.
 
 <% if vars.product_name == "CF"  %>
 Dashboard SSO was introduced in [cf-release v169](https://github.com/cloudfoundry/cf-release/tree/v169) so this or a newer version is required to support the feature.
 
-## <a name='enabling-the-feature'></a>Enabling the SSO Feature 
+## <a name='enabling-the-feature'></a>Enabling the SSO Feature
 
 To enable the SSO feature, the Cloud Controller requires a UAA client with sufficient permissions to create and delete clients for the service brokers that request them. This client can be configured by including the following snippet in the cf-release manifest:
 

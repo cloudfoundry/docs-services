@@ -18,7 +18,7 @@ owner: Core Services
         <li><a href="#broker-responsibilities">Broker Responsibilities</a></li>
         <li><a href="#examples">Example Route Services</a></li>
         <li><a href="#tutorial">Tutorial</a></li>
-        <% if vars.product_name == "CF" %>
+        <% if vars.platform_code == 'CF' %>
         <li><a href="#security-considerations">Security Considerations</a>
         <li><a href="#secure-route-services">Recommendations for Securing Route Services</a>
         </li>
@@ -175,7 +175,7 @@ When Cloud Foundry is deployed in a development environment, certificates hosted
 
 ### <a name='timeouts'></a> Timeouts ###
 
-<% if vars.product_name == "CF" %>
+<% if vars.platform_code == 'CF' %>
 Route services must forward the request to the app route within the number of seconds configured by the `router.route_service_timeout` property. The `router.route_service_timeout` property defaults to 60 seconds.
 
 In addition, all requests must respond in the number of seconds configured by the `request_timeout_in_seconds` property. The `request_timeout_in_seconds` property default to 900 seconds.
@@ -251,7 +251,7 @@ These commands requires the Cloud Foundry Command Line Interface (cf CLI) v6.16 
     $ curl spring-music.cf.example.com
     </pre>
 
-<% if vars.product_name == "CF" %>
+<% if vars.platform_code == 'CF' %>
 
 
 ## <a name='security-considerations'></a> Security Considerations

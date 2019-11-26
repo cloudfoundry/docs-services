@@ -1,34 +1,44 @@
 ---
 title: Services
-description: Any type of add-on that can be provisioned alongside your application; for example, a database or an account on a third-party SaaS provider.
+description: Any type of add-on that can be provisioned alongside your app; for example, a database or an account on a third-party SaaS provider.
 owner: Core Services
 ---
 
+The documentation in this section is intended for developers and operators interested in creating Managed Services for <%= vars.product_runtime %> (<%= vars.product_short %>). Managed Services are defined as having been integrated with <%= vars.product_short %> through APIs, and enable end users to provision reserved resources and credentials on demand. For documentation targeted at end users, such as how to provision services and integrate them with apps, see [Services Overview](../devguide/services/index.html).
 
-The documentation in this section is intended for developers and operators interested in creating Managed Services for Cloud Foundry. Managed Services are defined as having been integrated with Cloud Foundry via APIs, and enable end users to provision reserved resources and credentials on demand. For documentation targeted at end users, such as how to provision services and integrate them with applications, see [Services Overview](../devguide/services/index.html).
+To develop Managed Services for <%= vars.product_short %>, you need a <%= vars.product_short %> instance to test your service broker with as you are developing it. You must have admin access to your <%= vars.product_short %> instance to manage service brokers and the services marketplace catalog. For local development, <%= vars.recommended_by %> recommends using the [BOSH guide](https://bosh.io/docs/quick-start/) to deploy your own local instance of <%= vars.product_short %> using VirtualBox.
 
-To develop Managed Services for Cloud Foundry, you'll need a Cloud Foundry instance to test your service broker with as you are developing it. You must have admin access to your CF instance to manage service brokers and the services marketplace catalog. For local development, we recommend using the [BOSH guide](https://bosh.io/docs/quick-start/) to deploy your own local instance of Cloud Foundry using VirtualBox.
 
 ## Table of Contents
 
-<ul>
-<li><a href="overview.html" class="subnav">Overview</a></li>
-<li><strong>Service Broker API</strong></li>
-	<ul>
-	<li><a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md">Open Service Broker API</a></li>
-	<li><a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/profile.md">Platform Profiles</a></li>
-	<li><a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/profile.md#service-metadata">Catalog Metadata</a></li>
-	<li><a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/spec.md#volume-mounts-object">Volume Services</a></li>
-	<li><a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.14/release-notes.md">Release Notes</a></li>
-	</ul>	
-<li><a href="managing-service-brokers.html" class="subnav">Managing Service Brokers</a></li>
-<li><a href="access-control.html" class="subnav">Access Control</a></li>
-<li><a href="dashboard-sso.html" class="subnav">Dashboard Single Sign-On</a></li>
-<li><a href="examples.html" class="subnav">Example Service Brokers</a></li>
-<li><a href="binding-credentials.html" class="subnav">Binding Credentials</a></li>
-<li><a href="enable-sharing.html" class="subnav">Enabling Service Instance Sharing
-</a></li>
-<li><a href="app-log-streaming.html" class="subnav">Application Log Streaming</a></li>
-<li><a href="route-services.html" class="subnav">Route Services</a></li>
-<li><a href="supporting-multiple-cf-instances.html" class="subnav">Supporting Multiple Cloud Foundry Instances</a></li>
-</ul>
+* [Overview](overview.html)
+
+* **Service Broker API**
+	
+	* [Open Service Broker API](https://github.com/openservicebrokerapi/servicebroker/blob/v2.15/spec.md)
+	
+	* [Platform Profiles](https://github.com/openservicebrokerapi/servicebroker/blob/v2.15/profile.md)
+	
+	* [Catalog Metadata](https://github.com/openservicebrokerapi/servicebroker/blob/v2.15/profile.md#service-metadata)
+	
+	* [Volume Services](https://github.com/openservicebrokerapi/servicebroker/blob/v2.15/spec.md#volume-mounts-object)
+	
+	* [Release Notes](https://github.com/openservicebrokerapi/servicebroker/blob/v2.15/release-notes.md)
+
+* [Managing Service Brokers](managing-service-brokers.html)
+
+* [Access Control](access-control.html)
+
+* [Dashboard Single Sign-On](dashboard-sso.html)
+
+* [Example Service Brokers](examples.html)
+
+* [Binding Credentials](binding-credentials.html)
+
+* [Enabling Service Instance Sharing](enable-sharing.html)
+
+* [App Log Streaming](app-log-streaming.html)
+
+* [Route Services](route-services.html)
+
+* [Supporting Multiple <%= vars.product_short %> Instances](supporting-multiple-cf-instances.html)

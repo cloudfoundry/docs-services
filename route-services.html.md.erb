@@ -26,66 +26,44 @@ owner: Core Services
     </ul>
 </div>
 
-This documentation is intended for service authors who are interested in 
-offering a service to a Cloud Foundry (CF) services marketplace. Developers 
-interested in consuming these services can read the [Manage Application Requests with Route Services](../devguide/services/route-binding.html) topic.
+This topic provides guidance for offering a service to a <%= vars.product_runtime %> (<%= vars.product_short %>) services marketplace. For information about consuming these services, see [Manage App Requests with Route Services](../devguide/services/route-binding.html).
 
 <%= vars.route_services %>
 
-## <a name='introduction'></a>Introduction ##
 
-Cloud Foundry application developers may wish to apply transformation or 
-processing to requests before they reach an application. Common examples of use 
-cases include authentication, rate limiting, and caching services. Route 
-Services are a kind of Marketplace Service that developers can use to apply 
-various transformations to application requests by binding an application's 
-route to a service instance. Through integrations with service brokers and,  
-optionally, with the Cloud Foundry routing tier, providers can offer these 
-services to developers with a familiar, automated, self-service, and on-demand 
-user experience.
+## <a name='introduction'></a> Introduction
+
+<%= vars.product_short %> app developers may wish to apply transformation or processing to requests before they reach an app. Common examples of use cases include authentication, rate limiting, and caching services. Route Services are a kind of Marketplace Service that developers can use to apply various transformations to app requests by binding an app's route to a service instance. Through integrations with service brokers and, optionally, with the <%= vars.product_short %> routing tier, providers can offer these services to developers with a familiar, automated, self-service, and on-demand user experience.
 
 <%= vars.route_services_appsman1 %>
 
-## <a name='architecture'></a>Architecture ##
 
-Cloud Foundry supports the following three models for Route Services: 
+## <a name='architecture'></a> Architecture
+
+<%= vars.product_short %> supports the following three models for Route Services: 
 
 * [Fully-brokered services](#fully-brokered)
 * [Static, brokered services](#static-brokered)
 * [User-provided services](#user-provided)
 
-In each model, you configure a route service to process traffic addressed to an 
-app.
+In each model, you configure a route service to process traffic addressed to an app.
 
-### <a name="fully-brokered"></a>Fully-Brokered Service ###
+### <a name="fully-brokered"></a> Fully-Brokered Service
 
-In the fully-Brokered Service model, the CF router receives all traffic to apps 
-in the deployment before any processing by the route service. Developers can 
-bind a route service to any app, and if an app is bound to a route service, the 
-CF router sends its traffic to the service. After the route service processes 
-requests, it sends them back to the load balancer in front of the CF router. 
-The second time through, the CF router recognizes that the route service has 
-already handled them, and forwards them directly to app instances.
+In the fully-Brokered Service model, the <%= vars.product_short %> router receives all traffic to apps in the deployment before any processing by the route service. Developers can bind a route service to any app, and if an app is bound to a route service, the <%= vars.product_short %> router sends its traffic to the service. After the route service processes requests, it sends them back to the load balancer in front of the <%= vars.product_short %> router. The second time through, the <%= vars.product_short %> router recognizes that the route service has already handled them, and forwards them directly to app instances.
 
 ![Fully brokered](images/route-services-fully-brokered.png)
 
-The route service can run inside or outside of CF, so long as it fulfills the 
-[Service Instance Responsibilities](#service-instance-responsibilities) to 
-integrate it with the CF router. A service broker publishes the route service 
-to the CF marketplace, making it available to developers. Developers can then 
-create an instance of the service and bind it to their apps with the following 
-commands:
+The route service can run inside or outside of <%= vars.product_short %>, so long as it fulfills the [Service Instance Responsibilities](#service-instance-responsibilities) to integrate it with the <%= vars.product_short %> router. A service broker publishes the route service to the <%= vars.product_short %> marketplace, making it available to developers. Developers can then create an instance of the service and bind it to their apps with the following commands:
 
 `cf create-service BROKER-SERVICE-PLAN SERVICE-INSTANCE`
 `cf bind-route-service YOUR-APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME] [--path PATH]`
 
-Developers configure the service either through the service provider's web 
-interface or by passing [arbitrary parameters](../devguide/services/managing-services.html#arbitrary-params-create)
- to their `cf create-service` call through the `-c` flag.
+Developers configure the service either through the service provider's web interface or by passing [arbitrary parameters](../devguide/services/managing-services.html#arbitrary-params-create) to their `cf create-service` call through the `-c` flag.
 
 **Advantages:**
 
-- Developers can use a Service Broker to dynamically configure how the route service processes traffic to specific applications.
+- Developers can use a Service Broker to dynamically configure how the route service processes traffic to specific apps.
 - Adding route services requires no manual infrastructure configuration.
 - Traffic to apps that do not use the service makes fewer network hops because requests for those apps do not pass through the route service.
 
@@ -93,20 +71,13 @@ interface or by passing [arbitrary parameters](../devguide/services/managing-ser
 
 - Traffic to apps that use the route service makes additional network hops, as compared to the static model.
 
-### <a name="static-brokered"></a>Static, Brokered Service ###
+### <a name="static-brokered"></a> Static, Brokered Service
 
-In the static, brokered service model, an operator installs a static routing 
-service, which might be a piece of hardware, in front of the load balancer. The 
-routing service runs outside of Cloud Foundry and receives traffic to all apps 
-running in the CF deployment. The service provider creates a service broker to 
-publish the service to the CF marketplace. As with a [fully-brokered service](#fully-brokered), a developer can use the service by instantiating it 
-with `cf create-service` and binding it to an app with `cf bind-route-service`.
+In the static, brokered service model, an operator installs a static routing service, which might be a piece of hardware, in front of the load balancer. The routing service runs outside of <%= vars.product_short %> and receives traffic to all apps running in the <%= vars.product_short %> deployment. The service provider creates a service broker to publish the service to the <%= vars.product_short %> marketplace. As with a fully-brokered service, a developer can use the service by instantiating it with `cf create-service` and binding it to an app with `cf bind-route-service`.
 
 ![Static, brokered](images/route-services-static-brokered.png)
 
-In this model, you configure route services on an app-by-app basis. When you 
-bind a service to an app, the service broker directs the routing service to 
-process that app's traffic rather than pass the requests through unchanged.
+In this model, you configure route services on an app-by-app basis. When you bind a service to an app, the service broker directs the routing service to process that app's traffic rather than pass the requests through unchanged.
 
 **Advantages:**
 
@@ -118,19 +89,13 @@ process that app's traffic rather than pass the requests through unchanged.
 - Adding route services requires manual infrastructure configuration.
 - Traffic to apps that do not use the route service make unnecessary network hops. Requests for all apps hosted by the deployment pass through the route service component.
 
-### <a name="user-provided"></a>User-Provided Service ###
+### <a name="user-provided"></a> User-Provided Service
 
-If a route service is not listed in the CF marketplace by a broker, a developer 
-can still bind it to their app as a user-provided service. The service can run 
-anywhere, either inside or outside of CF, but it must fulfill the integration 
-requirements described in [Service Instance Responsibilities](#service-instance-responsibilities). The service also needs 
-to be reachable by an outbound connection from the CF router.
+If a route service is not listed in the <%= vars.product_short %> marketplace by a broker, a developer can still bind it to their app as a user-provided service. The service can run anywhere, either inside or outside of <%= vars.product_short %>, but it must fulfill the integration requirements described in [Service Instance Responsibilities](#service-instance-responsibilities). The service also needs to be reachable by an outbound connection from the <%= vars.product_short %> router.
 
 ![User-provided](images/route-services-user-provided.png)
 
-This model is identical to the [fully-brokered service](#fully-brokered) model, 
-except without the broker. Developers configure the service manually, outside 
-of Cloud Foundry. They can then create a user-provided service instance and bind it to their application with the following commands, supplying the URL of their route service:
+This model is identical to the fully-brokered service model, except without the broker. Developers configure the service manually, outside of <%= vars.product_short %>. They can then create a user-provided service instance and bind it to their app with the following commands, supplying the URL of their route service:
 
 `cf create-user-provided-service SERVICE-INSTANCE -r ROUTE-SERVICE-URL`
 `cf bind-route-service DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME]`
@@ -142,18 +107,18 @@ of Cloud Foundry. They can then create a user-provided service instance and bind
 
 **Disadvantages:**
 
-- Developers must manually provision and configure route services out of the context of Cloud Foundry because no service broker automates these operations.
+- Developers must manually provision and configure route services out of the context of <%= vars.product_short %> because no service broker automates these operations.
 - Traffic to apps that use the route service makes additional network hops, as compared to the static model.
 
-### <a name="architecture-comparison"></a>Architecture Comparison ###
+### <a name="architecture-comparison"></a> Architecture Comparison
 
-The models above require the [broker](#broker-responsibilities) and [service instance](#service-instance-responsibilities) responsibilities summarized in the following table:
+The models above require the broker and service instance responsibilities summarized in the following table:
 
 <table id='architecture-comparison' border="1" class="nice" >
   <tr>
     <th>Route Services Architecture</th>
-    <th>Fulfills CF <a href="#service-instance-responsibilities">Service Instance Responsibilities</a></th>
-    <th>Fulfills CF <a href="#broker-responsibilities">Broker Responsibilities</a></th>
+    <th>Fulfills %= vars.product_short %> <a href="#service-instance-responsibilities">Service Instance Responsibilities</a></th>
+    <th>Fulfills %= vars.product_short %> <a href="#broker-responsibilities">Broker Responsibilities</a></th>
   </tr><tr>
     <td>Fully-Brokered</td>
     <td>Yes</td>
@@ -171,43 +136,44 @@ The models above require the [broker](#broker-responsibilities) and [service ins
 
 <%= vars.route_services_config %>
 
-## <a name='service-instance-responsibilities'></a>Service Instance Responsibilities ##
+
+## <a name='service-instance-responsibilities'></a> Service Instance Responsibilities
 
 The following applies only when a broker returns `route_service_url` in the bind response.
 
-#### <a name='how-it-works'></a>How It Works ####
+### <a name='how-it-works'></a> How It Works
 
-Binding a service instance to a route associates the `route_service_url` with the route in the CF router. All requests for the route are proxied to the URL specified by `route_service_url`.
+Binding a service instance to a route associates the `route_service_url` with the route in the <%= vars.product_short %> router. All requests for the route are proxied to the URL specified by `route_service_url`.
 
-Once a route service completes its function it may choose to forward the request to the originally requested URL or to another location, or it may choose to reject the request; rejected requests will be returned to the originating requestor. The CF router includes a header that provides the originally requested URL, as well as two headers that are used by the router itself to validate the request sent by the route service. These headers are described below in [Headers](#headers).
+Once a route service completes its function it may choose to forward the request to the originally requested URL or to another location, or it may choose to reject the request; rejected requests will be returned to the originating requestor. The <%= vars.product_short %> router includes a header that provides the originally requested URL, as well as two headers that are used by the router itself to validate the request sent by the route service. These headers are described in the sections below.
 
-#### <a name='headers'></a>Headers ####
+### <a name='headers'></a>Headers ###
 
 The following HTTP headers are added by the Gorouter to requests forwarded to route services.
 
-##### X-CF-Forwarded-Url #####
+#### X-CF-Forwarded-Url
 
 The `X-CF-Forwarded-Url` header contains the originally requested URL. The route service may choose to forward the request to this URL or to another.
 
-##### X-CF-Proxy-Signature #####
+#### X-CF-Proxy-Signature
 
 The `X-CF-Proxy-Signature` header contains an encypted value which only the Gorouter can decrypt. 
 
-The header contains the originally requested URL and a timestamp. When this header is present, the Gorouter will reject the request if the requested URL does not match that in the header, or if a timeout has expired.
+The header contains the originally requested URL and a timestamp. When this header is present, the Gorouter rejects the request if the requested URL does not match that in the header, or if a timeout has expired.
 
-`X-CF-Proxy-Signature` also signals to the Gorouter that a request has transited a route service. If this header is present, the Gorouter will not forward the request to a route service, preventing recursive loops. For this reason, route services should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers. 
+`X-CF-Proxy-Signature` also signals to the Gorouter that a request has transited a route service. If this header is present, the Gorouter does not forward the request to a route service, preventing recursive loops. For this reason, route services should not strip off the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers. 
 
-If the route service forwards the request to a URL different from the originally requested one, and the URL resolves to a route for an application on Cloud Foundry, the route must not have a bound route service or the request will be rejected, as the requested URL will not match the one in the `X-CF-Proxy-Signature` header.
+If the route service forwards the request to a URL different from the originally requested one, and the URL resolves to a route for an app on <%= vars.product_short %>, the route must not have a bound route service or the request is rejected, as the requested URL does not match the one in the `X-CF-Proxy-Signature` header.
 
-##### X-CF-Proxy-Metadata #####
+#####= X-CF-Proxy-Metadata
 
 The `X-CF-Proxy-Metadata` header aids in the encryption and description of `X-CF-Proxy-Signature`. 
 
-#### <a name='ssl-certs'></a>SSL Certificates ####
+### <a name='ssl-certs'></a> SSL Certificates
 
-When Cloud Foundry is deployed in a development environment, certificates hosted by the load balancer are self-signed, and not signed by a trusted certificate authority. When the route service finishes processing an inbound request and makes a call to the value of `X-CF-Forwarded-Url`, be prepared to accept the self-signed certificate when integrating with a non-production deployment of Cloud Foundry.
+When <%= vars.product_short %> is deployed in a development environment, certificates hosted by the load balancer are self-signed, and not signed by a trusted Certificate Authority. When the route service finishes processing an inbound request and makes a call to the value of `X-CF-Forwarded-Url`, be prepared to accept the self-signed certificate when integrating with a non-production deployment of <%= vars.product_short %>.
 
-#### <a name='timeouts'></a>Timeouts ####
+### <a name='timeouts'></a> Timeouts
 
 <% if vars.product_name == "CF" %>
 Route services must forward the request to the application route within the number of seconds configured by the `router.route_service_timeout` property. The `router.route_service_timeout` property defaults to 60 seconds.
@@ -222,90 +188,100 @@ In addition, all requests must respond in 900 seconds.
 
 <% end %>
 
-## <a name='broker-responsibilities'></a>Broker Responsibilities ##
 
-#### <a name='catalog'></a>Catalog Endpoint ####
+## <a name='broker-responsibilities'></a> Broker Responsibilities
 
-Brokers must include `requires: ["route_forwarding"]` for a service in the catalog endpoint. If this is not present, Cloud Foundry will not permit users to bind an instance of the service to a route.
+### <a name='catalog'></a> Catalog Endpoint
 
-#### <a name='binding'></a>Binding Endpoint ####
+Brokers must include `requires: ["route_forwarding"]` for a service in the catalog endpoint. If this is not present, <%= vars.product_short %> does not permit users to bind an instance of the service to a route.
 
-When users bind a route to a service instance, Cloud Foundry sends a [bind request](./api.html#binding) to the broker, including the route address with `bind_resource.route`. A route is an address used by clients to reach apps mapped to the route. The broker may return `route_service_url`, containing a URL where Cloud Foundry should proxy requests for the route. This URL must have an `https` scheme, otherwise the Cloud Controller rejects the binding. `route_service_url` is optional, and not returning this field enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the CF router.
+### <a name='binding'></a> Binding Endpoint
 
-## <a name='examples'></a>Example Route Services ##
-- [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to Cloud Foundry. It fulfills the service instance responsibilities above and logs requests received and sent. It can be used to see the route service integration in action by tailing its logs.
-- [Rate Limiting Route Service](https://github.com/cloudfoundry-samples/ratelimit-service): This example route service is a simple Cloud Foundry app that provides rate limiting to control the rate of traffic to an application.
-- [Spring Boot Example](https://github.com/nebhale/route-service-example): Logs requests received and sent; written in Spring Boot
+When users bind a route to a service instance, <%= vars.product_short %> sends a bind request to the broker, including the route address with `bind_resource.route`. A route is an address used by clients to reach apps mapped to the route. The broker may return `route_service_url`, containing a URL where <%= vars.product_short %> should proxy requests for the route. This URL must have an `https` scheme, or the Cloud Controller rejects the binding. `route_service_url` is optional, and not returning this field enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the <%= vars.product_short %> router.
 
-## <a name='tutorial'></a>Tutorial ##
+For more information about bind requsts, see the [Binding](./api.html#binding) section of the _Open Service Broker API (v2.13)_ spec on GitHub.
 
-The following instructions show how to use the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) described in <a href="#examples">Example Route Services</a> to verify that when a route service is bound to a route, requests for that route are proxied to the route service.
+
+## <a name='examples'></a> Example Route Services
+
+- [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service): This route service can be pushed as an app to <%= vars.product_short %>. It fulfills the service instance responsibilities above and logs requests received and sent. It can be used to see the route service integration in action by tailing its logs.
+
+- [Rate Limiting Route Service](https://github.com/cloudfoundry-samples/ratelimit-service): This example route service is a simple <%= vars.product_short %> app that provides rate limiting to control the rate of traffic to an app.
+
+- [Spring Boot Example](https://github.com/nebhale/route-service-example): Logs requests received and sent, written in Spring Boot.
+
+
+## <a name='tutorial'></a> Tutorial
+
+The following instructions show how to use the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) described in [Example Route Services](#examples) to verify that when a route service is bound to a route, requests for that route are proxied to the route service.
 
 A video of this tutorial is available on [Youtube](https://youtu.be/VaaZJE2E4jI).
 
 These commands requires the Cloud Foundry Command Line Interface (cf CLI) version 6.16 or later.
 
-1. Push the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) as an app.
+To use the Logging Route Service:
 
-    <pre class="terminal">
-    $ cf push logger
-    </pre>
+1. Push the Logging Route Service as an app by running:
 
-1. Create a user-provided service instance, and include the route of the [Logging Route Service](https://github.com/cloudfoundry-samples/logging-route-service) you pushed as `route_service_url`. Be sure to use `https` for the scheme.
+    ```
+    cf push logger
+    ```
 
-    <pre class="terminal">
-    $ cf create-user-provided-service mylogger -r https://logger.cf.example.com
-    </pre>
+1. Create a user-provided service instance, and include the route of the Logging Route Service you pushed as `route_service_url`. Be sure to use `https` for the scheme. Run:
 
-1. Push a sample app like [Spring Music](https://github.com/cloudfoundry-samples/spring-music). By default this creates a route `spring-music.cf.example.com`.
+    ```
+    cf create-user-provided-service mylogger -r https://logger.cf.example.com
+    ```
 
-    <pre class="terminal">
-    $ cf push spring-music
-    </pre>
+1. Push a sample app like [Spring Music](https://github.com/cloudfoundry-samples/spring-music). By default, this creates a route `spring-music.cf.example.com`. Run:
 
-1. Bind the user-provided service instance to the route of your sample app. The `bind-route-service` command takes a route and a service instance; the route is specified in the following example by domain `cf.example.com` and hostname `spring-music`.
+    ```
+    cf push spring-music
+    ```
 
-    <pre class="terminal">
-    $ cf bind-route-service cf.example.com mylogger --hostname spring-music
-    </pre>
+1. Bind the user-provided service instance to the route of your sample app. The `bind-route-service` command takes a route and a service instance; the route is specified in the following example by domain `cf.example.com` and hostname `spring-music`. Run:
 
-1. Tail the logs for your route service.
+    ```
+    cf bind-route-service cf.example.com mylogger --hostname spring-music
+    ```
 
-    <pre class="terminal">
-    $ cf logs logger
-    </pre>
+1. Tail the logs for your route service by running:
 
-1. Send a request to the sample app and view in the route service logs that the request is forwarded to it.
+    ```
+    cf logs logger
+    ```
 
-    <pre class="terminal">
-    $ curl spring-music.cf.example.com
-    </pre>
+1. Send a request to the sample app and view in the route service logs that the request is forwarded to it by running:
+
+    ```
+    curl spring-music.cf.example.com
+    ```
 
 <% if vars.product_name == "CF" %>
 
-## <a name='security-considerations'></a>Security Considerations ##
+## <a name='security-considerations'></a> Security Considerations
 
-The contract between route services and Gorouter, applicable for [Fully Brokered](#fully-brokered) and [User Provided](#user-provided) models, enables a Cloud Foundry operator to suggest whether or not requests forwarded from the route service to a load balancer are encrypted. The Cloud Foundry operator makes this suggestion by setting the `router.route_services_recommend_https` manifest property.
+The contract between route services and the Gorouter, applicable for fully-brokered and user-provided models, enables a <%= vars.product_short %> operator to suggest whether or not requests forwarded from the route service to a load balancer are encrypted. The <%= vars.product_short %> operator makes this suggestion by setting the `router.route_services_recommend_https` manifest property.
 
 This suggestion does not allow the platform to guarantee that a route service obeys the scheme of the `X-Forwarded-Url` header. If a route service ignores the scheme and downgrades the request to plain text, a malicious actor can intercept the request and use or modify the data within it.
 
-For increased security, follow the recommendations below:
+For increased security, follow these recommendations:
 
 * A load balancer terminating TLS should sanitize and reset `X-Forwarded-Proto` based on whether the request it received was encrypted or not. Set the `router.sanitize_forwarded_proto: false` manifest property for Gorouter.
-
 
 * A load balancer configured for TCP passthrough should sanitize and reset the header based on whether the request it received was encrypted or not. Set the 
 `router.sanitize_forwarded_proto: true` manifest property for Gorouter.
 
 <% if vars.product_name.include? "CF" %>
-For more information about securing traffic into Cloud Foundry, see [Securing Traffic into Cloud Foundry](../adminguide/securing-traffic.html).
+For more information about securing traffic into <%= vars.product_short %>, see [Securing Traffic into <%= vars.product_short %>](../adminguide/securing-traffic.html).
 <% end %>
 
-<p class='note'><strong>Note</strong>: When a route service is mapped to a route, Gorouter sanitizes the <code>X-Forwarded-Proto</code> header once, even though requests pass through Gorouter more than once.</p>
+<p class='note'><strong>Note:</strong> When a route service is mapped to a route, Gorouter sanitizes the <code>X-Forwarded-Proto</code> header once, even though requests pass through Gorouter more than once.</p>
+
 
 ## <a name='secure-route-services'></a> Recommendations for Securing Route Services
 
-To best secure communications through route services, Cloud Foundry operators should do the following: 
+To best secure communications through route services, <%= vars.product_short %> operators should:
 
 1. Set the `router.route_services_recommended_https: true` manifest property.
 

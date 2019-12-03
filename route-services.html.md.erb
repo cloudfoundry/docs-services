@@ -157,7 +157,7 @@ The `X-CF-Forwarded-Url` header contains the originally requested URL. The route
 
 #### X-CF-Proxy-Signature
 
-The `X-CF-Proxy-Signature` header contains an encypted value which only the Gorouter can decrypt. 
+The `X-CF-Proxy-Signature` header contains an encrypted value which only the Gorouter can decrypt.
 
 The header contains the originally requested URL and a timestamp. When this header is present, the Gorouter rejects the request if the requested URL does not match that in the header, or if a timeout has expired.
 
@@ -199,7 +199,7 @@ Brokers must include `requires: ["route_forwarding"]` for a service in the catal
 
 When users bind a route to a service instance, <%= vars.product_short %> sends a bind request to the broker, including the route address with `bind_resource.route`. A route is an address used by clients to reach apps mapped to the route. The broker may return `route_service_url`, containing a URL where <%= vars.product_short %> should proxy requests for the route. This URL must have an `https` scheme, or the Cloud Controller rejects the binding. `route_service_url` is optional, and not returning this field enables a broker to dynamically configure a network component already in the request path for the route, requiring no change in the <%= vars.product_short %> router.
 
-For more information about bind requsts, see the [Binding](./api.html#binding) section of the _Open Service Broker API (v2.13)_ spec on GitHub.
+For more information about bind requests, see the [Binding](./api.html#binding) section of the _Open Service Broker API (v2.13)_ spec on GitHub.
 
 
 ## <a name='examples'></a> Example Route Services

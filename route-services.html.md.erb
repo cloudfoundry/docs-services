@@ -33,14 +33,14 @@ This topic provides guidance for offering a service to a <%= vars.app_runtime_fu
 
 ## <a name='introduction'></a> Introduction
 
-<%= vars.app_runtime_abbr %> app developers may wish to apply transformation or processing to requests before they reach an app. Common examples of use cases include authentication, rate limiting, and caching services. Route Services are a kind of Marketplace Service that developers can use to apply various transformations to app requests by binding an app's route to a service instance. Through integrations with service brokers and, optionally, with the <%= vars.app_runtime_abbr %> routing tier, providers can offer these services to developers with a familiar, automated, self-service, and on-demand user experience.
+<%= vars.app_runtime_abbr %> app developers may wish to apply transformation or processing to requests before they reach an app. Common examples of use cases include authentication, rate limiting, and caching services. Route services are a kind of Marketplace service that developers can use to apply various transformations to app requests by binding an app's route to a service instance. Through integrations with service brokers and, optionally, with the <%= vars.app_runtime_abbr %> routing tier, providers can offer these services to developers with a familiar, automated, self-service, and on-demand user experience.
 
 <%= vars.route_services_appsman1 %>
 
 
 ## <a name='architecture'></a> Architecture
 
-<%= vars.app_runtime_abbr %> supports the following three models for Route Services: 
+<%= vars.app_runtime_abbr %> supports the following three models for route services: 
 
 * [Fully-brokered services](#fully-brokered)
 * [Static, brokered services](#static-brokered)
@@ -50,7 +50,7 @@ In each model, you configure a route service to process traffic addressed to an 
 
 ### <a name="fully-brokered"></a> Fully-Brokered Service
 
-In the fully-Brokered Service model, the <%= vars.app_runtime_abbr %> router receives all traffic to apps in the deployment before any processing by the route service. Developers can bind a route service to any app, and if an app is bound to a route service, the <%= vars.app_runtime_abbr %> router sends its traffic to the service. After the route service processes requests, it sends them back to the load balancer in front of the <%= vars.app_runtime_abbr %> router. The second time through, the <%= vars.app_runtime_abbr %> router recognizes that the route service has already handled them, and forwards them directly to app instances.
+In the fully-brokered service model, the <%= vars.app_runtime_abbr %> router receives all traffic to apps in the deployment before any processing by the route service. Developers can bind a route service to any app, and if an app is bound to a route service, the <%= vars.app_runtime_abbr %> router sends its traffic to the service. After the route service processes requests, it sends them back to the load balancer in front of the <%= vars.app_runtime_abbr %> router. The second time through, the <%= vars.app_runtime_abbr %> router recognizes that the route service has already handled them, and forwards them directly to app instances.
 
 ![Fully brokered](images/route-services-fully-brokered.png)
 
@@ -81,7 +81,7 @@ In this model, you configure route services on an app-by-app basis. When you bin
 
 **Advantages:**
 
-- Developers can use a Service Broker to dynamically configure how the route service processes traffic to specific apps.
+- Developers can use a service broker to dynamically configure how the route service processes traffic to specific apps.
 - Traffic to apps that use the route service takes fewer network hops.
 
 **Disadvantages:**
@@ -219,15 +219,15 @@ For a video of this tutorial, see [Route Services in Pivotal Cloud Foundry 1.7](
 
 These commands requires the Cloud Foundry Command Line Interface (cf CLI) v6.16 or later.
 
-To use the Logging Route Service:
+To use the logging route service:
 
-1. Push the Logging Route Service as an app by running:
+1. Push the logging route service as an app by running:
 
     ```
     cf push logger
     ```
 
-1. Create a user-provided service instance, and include the route of the Logging Route Service you pushed as `route_service_url`. Be sure to use `https` for the scheme. Run:
+1. Create a user-provided service instance, and include the route of the logging route service you pushed as `route_service_url`. Be sure to use `https` for the scheme. Run:
 
     ```
     cf create-user-provided-service mylogger -r https://logger.cf.example.com

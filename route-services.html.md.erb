@@ -165,7 +165,7 @@ The header contains the originally requested URL and a timestamp. When this head
 
 If the route service forwards the request to a URL different from the originally requested one, and the URL resolves to a route for an app on <%= vars.product_short %>, the route must not have a bound route service or the request is rejected, as the requested URL does not match the one in the `X-CF-Proxy-Signature` header.
 
-#####= X-CF-Proxy-Metadata
+##### X-CF-Proxy-Metadata
 
 The `X-CF-Proxy-Metadata` header aids in the encryption and description of `X-CF-Proxy-Signature`. 
 

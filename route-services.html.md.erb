@@ -219,14 +219,25 @@ Binding a service instance to a route associates the
 router. All requests for the route are proxied to the URL specified by
 `route_service_url`.
 
-Once a route service completes its function it may choose to forward
-the request to the originally requested URL or to another location, or
-it may choose to reject the request; rejected requests will be
-returned to the originating requestor. The <%= vars.app_runtime_abbr
-%> router includes a header that provides the originally requested
-URL, as well as two headers that are used by the router itself to
-validate the request sent by the route service. These headers are
-described in the sections below.
+Once a route service determines how to handle the request it
+should either:
+
+* Accept the request by making a new request to the originally
+  requested URL (or to another location), and then respond to the
+  originating requestor
+* Reject the request by responding with a non `2xx` HTTP status code
+
+The <%= vars.app_runtime_abbr %> router includes a header
+(`X-CF-Forwarded-Url`) that provides the originally requested URL, as
+well as two headers (`X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata`)
+that the router uses to validate that the route-service sent the
+request. These headers are described in the sections below.
+
+When forwarding a request to the originally requested URL, the route
+service must forward the `X-CF-Proxy-Signature` and
+`X-CF-Proxy-Metadata` headers on the request or it will be rejected.
+When forwarding a request to a location other than the originally
+requested URL, the route service should strip these headers.
 
 ### <a name='headers'></a> Headers
 
@@ -241,27 +252,33 @@ or to another.
 
 #### X-CF-Proxy-Signature
 
-The `X-CF-Proxy-Signature` header contains an encrypted value which
-only the Gorouter can decrypt.
-
-The header contains the originally requested URL and a timestamp. When
-this header is present, the Gorouter rejects the request if the
-requested URL does not match that in the header, or if a timeout has
-expired.
+When the Gorouter receives a request with this header, it will accept
+and forward the request to the app only if the URL of the request
+matches the one associated with the token, and if the request was
+received on time. Otherwise, the request is rejected.
 
 `X-CF-Proxy-Signature` also signals to the Gorouter that a request has
 transited a route service. If this header is present, the Gorouter
-does not forward the request to a route service, preventing recursive
-loops. For this reason, route services should not strip off the
-`X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers.
+does not forward the request to a route service. The route-service
+needs to forward these headers in subsequent requests to the orignally
+requested URL, so that it knows not to send the request back to the
+route service but to the app. The headers should NOT be sent in the
+HTTP reponse to the GoRouter, only in the new HTTP request to the
+GoRouter.
 
-If the route service forwards the request to a URL different from the
-originally requested one, and the URL resolves to a route for an app
-on <%= vars.app_runtime_abbr %>, the route must not have a bound route
-service or the request is rejected, as the requested URL does not
-match the one in the `X-CF-Proxy-Signature` header.
+Warning: the `X-CF-Proxy-Signature` header is
+an *access token*. You should treat it as a secret that
+cannot be shared with anyone. If someone gets access to one of these
+tokens, they will be able to bypass the route service.
 
-#####= X-CF-Proxy-Metadata
+CF-hosted Route Services cannot be chained: If the route service
+forwards the request to a URL which resolves to a route for a
+different app on <%= vars.app_runtime_abbr %>, the route must not have
+a bound route service. Otherwise, the request is rejected as the
+requested URL does not match the one in the forwarded
+`X-CF-Proxy-Signature` header.
+
+##### X-CF-Proxy-Metadata
 
 The `X-CF-Proxy-Metadata` header aids in the encryption and
 description of `X-CF-Proxy-Signature`.

@@ -206,8 +206,7 @@ responsibilities summarized in the following table:
 
 <%= vars.route_services_config %>
 
-
-## <a name='service-instance-responsibilities'></a> Service Instance Responsibilities
+## <a name='service-instance'></a> Service Instance
 
 The following applies only when a broker returns `route_service_url`
 in the bind response.
@@ -219,25 +218,31 @@ Binding a service instance to a route associates the
 router. All requests for the route are proxied to the URL specified by
 `route_service_url`.
 
-Once a route service determines how to handle the request it
-should either:
+The <%= vars.app_runtime_abbr %> router includes the `X-CF-Forwarded-Url` header
+containing the originally requested URL, as
+well as the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers used 
+by the router to validate that the route-service sent the
+request. These headers are described in the [Headers](#headers) section, below.  
 
-* Accept the request by making a new request to the originally
-  requested URL (or to another location), and then respond to the
-  originating requestor
-* Reject the request by responding with a non `2xx` HTTP status code
 
-The <%= vars.app_runtime_abbr %> router includes a header
-(`X-CF-Forwarded-Url`) that provides the originally requested URL, as
-well as two headers (`X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata`)
-that the router uses to validate that the route-service sent the
-request. These headers are described in the sections below.
+
+### <a name='service-instance-responsibilities'></a> Service Instance Responsibilities
+
+The route service must handle requests by either:
+
+* Accepting the request by making a new request to the originally
+  requested URL, or to another location, and then responding to the
+  originating requestor.
+* Rejecting the request by responding with a non `2xx` HTTP status code.  
 
 When forwarding a request to the originally requested URL, the route
-service must forward the `X-CF-Proxy-Signature` and
+service must forward the `X-CF-Forwarded-Url`, `X-CF-Proxy-Signature` and
 `X-CF-Proxy-Metadata` headers on the request or it will be rejected.
 When forwarding a request to a location other than the originally
 requested URL, the route service should strip these headers.
+
+
+
 
 ### <a name='headers'></a> Headers
 
@@ -266,10 +271,11 @@ route service but to the app. The headers should NOT be sent in the
 HTTP reponse to the GoRouter, only in the new HTTP request to the
 GoRouter.
 
-Warning: the `X-CF-Proxy-Signature` header is
-an *access token*. You should treat it as a secret that
-cannot be shared with anyone. If someone gets access to one of these
-tokens, they will be able to bypass the route service.
+<p class="note"><strong>Note:</strong> The <code>X-CF-Proxy-Signature</code> header is
+an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
+token can bypass the route service. Treat this token as a secret that
+cannot be shared with anyone.
+</p>
 
 CF-hosted Route Services cannot be chained: If the route service
 forwards the request to a URL which resolves to a route for a

@@ -14,7 +14,13 @@ owner: Core Services
                 <li><a href="#architecture-comparison">Architecture Comparison</a></li>
             </ul>
         </li>
-        <li><a href="#service-instance-responsibilities">Service Instance Responsibilities</a></li>
+        <li><a href="#service-instance">Service Instance</a>
+            <ul>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#service-instance-responsibilities">Service Instance Responsibilities</a></li>
+                <li><a href="#headers">Headers</a></li>
+            </ul>
+        </li>
         <li><a href="#broker-responsibilities">Broker Responsibilities</a></li>
         <li><a href="#examples">Example Route Services</a></li>
         <li><a href="#tutorial">Tutorial</a></li>
@@ -239,10 +245,7 @@ When forwarding a request to the originally requested URL, the route
 service must forward the `X-CF-Forwarded-Url`, `X-CF-Proxy-Signature` and
 `X-CF-Proxy-Metadata` headers on the request or it will be rejected.
 When forwarding a request to a location other than the originally
-requested URL, the route service should strip these headers.
-
-
-
+requested URL, the route service should strip these headers.   
 
 ### <a name='headers'></a> Headers
 

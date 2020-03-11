@@ -5,7 +5,7 @@ owner: Core Services
 
 ## <a id='architecture-terminology'></a> Architecture & Terminology
 
-Services are integrated with <%= vars.platform_name %> by implementing a documented API for which the Cloud Controller is the client, called the Service Broker API. This should not be confused with the Cloud Controller API, often used to refer to the version of <%= vars.platform_name %> itself. When one refers to "<%= vars.platform_name %> v2", they are referring to the version of the Cloud Controller API. The Service Broker API is versioned independently of the Cloud Controller API.
+Services are integrated with <%= vars.product_name_full %> (<%= vars.product_name %>) by implementing a documented API for which the Cloud Controller is the client, called the Service Broker API. This should not be confused with the Cloud Controller API, often used to refer to the version of <%= vars.product_name %> itself. When one refers to "<%= vars.product_name %> v2", they are referring to the version of the Cloud Controller API. The Service Broker API is versioned independently of the Cloud Controller API.
 
 "Service broker" is the term that refers to a component of the service which implements the Service Broker API. This component was formerly referred to as a service gateway. However, as traffic between apps and services does not flow through the service broker, the term "gateway" caused confusion. Although "gateway" still appears in old code, the term "broker" is used in conversation, in new code, and in documentation.
 
@@ -17,11 +17,11 @@ Service brokers advertise a catalog of service offerings and service plans, as w
 
 ## <a id='implementation-deployment'></a> Implementation and Deployment
 
-How a service is implemented is up to the service provider or developer. <%= vars.platform_name %> only requires that the service provider implement the Service Broker API. A broker can be implemented as a separate app, or by adding the required HTTP endpoints to an existing service.
+How a service is implemented is up to the service provider or developer. <%= vars.product_name %> only requires that the service provider implement the Service Broker API. A broker can be implemented as a separate app, or by adding the required HTTP endpoints to an existing service.
 
-Because <%= vars.platform_name %> only requires that a service implements, the Service Broker API in order to be available to <%= vars.platform_name %> end users, many deployment models are possible. The following are examples of valid deployment models:
+Because <%= vars.product_name %> only requires that a service implements, the Service Broker API in order to be available to <%= vars.product_name %> end users, many deployment models are possible. The following are examples of valid deployment models:
 
-* Entire service packaged and deployed by BOSH alongside <%= vars.platform_name %>
-* Service broker packaged and deployed by BOSH alongside <%= vars.platform_name %>, rest of the service deployed and maintained by other means
-* Broker (and optionally service) pushed as an app to <%= vars.platform_name %> user space
-* Entire service, including broker, deployed and maintained outside of <%= vars.platform_name %> by other means
+* Entire service packaged and deployed by BOSH alongside <%= vars.product_name %>
+* Service broker packaged and deployed by BOSH alongside <%= vars.product_name %>, rest of the service deployed and maintained by other means
+* Broker (and optionally service) pushed as an app to <%= vars.product_name %> user space
+* Entire service, including broker, deployed and maintained outside of <%= vars.product_name %> by other means

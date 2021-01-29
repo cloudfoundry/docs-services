@@ -39,9 +39,11 @@ An example catalog is shown below:
 
 When a service instance is created in one space and shared into another, developers can bind their apps to the service instance from both spaces. 
 
-You may want to have the service broker return credentials with different permissions depending on which space an app is bound from. For example, a messaging service may permit writes from the originating space and only reads from any spaces that the service is shared into.
+You may want to have the service broker return credentials with different permissions depending on which space an app is bound from. 
+For example, a messaging service may permit writes from the originating space and only reads from any spaces that the service is shared into.
 
-To determine whether the space of the app is the same as the originating space of the service instance, the service broker can compare the `context.space_guid` and `bind_resource.space_guid` fields in the binding request. The `context.space_guid` field represents the space where the service instance was created, and `bind_resource.space_guid` represents the space of the app involved in the binding.
+To determine whether the space of the app is the same as the originating space of the service instance, the service broker can compare the `context.space_guid` and `bind_resource.space_guid` fields in the binding request. 
+The `context.space_guid` field represents the space where the service instance was created, and `bind_resource.space_guid` represents the space of the app involved in the binding.
 
 ## <a id="security"></a> Security Considerations
 
@@ -50,7 +52,10 @@ Service authors must consider the following before enabling service instance sha
 * [Service keys](../devguide/services/service-keys.html) can only be generated
 by users who have access to the space where the service instance was created.
 This ensures that only developers with access to this space have visibility
-into where and how many times the service instance is used.
+into where and how many times the service instance is used. It is not possible 
+to distinguish between service keys created when targeting the originating space 
+and those created when targeting the space where the instance has been shared to.
+Also, unsharing an instance from a space will not delete any service keys.
 
 * Consider the impact of giving out excessive permissions for service bindings,
 especially bindings that originate from spaces that the service instance has
@@ -61,8 +66,9 @@ see [Binding Permissions Based on Instance Sharing](#binding-permissions).
 * You should generate unique credentials for each binding. This ensures that
 developers can unshare a service instance at any time. Unsharing an instance
 deletes any service bindings and revokes access for those credentials.
-Unsharing an instance prevents unauthorized future access from developers and
-apps that saved the credentials they were previously provided using the
-service binding.
+Unsharing an instance prevents unauthorized 
+future access from developers and apps that saved the credentials they were 
+previously provided using the service binding.
 
-* Consider the impact of a service instance dashboard being accessed by users of shared service instances. If authenticating through SSO, see [Dashboard Single Sign-On](./dashboard-sso.html).
+* Consider the impact of a service instance dashboard being accessed by users 
+of shared service instances. If authenticating through SSO, see [Dashboard Single Sign-On](./dashboard-sso.html).

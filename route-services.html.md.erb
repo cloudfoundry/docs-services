@@ -226,9 +226,9 @@ router. All requests for the route are proxied to the URL specified by
 
 The <%= vars.app_runtime_abbr %> router includes the `X-CF-Forwarded-Url` header
 containing the originally requested URL, as
-well as the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers used 
+well as the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers used
 by the router to validate that the route-service sent the
-request. These headers are described in the [Headers](#headers) section, below.  
+request. These headers are described in the [Headers](#headers) section, below.
 
 
 
@@ -239,13 +239,13 @@ The route service must handle requests by either:
 * Accepting the request by making a new request to the originally
   requested URL, or to another location, and then responding to the
   originating requestor.
-* Rejecting the request by responding with a non `2xx` HTTP status code.  
+* Rejecting the request by responding with a non `2xx` HTTP status code.
 
 When forwarding a request to the originally requested URL, the route
 service must forward the `X-CF-Forwarded-Url`, `X-CF-Proxy-Signature` and
 `X-CF-Proxy-Metadata` headers on the request or it will be rejected.
 When forwarding a request to a location other than the originally
-requested URL, the route service should strip these headers.   
+requested URL, the route service should strip these headers.
 
 ### <a name='headers'></a> Headers
 
@@ -468,7 +468,7 @@ For increased security, follow these recommendations:
   encrypted or not. Set the `router.sanitize_forwarded_proto: true`
   manifest property for the Gorouter.
 
-<% if vars.platform_code.include? "CF" %>
+<% if vars.platform_code == "CF" %>
   For more information about
   securing traffic into <%= vars.app_runtime_abbr %>, see [Securing
   Traffic into <%= vars.app_runtime_abbr %>]

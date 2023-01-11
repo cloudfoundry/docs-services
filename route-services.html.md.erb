@@ -271,7 +271,7 @@ does not forward the request to a route service. The route-service
 needs to forward these headers in subsequent requests to the orignally
 requested URL, so that it knows not to send the request back to the
 route service but to the app. The headers should NOT be sent in the
-HTTP reponse to the GoRouter, only in the new HTTP request to the
+HTTP response to the GoRouter, only in the new HTTP request to the
 GoRouter.
 
 <p class="note"><strong>Note:</strong> The <code>X-CF-Proxy-Signature</code> header is

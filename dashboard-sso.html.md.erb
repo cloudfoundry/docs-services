@@ -5,6 +5,29 @@ owner: Core Services
 
 
 
+<div id="js-quick-links">
+            <div class="quick-links"><ul>
+<li><a href="#introduction">Introduction</a></li>
+<% if vars.platform_code == 'CF' %><li><a href="#enabling-the-feature">Enabling the SSO Feature</a></li>
+<% end %>
+<li>
+<a href="#broker-responsibilities">Service Broker Responsibilities</a><ul>
+<li><a href="#registering-dashboard-client">Registering the Dashboard Client</a></li>
+<li><a href="#dashboard-url">Dashboard URL</a></li>
+</ul>
+</li>
+<li>
+<a href="#dashboard-responsibilities">Service Dashboard Responsibilities</a><ul>
+<li><a href="#oauth2-flow">OAuth Flow</a></li>
+<li><a href="#checking-user-permissions">Checking User Permissions</a></li>
+<li><a href="#on-scopes">On Scopes</a></li>
+</ul>
+</li>
+<li><a href="#reference-implementation">Reference Implementation</a></li>
+<li><a href="#restrictions">Restrictions</a></li>
+<li><a href="#resources">Resources</a></li>
+</ul></div>
+
 ## <a name='introduction'></a>Introduction ##
 
 Single Sign-On (SSO) enables <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) users to authenticate with third-party service dashboards using their <%= vars.app_runtime_abbr %> credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth protocol handles authentication.

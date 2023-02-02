@@ -7,7 +7,7 @@ owner: Core Services
 
 Single Sign-On (SSO) enables <%= vars.app_runtime_first %> users to authenticate with third-party service dashboards using their <%= vars.app_runtime_abbr %> credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth protocol handles authentication.
 
-<% if vars.platform_code == 'CF'  %>
+<% if vars.platform_code == 'CF' %>
 Dashboard SSO was introduced in [cf-release v169](https://github.com/cloudfoundry/cf-release/tree/v169) so this or a newer version is required to support the feature.
 
 ## <a id='enabling-the-feature'></a>Enabling the SSO Feature

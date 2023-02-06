@@ -34,7 +34,7 @@ When this client is not present in the cf-release manifest, Cloud Controller can
 
 ### <a id='registering-dashboard-client'></a>Registering the Dashboard Client
 
-1.  A service broker must include the `dashboard_client` field in the JSON response from its [catalog endpoint](api.html#catalog-mgmt) for each service implementing this feature. A valid response would appear as follows:
+1.  A service broker must include the `dashboard_client` field in the JSON response from its [catalog endpoint](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#catalog-management) for each service implementing this feature. A valid response would appear as follows:
 
       ```
       {
@@ -60,7 +60,7 @@ When this client is not present in the cf-release manifest, Cloud Controller can
 
 ### <a id='dashboard-url'></a>Dashboard URL
 
-A service broker should return a URL for the `dashboard_url` field in response to a [provision request](./api.html#provisioning). Cloud Controller clients should expose this URL to users. `dashboard_url` can be found in the response from Cloud Controller to create a service instance, enumerate service instances, space summary, and other endpoints.
+A service broker should return a URL for the `dashboard_url` field in response to a [provision request](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#provisioning). Cloud Controller clients should expose this URL to users. `dashboard_url` can be found in the response from Cloud Controller to create a service instance, enumerate service instances, space summary, and other endpoints.
 
 Users can then navigate to the service dashboard at the URL provided by `dashboard_url`, initiating the OAuth login flow.
 

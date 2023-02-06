@@ -105,29 +105,30 @@ A service dashboard should implement the OAuth Authorization Code Grant type ([U
 
 UAA is responsible for authenticating a user and providing the service with an access token with the requested permissions. However, after the user has been logged in, it is the responsibility of the service dashboard to verify that the user making the request to manage an instance currently has access to that service instance.
 
-The service can accomplish this with a GET to the `/v3/service_instances/:guid/permissions` endpoint on the Cloud Controller. The request must include a token for an authenticated user and the service instance guid. The token is the same one obtained from the UAA in response to a request to the Token Endpoint, described above.
+The service can accomplish this with a GET to the `/v3/service_instances/:guid/permissions` endpoint on the Cloud Controller. The request must include a token for an authenticated user and the service instance GUID. The token is the same one obtained from the UAA in response to a request to the Token Endpoint, described above.
 
-- Example Request:
+#### Example Request
 
-    ```
-    curl -H 'Content-Type: application/json' \
-         -H 'Authorization: bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoid' \
-         http://api.cloudfoundry.com/v3/service_instances/44b26033-1f54-4087-b7bc-da9652c2a539/permissions
+```
+curl -H 'Content-Type: application/json' \
+     -H 'Authorization: bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoid' \
+     http://api.cloudfoundry.com/v3/service_instances/44b26033-1f54-4087-b7bc-da9652c2a539/permissions
 
-    ```
-- Response:
+```
 
-    ```
-    {
-      "manage": true,
-      "read": true
-    }
-    ```
+#### Response
 
-    The response includes the following fields which indicate the various user permissions for the given service instance:
+```
+{
+  "manage": true,
+  "read": true
+}
+```
 
-    - `manage`: if `true`, the user has sufficient permissions to make changes to and update the service instance; `false` indicates insufficient permissions.
-    - `read`: if `true`, the user has permission to access read-only diagnostic and monitoring information for the given service instance (e.g. permission to view a read-only dashboard); `false` indicates insufficient permissions.
+The response includes the following fields which indicate the various user permissions for the given service instance:
+
+- `manage`: if `true`, the user has sufficient permissions to make changes to and update the service instance; `false` indicates insufficient permissions.
+- `read`: if `true`, the user has permission to access read-only diagnostic and monitoring information for the given service instance (e.g. permission to view a read-only dashboard); `false` indicates insufficient permissions.
 
 Since administrators may change the permissions of users at any time, the service should check this endpoint whenever a user uses the SSO flow to access the service's UI.
 

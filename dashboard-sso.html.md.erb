@@ -106,7 +106,6 @@ A service dashboard should implement the OAuth Authorization Code Grant type ([U
 UAA is responsible for authenticating a user and providing the service with an access token with the requested permissions. However, after the user has been logged in, it is the responsibility of the service dashboard to verify that the user making the request to manage an instance currently has access to that service instance.
 
 The service can accomplish this with a GET to the `/v3/service_instances/:guid/permissions` endpoint on the Cloud Controller. The request must include a token for an authenticated user and the service instance guid. The token is the same one obtained from the UAA in response to a request to the Token Endpoint, described above.
-.
 
 - Example Request:
 

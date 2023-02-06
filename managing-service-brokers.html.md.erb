@@ -11,7 +11,7 @@ In order to run many of the commands below, you must be authenticated with <%= v
 
 ## <a id='quick-start'></a>Quick Start ##
 
-Given a service broker that has implemented the [Service Broker API](api.html), two steps are required to make its services available to end users in all orgs or a limited number of orgs by service plan.
+Given a service broker that has implemented the [Service Broker API](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md), two steps are required to make its services available to end users in all orgs or a limited number of orgs by service plan.
 
 1. [Register a Broker](#register-broker)
 1. [Make Plans Public](#make-plans-public)
@@ -120,7 +120,7 @@ Removing a service broker will remove all services and plans in the broker's cat
 $ cf delete-service-broker mybrokername
 </pre>
 
-<p class="note"><strong>Note</strong>: Attempting to remove a service broker will fail if there are service instances for any service plan in its catalog. When planning to shut down or delete a broker, make sure to remove all service instances first. Failure to do so will leave <a href="./api.html#orphans">orphaned service instances</a> in the <%= vars.platform_name %> database. If a service broker has been shut down without first deleting service instances, you can remove the instances with the CLI; see <a href="#purge-service">Purge a Service</a>.</p>
+<p class="note"><strong>Note</strong>: Attempting to remove a service broker will fail if there are service instances for any service plan in its catalog. When planning to shut down or delete a broker, make sure to remove all service instances first. Failure to do so will leave <a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#orphans">orphaned service instances</a> in the <%= vars.platform_name %> database. If a service broker has been shut down without first deleting service instances, you can remove the instances with the CLI; see <a href="#purge-service">Purge a Service</a>.</p>
 
 ### <a id='purge-service'></a>Purge a Service ###
 

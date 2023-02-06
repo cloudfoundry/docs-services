@@ -36,22 +36,24 @@ When this client is not present in the cf-release manifest, Cloud Controller can
 
 1.  A service broker must include the `dashboard_client` field in the JSON response from its [catalog endpoint](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#catalog-management) for each service implementing this feature. A valid response would appear as follows:
 
-      ```
-      {
-        "services": [
-          {
-            "id": "44b26033-1f54-4087-b7bc-da9652c2a539",
-            ...
-            "dashboard_client": {
-              "id": "p-mysql-client",
-              "secret": "p-mysql-secret",
-              "redirect_uri": "http://p-mysql.example.com"
-            }
+    ```
+    {
+      "services": [
+        {
+          "id": "44b26033-1f54-4087-b7bc-da9652c2a539",
+          ...
+          "dashboard_client": {
+            "id": "p-mysql-client",
+            "secret": "p-mysql-secret",
+            "redirect_uri": "http://p-mysql.example.com"
           }
-        ]
-      }
-      ```
+        }
+      ]
+    }
+    ```
+
     The `dashboard_client` field is a hash containing three fields:
+
     - `id` is the unique identifier for the OAuth client that will be created for your service dashboard on the token server (UAA), and will be used by your dashboard to authenticate with the token server (UAA). If the client id is already taken, <%= vars.app_runtime_abbr %> will return an error when registering or updating the broker.
     - `secret` is the shared secret your dashboard will use to authenticate with the token server (UAA).
     - `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`.

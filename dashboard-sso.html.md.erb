@@ -54,9 +54,9 @@ When this client is not present in the cf-release manifest, Cloud Controller can
 
     The `dashboard_client` field is a hash containing three fields:
 
-    - `id` is the unique identifier for the OAuth client that will be created for your service dashboard on the token server (UAA), and will be used by your dashboard to authenticate with the token server (UAA). If the client id is already taken, <%= vars.app_runtime_abbr %> will return an error when registering or updating the broker.
-    - `secret` is the shared secret your dashboard will use to authenticate with the token server (UAA).
-    - `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`.
+   - `id` is the unique identifier for the OAuth client that will be created for your service dashboard on the token server (UAA), and will be used by your dashboard to authenticate with the token server (UAA). If the client id is already taken, <%= vars.app_runtime_abbr %> will return an error when registering or updating the broker.
+   - `secret` is the shared secret your dashboard will use to authenticate with the token server (UAA).
+   - `redirect_uri` is used by the token server as an additional security precaution. UAA will not provide a token if the callback URL declared by the service dashboard doesn't match the domain name in `redirect_uri`. The token server matches on the domain name, so any paths will also match; e.g. a service dashboard requesting a token and declaring a callback URL of `http://p-mysql.example.com/manage/auth` would be approved if `redirect_uri` for its client is `http://p-mysql.example.com/`.
 
 1. When a service broker which advertises the `dashboard_client` property for any of its services is [added or updated](managing-service-brokers.html), Cloud Controller will create or update UAA clients as necessary. This client will be used by the service dashboard to authenticate users.
 
@@ -80,8 +80,8 @@ $ curl api.example.com/info
 "allow_debug":true}
 ```
 
-
 <p class='note'>To enable service dashboards to support SSO for service instances created from different <%= vars.app_runtime_abbr %> instances, the /v2/info url is sent to service brokers in the <code>X-Api-Info-Location</code> header of every API call. A service dashboard should be able to discover this URL from the broker, which would enable the dashboard to contact the appropriate UAA for a particular service instance. Note that although the Cloud Foundry API (CAPI) V2 is now deprecated, the Cloud Controller will still communicate its /v2/info URL via this header. /v2/info is the sole CAPI V2 endpoint that will continue to be served even where a Cloud Controller has been configured, via the CAPI bosh release, to disable the V2 API</p>
+
 A service dashboard should implement the OAuth Authorization Code Grant type ([UAA documentation](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC documentation](http://tools.ietf.org/html/rfc6749#section-4.1)).
 
 1. When a user visits the service dashboard at the value of `dashboard_url`, the dashboard should redirect the user's browser to the Authorization Endpoint and include its `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and list of requested scopes.

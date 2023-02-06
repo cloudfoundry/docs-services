@@ -25,4 +25,10 @@ To enable this functionality, a service broker must implement the following:
 1. Upon discovering a new `syslog_drain_url`, Loggregator identifies the associated app
 1. Loggregator streams app logs for that app to the locations specified by the service instances' `syslog_drain_url`s
 
-Users can manually configure app logs to be streamed to a location of their choice using User-provided Service Instances. For details, see [Using Third-Party Log Management Services](../devguide/services/log-management.html).
+Users can manually configure app logs to be streamed to a location of their choice
+using User-provided Service Instances. For details, see
+<% if vars.guide_name == 'Tile Developer' %>
+[Using Third-Party Log Management Services](https://docs.pivotal.io/application-service/3-0/devguide/services/log-management.html).
+<% else %>
+[Using Third-Party Log Management Services](../devguide/services/log-management.html).
+<% end %>

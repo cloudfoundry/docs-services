@@ -150,22 +150,23 @@ To perform a database schema migration with the cf CLI:
 
 1. Push the app:
 
-   <pre class="terminal">$ cf push APP-NAME</pre>
+    <pre class="terminal">$ cf push APP-NAME</pre>
 
-   Where `APP-NAME` is the name of the app.
+    Where `APP-NAME` is the name of the app.
 
-   <p class="note"><strong>Note:</strong> To run a task without starting the app, push the app with <code>cf push -i 0</code> and then run the task. You can run the app later by scaling up its instance count.</p>
+    <p class="note"><strong>Note:</strong> To run a task without starting the app, push the app with <code>cf push -i 0</code> and then run the task. You can run the app later by scaling up its instance count.</p>
 
 1. Perform a database schema migration as a task on the app:
 
-   <pre class="terminal">
-   $ cf run-task APP-NAME --command "bin/rails db:migrate" --name TASK-NAME
-   Creating task for app APP-NAME in org jdoe-org / space development as jdoe@pivotal.io...
-   OK
-   Task 1 has been submitted successfully for execution.
-   </pre>
+    <pre class="terminal">
+    $ cf run-task APP-NAME --command "bin/rails db:migrate" --name TASK-NAME
+    Creating task for app APP-NAME in org jdoe-org / space development as jdoe@pivotal.io...
+    OK
+    Task 1 has been submitted successfully for execution.
+    </pre>
 
-   Where:
-
-   - `APP-NAME` is the name of the app.
-   - `TASK-NAME` is the name of the task.
+    Where:
+    <ul>
+      <li><code>APP-NAME</code> is the name of the app.</li>
+      <li><code>TASK-NAME</code> is the name of the task.</li>
+    </ul>

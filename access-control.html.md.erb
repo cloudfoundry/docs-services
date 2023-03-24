@@ -5,9 +5,9 @@ owner: Core Services
 
 
 
-All new service plans from standard brokers are private by default. This means that when adding a new broker, or when adding a new plan to an existing broker's catalog, service plans won't immediately be available to end users. This lets an admin control which service plans are available to end users, and manage limited service availability.
+All new service plans from standard brokers are private by default. When you add a new broker, or when you add a new plan to an existing broker's catalog, service plans do not immediately become available to you. This is an admin control which service plans are available to you, and manage limited service availability.
 
-Space-scoped brokers are registered to a specific space, and all users within that space can automatically access the broker's service plans. With space-scoped brokers, service visibility is not managed separately.
+Space scoped brokers are registered to a specific space, and all users within that space can access the broker's service plans. With space-scoped brokers, service visibility is not managed separately.
 
 ## <a id='prerequisites'></a>Prerequisites ###
 - CLI v6.4.0
@@ -16,7 +16,7 @@ Space-scoped brokers are registered to a specific space, and all users within th
 
 ## <a id='display-access'></a>Display Access to Service Plans ###
 
-The `service-access` CLI command enables an admin to see the current access control setting for every service plan in the marketplace, across all service brokers.
+The `service-access` CLI command allows an admin to see the current access control setting for every service plan in the marketplace, across all service brokers.
 
 <pre class="terminal">
 $ cf service-access
@@ -66,10 +66,10 @@ The `-p` and `-o` flags to `cf enable-service-access` let the admin limit user a
 - `-o ORG` grants users in a specified org access to all plans (access: `limited`)
 - `-p PLAN -o ORG` grants users in one org access to one plan (access: `limited`)
 
-For example, the following command grants the org dev-user-org access to the p-mysql service. 
+For example, the following command grants the org dev-user-org access to the p-mysql service.
 
 <pre class="terminal">
-$ cf enable-service-access p-mysql -o dev-user-org 
+$ cf enable-service-access p-mysql -o dev-user-org
 Enabling access to all plans of service p-mysql for the org dev-user-org as admin...
 OK
 
@@ -100,13 +100,13 @@ broker: p-mysql
 <p class="note"><strong>Note</strong>: When multiple brokers provide two or more services with the same name, you must specify the broker by including the <code>-b BROKER</code> flag in the <code>cf enable-service-access</code> command.</p>
 
 
-## <a id='disable-access'></a>Disable Access to Service Plans ###
+## <a id='disable-access'></a>Deactivate Access to Service Plans ###
 
-Admins use the `cf disable-service-access` command to disable user access to service plans. The command denies access at the org level or across all orgs.
+Admins use the `cf disable-service-access` command to deactivate user access to service plans. The command denies access at the org level or across all orgs.
 
-#### Disable Access to All Plans for All Users
+#### Deactivate Access to All Plans for All Users
 
-Running `cf disable-service-access SERVICE-NAME` without any flags disables all user access to all plans carried by the service. For example, the following command denies any user access to all `p-mysql` service plans:
+When you run `cf disable-service-access SERVICE-NAME` without any flags, it  deactivates all user access to all plans carried by the service. For example, the following command denies any user access to all `p-mysql` service plans:
 
 <pre class="terminal">
 $ cf disable-service-access p-mysql
@@ -120,13 +120,13 @@ broker: p-mysql
    p-mysql    100mb-dev   none
 </pre>
 
-#### Disable Access for Specific Orgs or Plans
+#### Deactivate Access for Specific Orgs or Plans
 
-The `-p` and `-o` flags to `cf disable-service-access` let the admin deny access to specific service plans or orgs as follows:
+The `-p` and `-o` flags to `cf disable-service-access` allow the admin to deny access to specific service plans or orgs as follows:
 
-- `-p PLAN` disables user access to one service plan
-- `-o ORG` disables access to all plans for users in a specified org
-- `-p PLAN -o ORG` prevents users in one org from accessing one plan
+- `-p PLAN` Deactivates user access to one service plan.
+- `-o ORG` Deactivates access to all plans for users in a specified org.
+- `-p PLAN -o ORG` Prevents users in one org from accessing one plan.
 
 Run `cf help disable-service-access` to review these options from the command line.
 
@@ -134,5 +134,5 @@ Run `cf help disable-service-access` to review these options from the command li
 
 ### Limitations ####
 
-- You cannot disable access to a service plan for an org if the plan is currently available to all orgs. You must first disable access for all orgs; then you can enable access for a  particular org.
+- You cannot deactivate access to a service plan for an org if the plan is currently available to all orgs. You must deactivate access for all orgs and activate access for a  particular org.
 

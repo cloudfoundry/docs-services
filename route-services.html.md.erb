@@ -19,15 +19,15 @@ marketplace. For information about consuming these services, see
 
 ## <a name='introduction'></a> Introduction
 
-<%= vars.app_runtime_abbr %> app developers may wish to apply
+<%= vars.app_runtime_abbr %> app developers might wish to apply
 transformation or processing to requests before they reach an
 app. Common examples of use cases include authentication, rate
 limiting, and caching services. Route services are a kind of
-Marketplace service that developers can use to apply various
+Marketplace service that you can use to apply various
 transformations to app requests by binding an app's route to a service
 instance. Through integrations with service brokers and, optionally,
 with the <%= vars.app_runtime_abbr %> routing tier, providers can
-offer these services to developers with a familiar, automated,
+offer these services with a familiar, automated,
 self-service, and on-demand user experience.
 
 <% if vars.platform_code != 'CF' %>
@@ -46,7 +46,7 @@ self-service, and on-demand user experience.
 
 ## <a name='architecture'></a> Architecture
 
-<%= vars.app_runtime_abbr %> supports the following three models for
+<%= vars.app_runtime_abbr %> supports the following models for
 route services:
 
 * [Fully-brokered services](#fully-brokered)
@@ -60,7 +60,7 @@ addressed to an app.
 
 In the fully-brokered service model, the <%= vars.app_runtime_abbr %>
 router receives all traffic to apps in the deployment before any
-processing by the route service. Developers can bind a route service
+processing by the route service. You can bind a route service
 to any app, and if an app is bound to a route service, the <%= vars.app_runtime_abbr %> router sends its traffic to the
 service. After the route service processes requests, it sends them
 back to the load balancer in front of the <%= vars.app_runtime_abbr %>
@@ -68,25 +68,25 @@ router. The second time through, the <%= vars.app_runtime_abbr %>
 router recognizes that the route service has already handled them, and
 forwards them directly to app instances.
 
-![Fully brokered](images/route-services-fully-brokered.png)
+![alt-text="Fully brokered service model"](./images/route-services-fully-brokered.png)
 
 The route service can run inside or outside of <%= vars.app_runtime_abbr %>, so long as it fulfills the [Service Instance
 Responsibilities](#service-instance-responsibilities) to integrate it
 with the <%= vars.app_runtime_abbr %> router. A service broker
 publishes the route service to the <%= vars.app_runtime_abbr %>
-marketplace, making it available to developers. Developers can then
-create an instance of the service and bind it to their apps with the
+marketplace, and makes it available to developers. You can then
+create an instance of the service and bind it to your apps with the
 following commands:
 
-```
+```console
 cf create-service BROKER-SERVICE-PLAN SERVICE-INSTANCE
 ```
 
-```
+```console
 cf bind-route-service YOUR-APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME] [--path PATH]
 ```
 
-Developers configure the service either through the service provider's web interface or by passing
+You can configure the service either through the service provider web interface or by passing
 <% if vars.guide_name == 'Tile Developer' %>
 [arbitrary parameters](https://docs.pivotal.io/application-service/3-0/devguide/services/managing-services.html#arbitrary-params-create)
 <% else %>
@@ -96,22 +96,22 @@ to their `cf create-service` call through the `-c` flag.
 
 **Advantages:**
 
-- Developers can use a Service Broker to dynamically configure how the
-  route service processes traffic to specific apps.
-- Adding route services requires no manual infrastructure
+* You can can use a Service Broker to dynamically configure how the
+route service processes traffic to specific apps.
+
+* Adding route services requires no manual infrastructure
   configuration.
-- Traffic to apps that do not use the service makes fewer network hops
-  because requests for those apps do not pass through the route
-  service.
+
+* Traffic to apps that do not use the service makes fewer network hops because requests for those apps do not pass through the route service.
 
 **Disadvantages:**
 
-- Traffic to apps that use the route service makes additional network
+* Traffic to apps that use the route service makes additional network
   hops, as compared to the static model.
 
 ### <a name="static-brokered"></a> Static, Brokered Service
 
-In the static, brokered service model, an operator installs a static
+In the static brokered service model, an operator installs a static
 routing service, which might be a piece of hardware, in front of the
 load balancer. The routing service runs outside of <%= vars.app_runtime_abbr %> and receives traffic to all apps running in
 the <%= vars.app_runtime_abbr %> deployment. The service provider
@@ -119,7 +119,7 @@ creates a service broker to publish the service to the <%= vars.app_runtime_abbr
 service, a developer can use the service by instantiating it with `cf
 create-service` and binding it to an app with `cf bind-route-service`.
 
-![Static, brokered](images/route-services-static-brokered.png)
+![alt-text="Static brokered service model."](./images/route-services-static-brokered.png)
 
 In this model, you configure route services on an app-by-app
 basis. When you bind a service to an app, the service broker directs
@@ -128,36 +128,35 @@ requests through unchanged.
 
 **Advantages:**
 
-- Developers can use a service broker to dynamically configure how the
-  route service processes traffic to specific apps.
-- Traffic to apps that use the route service takes fewer network hops.
+* You can use a service broker to dynamically configure how the
+ route service processes traffic to specific apps.
+
+* Traffic to apps that use the route service takes fewer network hops.
 
 **Disadvantages:**
 
-- Adding route services requires manual infrastructure configuration.
-- Traffic to apps that do not use the route service make unnecessary
+* Adding route services requires manual infrastructure configuration.
+* Traffic to apps that do not use the route service make unnecessary
   network hops. Requests for all apps hosted by the deployment pass
   through the route service component.
 
 ### <a name="user-provided"></a> User-Provided Service
 
 If a route service is not listed in the <%= vars.app_runtime_abbr %>
-marketplace by a broker, a developer can still bind it to their app as
-a user-provided service. The service can run anywhere, either inside
+marketplace by a broker, you can still bind it to your app as
+a user provided service. The service can run anywhere, either inside
 or outside of <%= vars.app_runtime_abbr %>, but it must fulfill the
 integration requirements described in [Service Instance
 Responsibilities](#service-instance-responsibilities). The service
 also needs to be reachable by an outbound connection from the <%= vars.app_runtime_abbr %> router.
+![alt-text="Binded to your app as user provided service."](./images/route-services-user-provided.png)
 
-![User-provided](images/route-services-user-provided.png)
+This model is identical to the fully brokered service model, except
+without the broker. You can configure the service manually, outside
+of <%= vars.app_runtime_abbr %>. You can then create a user provided
+service instance and bind it to your app with the following commands,that supply the URL of their route service:
 
-This model is identical to the fully-brokered service model, except
-without the broker. Developers configure the service manually, outside
-of <%= vars.app_runtime_abbr %>. They can then create a user-provided
-service instance and bind it to their app with the following commands,
-supplying the URL of their route service:
-
-```
+```console
 cf create-user-provided-service SERVICE-INSTANCE -r ROUTE-SERVICE-URL
 ```
 
@@ -167,22 +166,22 @@ cf bind-route-service DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME]
 
 **Advantages:**
 
-- Adding route services requires no manual infrastructure configuration.
-- Traffic to apps that do not use the service makes fewer network hops
+* Adding route services requires no manual infrastructure configuration.
+* Traffic to apps that do not use the service makes fewer network hops
   because requests for those apps do not pass through the route
   service.
 
 **Disadvantages:**
 
-- Developers must manually provision and configure route services out
+* You must manually provision and configure route services out
   of the context of <%= vars.app_runtime_abbr %> because no service
   broker automates these operations.
-- Traffic to apps that use the route service makes additional network
+* Traffic to apps that use the route service makes additional network
   hops, as compared to the static model.
 
 ### <a name="architecture-comparison"></a> Architecture Comparison
 
-The models above require the broker and service instance
+The previous models require the broker and service instance
 responsibilities summarized in the following table:
 
 <table id='architecture-comparison' border="1" class="nice" >
@@ -209,27 +208,27 @@ responsibilities summarized in the following table:
 
 ## <a id='enabling-route-services-in-cloudfoundry'></a>Enabling Route Services in Cloud Foundry
 
-To enable support for route services in a Cloud Foundry deployment, the operator
+To begin support for route services in a Cloud Foundry deployment, the operator
 must provide a passphrase used by the Gorouter to encrypt a header that is sent with
 the request to the route service.
 The Gorouter uses this header to validate the request sent by the route service to the app route.
 The passphrase is configured in the cf-release manifest.
 
-```
+```console
 properties
   router:
     route_services_secret: YOUR-SECRET-PASSPHRASE
 ```
 
 <p class="note">
-  <strong>Note:</strong> The <code>route_services_secret</code> property should
+  <strong>Note:</strong> The <code>route_services_secret</code> property can
   be a robust passphrase.
   For more information, see the
   <a href="https://github.com/cloudfoundry-incubator/routing-release/blob/master/jobs/gorouter/spec">Gorouter spec</a>
   in the cf-release repository on GitHub.
 </p>
 
-Route service instances should send requests to the value of <code>x-cf-forwarded-url</code>, obeying the scheme.
+Route service instances can send requests to the value of <code>x-cf-forwarded-url</code>, obeying the scheme.
 The scheme is <code>https</code> by default.
 For environments that do not support TLS termination, this property can be set to false.
 
@@ -242,8 +241,8 @@ properties:
 The Gorouter only forwards requests to route services over SSL.
 By default, certificates provided by route services must be signed by a trusted CA.
 If they are not, the Gorouter rejects the request.
-In development environments, this concern may be unreasonable.
-To disable SSL certificate validation, modify the following property:
+In development environments, this concern might be unreasonable.
+To deactivate SSL certificate validation, edit the following property:
 
 ```
 properties:
@@ -276,24 +275,22 @@ The <%= vars.app_runtime_abbr %> router includes the `X-CF-Forwarded-Url` header
 containing the originally requested URL, as
 well as the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers used
 by the router to validate that the route-service sent the
-request. These headers are described in the [Headers](#headers) section, below.
-
-
+request. These headers are described in the [Headers](#headers) section.
 
 ### <a name='service-instance-responsibilities'></a> Service Instance Responsibilities
 
 The route service must handle requests by either:
 
-* Accepting the request by making a new request to the originally
+* Accepting the request, making a new request to the original
   requested URL, or to another location, and then responding to the
-  originating requestor.
+  original requestor.
 * Rejecting the request by responding with a non `2xx` HTTP status code.
 
 When forwarding a request to the originally requested URL, the route
 service must forward the `X-CF-Forwarded-Url`, `X-CF-Proxy-Signature` and
-`X-CF-Proxy-Metadata` headers on the request or it will be rejected.
+`X-CF-Proxy-Metadata` headers on the request or it is rejected.
 When forwarding a request to a location other than the originally
-requested URL, the route service should strip these headers.
+requested URL, the route service strips these headers.
 
 ### <a name='headers'></a> Headers
 
@@ -303,33 +300,33 @@ forwarded to route services.
 #### X-CF-Forwarded-Url
 
 The `X-CF-Forwarded-Url` header contains the originally requested
-URL. The route service may choose to forward the request to this URL
+URL. The route service might choose to forward the request to this URL
 or to another.
 
 #### X-CF-Proxy-Signature
 
-When the Gorouter receives a request with this header, it will accept
-and forward the request to the app only if the URL of the request
-matches the one associated with the token, and if the request was
+When the Gorouter receives a request with this header, it accepts
+and forwards the request to the app only if the URL of the request
+matches the one associated with the token, if the request was
 received on time. Otherwise, the request is rejected.
 
 `X-CF-Proxy-Signature` also signals to the Gorouter that a request has
 transited a route service. If this header is present, the Gorouter
 does not forward the request to a route service. The route-service
-needs to forward these headers in subsequent requests to the orignally
+needs to forward these headers in subsequent requests to the orignal
 requested URL, so that it knows not to send the request back to the
-route service but to the app. The headers should NOT be sent in the
+route service but to the app. The headers must NOT be sent in the
 HTTP response to the GoRouter, only in the new HTTP request to the
 GoRouter.
 
 <p class="note"><strong>Note:</strong> The <code>X-CF-Proxy-Signature</code> header is
 an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
-token can bypass the route service. Treat this token as a secret that
-cannot be shared with anyone.
+token can bypass the route service. Do not share your your <code>X-CF-Proxy-Signature</code>
+token with anyone.
 </p>
 
 CF-hosted Route Services cannot be chained: If the route service
-forwards the request to a URL which resolves to a route for a
+forwards the request to a URL to resolve a route for a
 different app on <%= vars.app_runtime_abbr %>, the route must not have
 a bound route service. Otherwise, the request is rejected as the
 requested URL does not match the one in the forwarded
@@ -374,7 +371,6 @@ In addition, all requests must respond in 900 seconds.
 
 <% end %>
 
-
 ## <a name='broker-responsibilities'></a> Broker Responsibilities
 
 ### <a name='catalog'></a> Catalog Endpoint
@@ -385,39 +381,37 @@ the service to a route.
 
 ### <a name='binding'></a> Binding Endpoint
 
-When users bind a route to a service instance, <%= vars.app_runtime_abbr %> sends a bind request to the broker, including
+When you bind a route to a service instance, <%= vars.app_runtime_abbr %> sends a bind request to the broker, including
 the route address with `bind_resource.route`. A route is an address
-used by clients to reach apps mapped to the route. The broker may
-return `route_service_url`, containing a URL where <%= vars.app_runtime_abbr %> should proxy requests for the route. This URL
+used by clients to reach apps mapped to the route. The broker might
+return `route_service_url`, containing a URL where <%= vars.app_runtime_abbr %> proxy requests for the route. This URL
 must have an `https` scheme, or the Cloud Controller rejects the
 binding. `route_service_url` is optional, and not returning this field
-enables a broker to dynamically configure a network component already
+allows a broker to dynamically configure a network component already
 in the request path for the route, requiring no change in the <%= vars.app_runtime_abbr %> router.
 
 For more information about bind requests, see the
 [Binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding) section of the _Open Service Broker API
 (v2.13)_ spec on GitHub.
 
-
 ## <a name='examples'></a> Example Route Services
 
-- [Logging Route
+* [Logging Route
   Service](https://github.com/cloudfoundry-samples/logging-route-service):
   This route service can be pushed as an app to <%= vars.app_runtime_abbr %>. It fulfills the service instance
-  responsibilities above and logs requests received and sent. It can
+  responsibilities and logs requests received and sent. It can
   be used to see the route service integration in action by tailing
   its logs.
 
-- [Rate Limiting Route
+* [Rate Limiting Route
   Service](https://github.com/cloudfoundry-samples/ratelimit-service):
   This example route service is a simple <%= vars.app_runtime_abbr %>
   app that provides rate limiting to control the rate of traffic to an
   app.
 
-- [Spring Boot
+* [Spring Boot
   Example](https://github.com/nebhale/route-service-example): Logs
   requests received and sent, written in Spring Boot.
-
 
 ## <a name='tutorial'></a> Tutorial
 
@@ -437,32 +431,40 @@ To use the logging route service:
 
 1. Push the logging route service as an app by running:
 
-    ```
+    ```console
     cf push logger
     ```
 
-1. Create a user-provided service instance, and include the route of
-the logging route service you pushed as `route_service_url`. Be sure
-to use `https` for the scheme. Run:
+1. Create a user provided service instance, and include the route of
+the logging route service you pushed as `route_service_url`. Make sure
+to use `https` for the scheme.
 
-    ```
+Run:
+
+    ```console
     cf create-user-provided-service mylogger -r https://logger.cf.example.com
     ```
 
-1. Push a sample app like [Spring
+1. Push a sample app such as [Spring
 Music](https://github.com/cloudfoundry-samples/spring-music). By
-default, this creates a route `spring-music.cf.example.com`. Run:
+default, this creates a route `spring-music.cf.example.com`.
+
+Run:
 
     ```
     cf push spring-music
     ```
 
-1. Bind the user-provided service instance to the route of your sample
+1. Bind the user provided service instance to the route of your sample
 app. The `bind-route-service` command takes a route and a service
-instance; the route is specified in the following example by domain
-`cf.example.com` and hostname `spring-music`. Run:
+instance.
 
-    ```
+The route is specified in the following example by domain
+`cf.example.com` and hostname `spring-music`.
+
+Run:
+
+    ```console
     cf bind-route-service cf.example.com mylogger --hostname spring-music
     ```
 
@@ -475,17 +477,16 @@ instance; the route is specified in the following example by domain
 1. Send a request to the sample app and view in the route service logs
 that the request is forwarded to it by running:
 
-    ```
+    ```console
     curl spring-music.cf.example.com
     ```
 
 <% if vars.platform_code == 'CF' %>
 
-
 ## <a name='security-considerations'></a> Security Considerations
 
 The contract between route services and the Gorouter, applicable for
-fully-brokered and user-provided models, enables a <%= vars.app_runtime_abbr %> operator to suggest whether or not requests
+fully brokered and user-provided models, activates a <%= vars.app_runtime_abbr %> operator to suggest whether or not requests
 forwarded from the route service to a load balancer are encrypted. The
 <%= vars.app_runtime_abbr %> operator makes this suggestion by setting
 the `router.route_services_recommend_https` manifest property.
@@ -493,17 +494,17 @@ the `router.route_services_recommend_https` manifest property.
 This suggestion does not allow the platform to guarantee that a route
 service obeys the scheme of the `X-Forwarded-Url` header. If a route
 service ignores the scheme and downgrades the request to plain text, a
-malicious actor can intercept the request and use or modify the data
+ the requester can intercept, and use or edit the data
 within it.
 
 For increased security, follow these recommendations:
 
-* A load balancer terminating TLS should sanitize and reset
+* A load balancer stops TLS and can sanitize and reset
   `X-Forwarded-Proto` based on whether the request it received was
   encrypted or not. Set the `router.sanitize_forwarded_proto: false`
   manifest property for the Gorouter.
 
-* A load balancer configured for TCP passthrough should sanitize and
+* A load balancer configured for TCP passthrough can sanitize and
   reset the header based on whether the request it received was
   encrypted or not. Set the `router.sanitize_forwarded_proto: true`
   manifest property for the Gorouter.
@@ -519,22 +520,21 @@ to a route, the Gorouter sanitizes the <code>X-Forwarded-Proto</code>
 header once, even though requests pass through the Gorouter more than
 once.</p>
 
-
 ## <a name='secure-route-services'></a> Recommendations for Securing Route Services
 
-To best secure communications through route services, <%= vars.app_runtime_abbr %> operators should:
+To best secure communications through route services, <%= vars.app_runtime_abbr %> operators :
 
 1. Set the `router.route_services_recommend_https: true` manifest
 property.
 
 1. Set the `router.disable_http: true` manifest property. Setting this
-property disables the HTTP listener, forcing all communication to the
-Gorouter to be HTTPS. This assumes all route services will communicate
+property deactivates the HTTP listener, and forces all communication to the
+Gorouter to be HTTPS. This assumes all route services communicate
 over HTTPS with the Gorouter. This causes requests from other clients
-made to port 80 to be rejected. You should confirm that clients of all
+made to port 80 to be rejected. You must confirm that clients of all
 apps make requests over TLS.
 
-1. Confirm that route services do not modify the value of the
+1. Confirm that route services do not change the value of the
 `X-Forwarded-Proto` header.
 
 <% end %>

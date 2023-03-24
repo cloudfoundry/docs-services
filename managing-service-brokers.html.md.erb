@@ -7,7 +7,7 @@ owner: Core Services
 
 This page assumes you are using cf CLI v6.16 or later.
 
-In order to run many of the commands below, you must be authenticated with <%= vars.app_runtime_full %> as an admin user or as a space developer.
+In order to run many of the commands, you must be authenticated with <%= vars.app_runtime_full %> as an admin user or as a space developer.
 
 ## <a id='quick-start'></a>Quick Start ##
 
@@ -23,8 +23,8 @@ from your broker, and save the catalog to the Cloud Controller database.
 The basic auth username and password which are provided when adding a broker are
 encrypted in Cloud Controller database, and used by the Cloud Controller to
 authenticate with the broker when making all API calls.
-Your service broker should validate the username and password sent in every
-request; otherwise, anyone could curl your broker to delete service instances. When the broker is registered with an URL having the scheme `https`, Cloud Controller will make all calls to the broker over HTTPS.
+Your service broker can validate the username and password sent in every
+request; otherwise, anyone could curl your broker to delete service instances. When the broker is registered with an URL having the scheme `https`, Cloud Controller makes all calls to the broker over HTTPS.
 
 As of cf-release 229, CC API 2.47.0, <%= vars.platform_name %> supports two types of brokers: _standard brokers_ and _space-scoped brokers_. A list of their differences follows:
 
@@ -47,7 +47,7 @@ As of cf-release 229, CC API 2.47.0, <%= vars.platform_name %> supports two type
   </pre>
   <p class="note"><strong>Note</strong>: If a space developer runs <code>cf create-service-broker</code> without the <code>--space-scoped</code> flag, they receive an error.
 * Managed by space developers
-* Newly-created plans automatically publish to all users in their space.
+* Newly created plans are published to all users in their space.
 
 ### <a id='make-plans-public'></a>Make Plans Public ###
 
@@ -57,9 +57,9 @@ See the [Access Control](./access-control.html#enable-access) topic for how to m
 
 ### <a id='multiple-brokers'></a>Multiple Brokers, Services, Plans ###
 
-Many service brokers may be added to a <%= vars.platform_name %> instance, each offering
+Many service brokers can be added to a <%= vars.platform_name %> instance, each offering
 many services and plans.
-The following constraints should be kept in mind:
+Keep the following constraints in mind:
 
 - It is not possible to have multiple brokers with the same name
 - Prior to Cloud Foundry API (CAPI) v1.71, the service ID and plan IDs of each service advertised by the broker must be unique across <%= vars.platform_name %>.
@@ -71,7 +71,7 @@ The following constraints should be kept in mind:
 If your deployment uses CAPI v1.71 or later, you can add multiple brokers with the same URL. In this case, the brokers must have different names. CAPI v1.70 and earlier do not support this feature.
 </div>
 
-See [Possible Errors](#possible-errors) below for error messages and what do to
+See [Possible Errors](#possible-errors) for error messages and what do to
 when you see them.
 
 ## <a id='list-brokers'></a> List Service Brokers ##
@@ -114,29 +114,29 @@ $ cf rename-service-broker mybrokername mynewbrokername
 
 ## <a id='remove-broker'></a>Remove a Broker ##
 
-Removing a service broker will remove all services and plans in the broker's catalog from the <%= vars.platform_name %> Marketplace.
+When you remove a service broker, all services and plans in the broker's catalog are removed from the <%= vars.platform_name %> Marketplace.
 
 <pre class="terminal">
 $ cf delete-service-broker mybrokername
 </pre>
 
-<p class="note"><strong>Note</strong>: Attempting to remove a service broker will fail if there are service instances for any service plan in its catalog. When planning to shut down or delete a broker, make sure to remove all service instances first. Failure to do so will leave <a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#orphans">orphaned service instances</a> in the <%= vars.platform_name %> database. If a service broker has been shut down without first deleting service instances, you can remove the instances with the CLI; see <a href="#purge-service">Purge a Service</a>.</p>
+<p class="note"><strong>Note</strong>: Attempting to remove a service broker can fail if there are service instances for any service plan in its catalog. When planning to shut down or delete a broker, make sure to remove all service instances first. Failure to do so leaves <a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#orphans">orphaned service instances</a> in the <%= vars.platform_name %> database. If a service broker has been shut down without first deleting service instances, you can remove the instances with the CLI; see <a href="#purge-service">Purge a Service</a>.</p>
 
 ### <a id='purge-service'></a>Purge a Service ###
 
-If a service broker has been shut down or removed without first deleting service instances from <%= vars.platform_name %>, you will be unable to remove the service broker or its services and plans from the Marketplace. In development environments, broker authors often destroy their broker deployments and need a way to clean up the Cloud Controller database.
+If a service broker has been shut down or removed without first deleting service instances from <%= vars.platform_name %>, you can be unable to remove the service broker or its services and plans from the Marketplace. In development environments, broker authors often destroy their broker deployments and need a way to clean up the Cloud Controller database.
 
-The following command will delete a service offering, all of its plans, as well as all associated service instances and bindings from the Cloud Controller database, without making any API calls to a service broker. Once all services for a broker have been purged, the broker can be removed normally.
+The following command deletes a service offering, all of its plans, and all associated service instances and bindings from the Cloud Controller database, without making any API calls to a service broker. Once all services for a broker have been purged, the broker can be removed normally.
 
 <pre class="terminal">
 $ cf purge-service-offering service-test
 Warning: This operation assumes that the service broker responsible for this
 service offering is no longer available, and all service instances have been
 deleted, leaving orphan records in <%= vars.platform_name %>'s database. All knowledge of
-the service will be removed from <%= vars.platform_name %>, including service instances and
-service bindings. No attempt will be made to contact the service broker; running
-this command without destroying the service broker will cause orphan service
-instances. After running this command you may want to run either
+the service can be removed from <%= vars.platform_name %>, including service instances and
+service bindings. No attempt is made to contact the service broker; running
+this command without destroying the service broker causes orphan service
+instances. After running this command you might want to run either
 delete-service-auth-token or delete-service-broker to complete the cleanup.
 
 Really purge service offering service-test from <%= vars.platform_name %>? y
@@ -145,15 +145,15 @@ OK
 
 ### <a id='purge-service-instance'></a>Purge a Service Instance###
 
-The following command will delete a single service instance, its service bindings and its service keys from the Cloud Controller database, without making any API calls to a service broker.
-This can be helpful in instances a Service Broker is not conforming to the Service Broker API and not returning a 200 or 410 to requests to delete the service instance.
+The following command deletes a single service instance, its service bindings and its service keys from the Cloud Controller database, without making any API calls to a service broker.
+This helps in instances when a Service Broker is not conforming to the Service Broker API and not returning a 200 or 410 to requests to delete the service instance.
 
 <pre class="terminal">
 $ cf purge-service-instance mysql-dev
 WARNING: This operation assumes that the service broker responsible for this
 service instance is no longer available or is not responding with a 200 or 410,
 and the service instance has been deleted, leaving orphan records in Cloud
-Foundry's database. All knowledge of the service instance will be removed from
+Foundry's database. All knowledge of the service instance is removed from
 <%= vars.platform_name %>, including service bindings and service keys.
 
 Really purge service instance mysql-dev from <%= vars.platform_name %>?> y
@@ -167,7 +167,7 @@ OK
 
 ## <a id='catalog-validation'></a> Catalog Validation Behaviors ##
 
-When <%= vars.platform_name %> fetches a catalog from a broker, it will compare the
+When <%= vars.platform_name %> fetches a catalog from a broker, and compares the
 broker's id for services and plans with the `unique_id` values for services and
 plans in the Cloud Controller database.
 
@@ -178,7 +178,7 @@ plans in the Cloud Controller database.
   </tr>
    <tr>
     <td>The catalog fails to load or validate.</td>
-    <td><%= vars.platform_name %> will return a meaningful error that the broker could not be reached or the catalog was not valid.</td>
+    <td><%= vars.platform_name %> returns a meaningful error that the broker could not be reached or the catalog was not valid.</td>
   </tr>
   <tr>
     <td>A service or plan in the broker catalog has an ID that is not present among the <code>unique_id</code> values in the marketplace database.</td>
@@ -209,7 +209,7 @@ Double-check that the username and password are correct:
 </pre>
 
 If you receive the following errors, check your broker logs.
-You may have an internal error.
+You might have an internal error.
 
 <pre class="terminal">
 Server error, status code: 500, error code: 10001, message:
@@ -225,7 +225,7 @@ Server error, status code: 500, error code: 10001, message:
 </pre>
 
 If your broker's catalog of services and plans violates validation of presence,
-uniqueness, and type, you will receive meaningful errors.
+uniqueness, and type, you can receive meaningful errors.
 
 <pre class="terminal">
 Server error, status code: 502, error code: 270012, message: Service broker catalog is invalid:

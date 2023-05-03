@@ -6,7 +6,7 @@ owner: Core Services
 This topic provides guidance for offering a service to a <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) services
 marketplace. For information about consuming these services, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Manage App Requests with Route Services](https://docs.pivotal.io/application-service/3-0/devguide/services/route-binding.html).
+[Route Services](https://docs.vmware.com/en/Tile-Developer-Guide/2.10/tile-dev-guide/route-services.html).
 <% else %>
 [Manage App Requests with Route Services](../devguide/services/route-binding.html).
 <% end %>
@@ -36,7 +36,7 @@ self-service, and on-demand user experience.
   You can also manage route services using Apps Manager.
   For more information, see the
   <% if vars.guide_name == 'Tile Developer' %>
-  <a href="https://docs.pivotal.io/application-service/3-0/console/manage-apps.html#manage-route-services">Manage Route Services</a>
+  <a href="https://docs.vmware.com/en/Tile-Developer-Guide/2.10/tile-dev-guide/route-services.html">Route Services</a>
   <% else %>
   <a href="../console/manage-apps.html#manage-route-services">Manage Route Services</a>
   <% end %>
@@ -88,7 +88,7 @@ cf bind-route-service YOUR-APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME] [--
 
 Developers configure the service either through the service provider's web interface or by passing
 <% if vars.guide_name == 'Tile Developer' %>
-[arbitrary parameters](https://docs.pivotal.io/application-service/3-0/devguide/services/managing-services.html#arbitrary-params-create)
+[arbitrary parameters](https://docs.vmware.com/en/Tile-Developer-Guide/2.10/tile-dev-guide/managed-index.html)
 <% else %>
 [arbitrary parameters](../devguide/services/managing-services.html#arbitrary-params-create)
 <% end %>
@@ -256,7 +256,7 @@ properties:
 ## <a id='enabling-route-services'></a>Enabling Route Services in <%= vars.app_runtime_abbr %>
 
 You configure Route Services for your deployment in the <%= vars.app_runtime_abbr %> tile, in the **Networking** pane.
-For more information, see [Configuring TAS for VMs](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/4.0/tas-for-vms/configure-pas.html).
+For more information, see [Configuring TAS for VMs](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/2.11/tas-for-vms/configure-pas.html).
 
 <% end %>
 

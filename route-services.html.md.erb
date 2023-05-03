@@ -6,7 +6,7 @@ owner: Core Services
 This topic provides guidance for offering a service to a <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) services
 marketplace. For information about consuming these services, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Manage App Requests with Route Services](https://docs.pivotal.io/application-service/3-0/devguide/services/route-binding.html).
+[Route Services](https://docs.vmware.com/en/Tile-Developer-Guide/2.10/tile-dev-guide/route-services.html).
 <% else %>
 [Manage App Requests with Route Services](../devguide/services/route-binding.html).
 <% end %>
@@ -31,13 +31,17 @@ offer these services with a familiar, automated,
 self-service, and on-demand user experience.
 
 <% if vars.platform_code != 'CF' %>
-  <p class="note">
-    <strong>Note:</strong> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI). You can also manage route services using Apps Manager. For more information, see:
-      <ul>
-        <li> If you are working in the Tile Developer Guide, see <a href="https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/manage-apps.html#manage-route-services">Manage Route Services</a> in the Tile Developer Guide.</li>
-        <li> If you are working in Tanzu Application Services, see <a href="../console/manage-apps.html#manage-route-services">Manage Route Services</a> in the TAS for VMs Guide.</li>
-      </ul>
-  </p>
+<p class="note">
+  <strong>Note:</strong> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
+  You can also manage route services using Apps Manager.
+  For more information, see the
+  <% if vars.guide_name == 'Tile Developer' %>
+  <a href="https://docs.vmware.com/en/Tile-Developer-Guide/2.10/tile-dev-guide/route-services.html">Route Services</a>
+  <% else %>
+  <a href="../console/manage-apps.html#manage-route-services">Manage Route Services</a>
+  <% end %>
+  section of the <em>Managing Apps and Service Instances Using Apps Manager</em> topic.
+</p>
 <% end %>
 
 ## <a name='architecture'></a> Architecture
@@ -84,7 +88,7 @@ cf bind-route-service YOUR-APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME] [--
 
 You can configure the service either through the service provider web interface or by passing
 <% if vars.guide_name == 'Tile Developer' %>
-[arbitrary parameters](https://docs.pivotal.io/application-service/3-0/devguide/services/managing-services.html#arbitrary-params-create)
+[arbitrary parameters](https://docs.vmware.com/en/Tile-Developer-Guide/2.10/tile-dev-guide/managed-index.html)
 <% else %>
 [arbitrary parameters](../devguide/services/managing-services.html#arbitrary-params-create)
 <% end %>
@@ -251,7 +255,6 @@ properties:
 ## <a id='enabling-route-services'></a>Enabling Route Services in <%= vars.app_runtime_abbr %>
 
 You configure Route Services for your deployment in the <%= vars.app_runtime_abbr %> tile, in the **Networking** pane.
-
 
 <% end %>
 

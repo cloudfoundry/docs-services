@@ -1,17 +1,13 @@
 ---
-title: Enabling Service Instance Sharing
+title: Service Instance sharing in Cloud Foundry
 owner: Core Services
 ---
 
-
-
-This topic provides information about activating service instance sharing in managed services.
-
-## <a id="overview"></a> Overview
-
 Service authors can allow instances of their services to be shared across spaces and orgs within Cloud Foundry.
-This activates apps running in different spaces and orgs to use the same service instance.
-Developers with Space Developer permissions in the space where the service instance was created are responsible for sharing, unsharing, updating, and deleting the service instance.
+This allows apps running in different spaces and orgs to use the same service instance.
+
+If you have Space Developer permissions in the space where the service instance was created, you are responsible
+for sharing, unsharing, updating, and deleting the service instance.
 
 For more information about the developer and administrator tasks related to service instance sharing, see
 <% if vars.guide_name == 'Tile Developer' %>
@@ -20,7 +16,7 @@ For more information about the developer and administrator tasks related to serv
 [Sharing Service Instances](../devguide/services/sharing-instances.html).
 <% end %>
 
-## <a id="enabling"></a> Enabling Service Instance Sharing
+## <a id="enabling"></a> Enabling Service Instance sharing
 
 Service brokers must explicitly activate service instance sharing by setting a flag in their service-level metadata object.
 This allows service instances, of any service plan, to be shared across orgs and spaces.
@@ -40,7 +36,7 @@ An example catalog:
 }
 ```
 
-## <a id="binding-permissions"></a> Binding Permissions Based on Instance Sharing
+## <a id="binding-permissions"></a> Binding permissions based on instance sharing
 
 When a service instance is created in one space and shared into another, developers can bind their apps to the service instance from both spaces.
 
@@ -50,7 +46,7 @@ For example, a messaging service can permit writes from the originating space an
 To determine whether the space of the app is the same as the originating space of the service instance, the service broker can compare the `context.space_guid` and `bind_resource.space_guid` fields in the binding request.
 The `context.space_guid` field represents the space where the service instance was created, and `bind_resource.space_guid` represents the space of the app involved in the binding.
 
-## <a id="security"></a> Security Considerations
+## <a id="security"></a> Security considerations
 
 Service authors must consider the following before enabling service instance sharing:
 

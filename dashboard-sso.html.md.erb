@@ -1,17 +1,19 @@
 ---
-title: Dashboard Single Sign-On
+title: Dashboard Single Sign On
 owner: Core Services
 ---
 
-## <a id='introduction'></a>Introduction
-
-Single Sign-On (SSO) enables <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) users to authenticate with third-party service dashboards using their <%= vars.app_runtime_abbr %> credentials. Service dashboards are web interfaces which enable users to interact with some or all of the features the service offers. SSO provides a streamlined experience for users, limiting repeated logins and multiple accounts across their managed services. The user's credentials are never directly transmitted to the service since the OAuth protocol handles authentication.
+Single Sign On (SSO) allows <%= vars.app_runtime_first %> users to authenticate with third party service dashboards
+using their <%= vars.app_runtime_abbr %> credentials.
+Service dashboards are web interfaces which allow you to interact with some or all of the features the service offers.
+SSO provides a streamlined experience that limits repeated logins and multiple accounts across managed services.
+Your credentials are never directly transmitted to the service because the OAuth protocol handles authentication.
 
 <% if vars.platform_code == 'CF' %>
 
 Dashboard SSO was introduced in [cf-release v169](https://github.com/cloudfoundry/cf-release/tree/v169) so this or a newer version is required to support the feature.
 
-## <a id='enabling-the-feature'></a>Enabling the SSO Feature
+## <a id='enabling-the-feature'></a>Enabling SSO
 
 To enable the SSO feature, the Cloud Controller requires a UAA client with sufficient permissions to create and delete clients for the service brokers that request them. This client can be configured by including the following snippet in the cf-release manifest:
 
@@ -30,9 +32,9 @@ When this client is not present in the cf-release manifest, Cloud Controller can
 
 <% end %>
 
-## <a id='broker-responsibilities'></a>Service Broker Responsibilities
+## <a id='broker-responsibilities'></a>Service Broker responsibilities
 
-### <a id='registering-dashboard-client'></a>Registering the Dashboard Client
+### <a id='registering-dashboard-client'></a>Registering the dashboard client
 
 1.  A service broker must include the `dashboard_client` field in the JSON response from its [catalog endpoint](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#catalog-management) for each service implementing this feature. A valid response would appear as follows:
 
@@ -67,9 +69,9 @@ A service broker should return a URL for the `dashboard_url` field in response t
 
 Users can then navigate to the service dashboard at the URL provided by `dashboard_url`, initiating the OAuth login flow.
 
-## <a id='dashboard-responsibilities'></a>Service Dashboard Responsibilities
+## <a id='dashboard-responsibilities'></a>Service dashboard responsibilities
 
-### <a id='oauth2-flow'></a>OAuth Flow
+### <a id='oauth2-flow'></a>OAuth flow
 
 When a user navigates to the URL from `dashboard_url`, the service dashboard should initiate the OAuth login flow. A summary of the flow can be found in [section 1.2 of the OAuth RFC](http://tools.ietf.org/html/rfc6749#section-1.2). OAuth expects the presence of an [Authorization Endpoint](http://tools.ietf.org/html/rfc6749#section-3.1) and a [Token Endpoint](http://tools.ietf.org/html/rfc6749#section-3.2). In <%= vars.app_runtime_abbr %> these endpoints are provided by the UAA. Clients can discover the location of UAA from Cloud Controller's info endpoint; in the response the location can be found in the `token_endpoint` field.
 
@@ -102,13 +104,13 @@ A service dashboard should implement the OAuth Authorization Code Grant type ([U
 
 1. UAA authenticates the dashboard client, validates the authorization code, and ensures that the redirect URI received matches the URI used to redirect the client when the authorization code was issues.  If valid, UAA responds back with an access token and a refresh token.
 
-### <a id='checking-user-permissions'></a>Checking User Permissions
+### <a id='checking-user-permissions'></a>Checking user permissions
 
 UAA is responsible for authenticating a user and providing the service with an access token with the requested permissions. However, after the user has been logged in, it is the responsibility of the service dashboard to verify that the user making the request to manage an instance currently has access to that service instance.
 
 The service can accomplish this with a GET to the `/v2/service_instances/:guid/permissions` endpoint on the Cloud Controller. The request must include a token for an authenticated user and the service instance guid. The token is the same one obtained from the UAA in response to a request to the Token Endpoint, described above.
 
-#### Example Request
+#### Example request
 
 ```
 curl -H 'Content-Type: application/json' \
@@ -137,7 +139,7 @@ Since administrators may change the permissions of users at any time, the servic
 
 Scopes let you specify exactly what type of access you need. Scopes limit access for OAuth tokens. They do not grant any additional permission beyond that which the user already has.
 
-#### Minimum Scopes
+#### Minimum scopes
 
 The following two scopes are necessary to implement the integration. Most dashboard shouldn't need more permissions than these scopes enabled.
 
@@ -146,7 +148,7 @@ The following two scopes are necessary to implement the integration. Most dashbo
 | `openid`                                         | Allows access to basic data about the user, such as email addresses |
 | `cloud_controller_service_permissions.read`      | Allows access to the CC endpoint that specifies whether the user can manage a given service instance |
 
-#### Additional Scopes
+#### Additional scopes
 
 Dashboards with extended capabilities may need to request these additional scopes:
 
@@ -155,7 +157,7 @@ Dashboards with extended capabilities may need to request these additional scope
 | `cloud_controller.read`                          | Allows read access to all resources the user is authorized to read |
 | `cloud_controller.write`                         | Allows write access to all resources the user is authorized to update / create / delete |
 
-## <a id='reference-implementation'></a>Reference Implementation
+## <a id='reference-implementation'></a>Reference implementation
 
 The [MySQL Service Broker][example-broker] is an example of a broker that also implements a SSO dashboard. The login flow is implemented using the [OmniAuth library](https://github.com/intridea/omniauth) and a custom [UAA OmniAuth Strategy](https://github.com/cloudfoundry/omniauth-uaa-oauth2). See this [OmniAuth wiki page](https://github.com/intridea/omniauth/wiki/Strategy-Contribution-Guide) for instructions on how to create your own strategy.
 

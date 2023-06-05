@@ -1,10 +1,12 @@
 ---
-title: Route Services
+title: Offering Route Services in Cloud Foundry
 owner: Core Services
 ---
 
-This topic provides guidance for offering a service to a <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) services
-marketplace. For information about consuming these services, see
+This topic tells you about how to offer a service to a <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) services
+marketplace.
+
+For information about consuming these services, see
 <% if vars.guide_name == 'Tile Developer' %>
 [Route Services](https://docs.vmware.com/en/Tile-Developer-Guide/2.10/tile-dev-guide/route-services.html).
 <% else %>
@@ -17,9 +19,7 @@ marketplace. For information about consuming these services, see
 </p>
 <% end %>
 
-## <a name='introduction'></a> Introduction
-
-<%= vars.app_runtime_abbr %> app developers may wish to apply
+<%= vars.app_runtime_abbr %> app developers might want to apply
 transformation or processing to requests before they reach an
 app. Common examples of use cases include authentication, rate
 limiting, and caching services. Route services are a kind of
@@ -264,8 +264,6 @@ You configure Route Services for your deployment in the <%= vars.app_runtime_abb
 The following applies only when a broker returns `route_service_url`
 in the bind response.
 
-### <a name='how-it-works'></a> How It Works
-
 Binding a service instance to a route associates the
 `route_service_url` with the route in the <%= vars.app_runtime_abbr %>
 router. All requests for the route are proxied to the URL specified by
@@ -279,7 +277,7 @@ request. These headers are described in the [Headers](#headers) section, below.
 
 
 
-### <a name='service-instance-responsibilities'></a> Service Instance Responsibilities
+### <a name='service-instance-responsibilities'></a> Service Instance responsibilities
 
 The route service must handle requests by either:
 
@@ -339,7 +337,7 @@ requested URL does not match the one in the forwarded
 The `X-CF-Proxy-Metadata` header aids in the encryption and
 description of `X-CF-Proxy-Signature`.
 
-### <a name='ssl-certs'></a> SSL Certificates
+### <a name='ssl-certs'></a> SSL certificates
 
 When <%= vars.app_runtime_abbr %> is deployed in a development
 environment, certificates hosted by the load balancer are self-signed,
@@ -373,16 +371,15 @@ In addition, all requests must respond in 900 seconds.
 
 <% end %>
 
+## <a name='broker-responsibilities'></a> Broker responsibilities
 
-## <a name='broker-responsibilities'></a> Broker Responsibilities
-
-### <a name='catalog'></a> Catalog Endpoint
+### <a name='catalog'></a> Catalog endpoint
 
 Brokers must include `requires: ["route_forwarding"]` for a service in
 the catalog endpoint. If this is not present, <%= vars.app_runtime_abbr %> does not permit users to bind an instance of
 the service to a route.
 
-### <a name='binding'></a> Binding Endpoint
+### <a name='binding'></a> Binding endpoint
 
 When users bind a route to a service instance, <%= vars.app_runtime_abbr %> sends a bind request to the broker, including
 the route address with `bind_resource.route`. A route is an address
@@ -397,8 +394,7 @@ For more information about bind requests, see the
 [Binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding) section of the _Open Service Broker API
 (v2.13)_ spec on GitHub.
 
-
-## <a name='examples'></a> Example Route Services
+## <a name='examples'></a> Route Services examples
 
 - [Logging Route
   Service](https://github.com/cloudfoundry-samples/logging-route-service):
@@ -479,8 +475,7 @@ that the request is forwarded to it by running:
 
 <% if vars.platform_code == 'CF' %>
 
-
-## <a name='security-considerations'></a> Security Considerations
+## <a name='security-considerations'></a> Security considerations
 
 The contract between route services and the Gorouter, applicable for
 fully-brokered and user-provided models, enables a <%= vars.app_runtime_abbr %> operator to suggest whether or not requests
@@ -517,8 +512,7 @@ to a route, the Gorouter sanitizes the <code>X-Forwarded-Proto</code>
 header once, even though requests pass through the Gorouter more than
 once.</p>
 
-
-## <a name='secure-route-services'></a> Recommendations for Securing Route Services
+## <a name='secure-route-services'></a> Recommendations for securing Route Services
 
 To best secure communications through route services, <%= vars.app_runtime_abbr %> operators should:
 

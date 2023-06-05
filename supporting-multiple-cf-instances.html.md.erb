@@ -1,5 +1,5 @@
 ---
-title: Supporting Multiple Cloud Foundry Instances
+title: Supporting multiple Cloud Foundry Instances
 owner: Core Services
 ---
 
@@ -10,17 +10,14 @@ owner: Core Services
 
 <% end %>
 
-This topic describes registering a service broker with multiple <%= vars.app_runtime_first %> instances.
-
-
-## <a id='overview'></a> Overview
+Learn how to register a your service broker with multiple <%= vars.app_runtime_first %> instances.
 
 It may be necessary for the broker to know which <%= vars.app_runtime_abbr %> instance is making a given request. For example, when using [Dashboard Single Sign-On](dashboard-sso.html), the broker is expected to interact with the authorization and token endpoints for a given <%= vars.app_runtime_abbr %> instance.
 
 There are two strategies that can be used to discover which <%= vars.app_runtime_abbr %> instance is making a given request.
 
 
-## <a id='routing-auth'></a> Routing and Authentication
+## <a id='routing-auth'></a> Routing and authentication
 
 The broker can use unique credentials, a unique URL, or both for each <%= vars.app_runtime_abbr %> instance. When registering the broker, you can configure different <%= vars.app_runtime_abbr %> instances to use different base URLs that include a unique ID. For example:
 

@@ -1,10 +1,15 @@
 ---
-title: Services
-description: Any type of add-on that can be provisioned alongside your app; for example, a database or an account on a third-party SaaS provider.
+title: Creating Managed Services in Cloud Foundry
+description: Any type of add on that can be provisioned alongside your app. For example, a database or an account
+on a third party SaaS provider.
 owner: Core Services
 ---
 
-The documentation in this section is intended for developers and operators interested in creating Managed Services for <%= vars.app_runtime_first %>. Managed Services are defined as having been integrated with <%= vars.app_runtime_abbr %> through APIs, and enable end users to provision reserved resources and credentials on demand. For documentation targeted at end users, such as how to provision services and integrate them with apps, see [Services](overview.html).
+This section is intended for developers and operators interested in creating
+Managed Services for <%= vars.app_runtime_first %>.
+
+Managed Services are defined as having been integrated
+with <%= vars.app_runtime_abbr %> through APIs, and allow you to provision reserved resources and credentials on demand. For documentation targeted at end users, such as how to provision services and integrate them with apps, see [Services](overview.html).
 
 To develop Managed Services for <%= vars.app_runtime_abbr %>, you need a <%= vars.app_runtime_abbr %> instance to test your service broker with as you are developing it. You must have admin access to your <%= vars.app_runtime_abbr %> instance to manage service brokers and the services marketplace catalog. For local development, <%= vars.recommended_by %> recommends using the [BOSH guide](https://bosh.io/docs/quick-start/) to deploy your own local instance of <%= vars.app_runtime_abbr %> using VirtualBox.
 
@@ -28,18 +33,18 @@ To develop Managed Services for <%= vars.app_runtime_abbr %>, you need a <%= var
 
 * [Managing Service Brokers](managing-service-brokers.html)
 
-* [Access Control](access-control.html)
+* [Managing access to Service Plans](access-control.html)
 
 * [Dashboard Single Sign-On](dashboard-sso.html)
 
-* [Example Service Brokers](examples.html)
+* [Service Broker examples](examples.html)
 
-* [Binding Credentials](binding-credentials.html)
+* [Binding credentials in Cloud Foundry](binding-credentials.html)
 
-* [Enabling Service Instance Sharing](enable-sharing.html)
+* [Service Instance sharing in Cloud Foundry](enable-sharing.html)
 
-* [App Log Streaming](app-log-streaming.html)
+* [App Log streaming in Cloud Foundry](app-log-streaming.html)
 
-* [Route Services](route-services.html)
+* [Offering Route Services in Cloud Foundry](route-services.html)
 
-* [Supporting Multiple <%= vars.app_runtime_abbr %> Instances](supporting-multiple-cf-instances.html)
+* [Supporting multiple <%= vars.app_runtime_abbr %> Instances](supporting-multiple-cf-instances.html)

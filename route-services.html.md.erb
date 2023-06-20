@@ -56,7 +56,7 @@ route services:
 In each model, you configure a route service to process traffic
 addressed to an app.
 
-### <a name="fully-brokered"></a> Fully-Brokered Service
+### <a name="fully-brokered"></a> Fully-brokered service
 
 In the fully-brokered service model, the <%= vars.app_runtime_abbr %>
 router receives all traffic to apps in the deployment before any
@@ -109,7 +109,7 @@ to their `cf create-service` call through the `-c` flag.
 - Traffic to apps that use the route service makes additional network
   hops, as compared to the static model.
 
-### <a name="static-brokered"></a> Static, Brokered Service
+### <a name="static-brokered"></a> Static, brokered service
 
 In the static, brokered service model, an operator installs a static
 routing service, which might be a piece of hardware, in front of the
@@ -139,7 +139,7 @@ requests through unchanged.
   network hops. Requests for all apps hosted by the deployment pass
   through the route service component.
 
-### <a name="user-provided"></a> User-Provided Service
+### <a name="user-provided"></a> User-provided service
 
 If a route service is not listed in the <%= vars.app_runtime_abbr %>
 marketplace by a broker, a developer can still bind it to their app as
@@ -180,7 +180,7 @@ cf bind-route-service DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME]
 - Traffic to apps that use the route service makes additional network
   hops, as compared to the static model.
 
-### <a name="architecture-comparison"></a> Architecture Comparison
+### <a name="architecture-comparison"></a> Architecture comparison
 
 The models above require the broker and service instance
 responsibilities summarized in the following table:
@@ -207,7 +207,7 @@ responsibilities summarized in the following table:
 
 <% if vars.platform_code == 'CF' %>
 
-## <a id='enabling-route-services-in-cloudfoundry'></a>Enabling Route Services in Cloud Foundry
+## <a id='enabling-route-services-in-cloudfoundry'></a>Enabling route services in Cloud Foundry
 
 To enable support for route services in a Cloud Foundry deployment, the operator
 must provide a passphrase used by the Gorouter to encrypt a header that is sent with
@@ -253,13 +253,13 @@ properties:
 
 <% else %>
 
-## <a id='enabling-route-services'></a>Enabling Route Services in <%= vars.app_runtime_abbr %>
+## <a id='enabling-route-services'></a>Enabling route services in <%= vars.app_runtime_abbr %>
 
 You configure Route Services for your deployment in the <%= vars.app_runtime_abbr %> tile, in the **Networking** pane.
 
 <% end %>
 
-## <a name='service-instance'></a> Service Instance
+## <a name='service-instance'></a> Service instance
 
 The following applies only when a broker returns `route_service_url`
 in the bind response.
@@ -277,7 +277,7 @@ request. These headers are described in the [Headers](#headers) section, below.
 
 
 
-### <a name='service-instance-responsibilities'></a> Service Instance responsibilities
+### <a name='service-instance-responsibilities'></a> Service instance responsibilities
 
 The route service must handle requests by either:
 
@@ -394,7 +394,7 @@ For more information about bind requests, see the
 [Binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding) section of the _Open Service Broker API
 (v2.13)_ spec on GitHub.
 
-## <a name='examples'></a> Route Services examples
+## <a name='examples'></a> Route services examples
 
 - [Logging Route
   Service](https://github.com/cloudfoundry-samples/logging-route-service):
@@ -512,7 +512,7 @@ to a route, the Gorouter sanitizes the <code>X-Forwarded-Proto</code>
 header once, even though requests pass through the Gorouter more than
 once.</p>
 
-## <a name='secure-route-services'></a> Recommendations for securing Route Services
+## <a name='secure-route-services'></a> Recommendations for securing route services
 
 To best secure communications through route services, <%= vars.app_runtime_abbr %> operators should:
 

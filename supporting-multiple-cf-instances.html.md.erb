@@ -1,5 +1,5 @@
 ---
-title: Supporting multiple Instances
+title: Supporting multiple instances
 owner: Core Services
 ---
 
@@ -26,7 +26,7 @@ The broker can use unique credentials, a unique URL, or both for each <%= vars.a
 * On <%= vars.app_runtime_abbr %> instance 2, the service broker is registered with the URL `broker.example.com/456`.
 
 
-## <a id='x-api-info-location'></a> X-Api-Info-Location Header
+## <a id='x-api-info-location'></a> X-Api-Info-Location header
 
 All calls to the broker from <%= vars.app_runtime_abbr %> include an `X-Api-Info-Location` header containing the `/v2/info` URL for that instance. The `/v2/info` endpoint returns further information, including the location of that <%= vars.app_runtime_abbr %> instance's UAA.
 

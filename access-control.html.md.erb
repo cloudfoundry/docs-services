@@ -10,12 +10,12 @@ plan to an existing broker's catalog, service plans do not immediately become av
 
 Space scoped brokers are registered to a specific space, and all users within that space can access the broker's service plans. With space-scoped brokers, service visibility is not managed separately.
 
-## <a id='prerequisites'></a>Prerequisites ###
+## <a id='prerequisites'></a>Prerequisites
 - CLI v6.4.0
 - Cloud Controller API v2.9.0 (cf-release v179)
 - Admin user access; the following commands can be run only by an admin user
 
-## <a id='display-access'></a>Service Plan access ###
+## <a id='display-access'></a>Service Plan access
 
 The `service-access` CLI command allows an admin to see the current access control setting for every service plan in the marketplace, across all service brokers.
 
@@ -53,7 +53,7 @@ OPTIONS:
    -o     plans accessible by a particular org
 </pre>
 
-## <a id='enable-access'></a>Enabling access to Service Plans ###
+## <a id='enable-access'></a>Enabling access to Service Plans
 
 Admins use the `cf enable-service-access` command to give users access to service plans. The command grants access at the org level or across all orgs.
 
@@ -101,7 +101,7 @@ broker: p-mysql
 <p class="note"><strong>Note</strong>: When multiple brokers provide two or more services with the same name, you must specify the broker by including the <code>-b BROKER</code> flag in the <code>cf enable-service-access</code> command.</p>
 
 
-## <a id='disable-access'></a>Deactivating access to Service Plans ###
+## <a id='disable-access'></a>Deactivating access to Service Plans
 
 Admins use the `cf disable-service-access` command to deactivate user access to service plans. The command denies access at the org level or across all orgs.
 
@@ -121,7 +121,7 @@ broker: p-mysql
    p-mysql    100mb-dev   none
 </pre>
 
-#### Deactivating access for secific orgs or plans
+#### Deactivating access for specific orgs or plans
 
 The `-p` and `-o` flags to `cf disable-service-access` allow the admin to deny access to specific service plans or orgs as follows:
 
@@ -133,7 +133,6 @@ Run `cf help disable-service-access` to review these options from the command li
 
 <p class="note"><strong>Note</strong>: When multiple brokers provide two or more services with the same name, you must specify the broker by including the <code>-b BROKER</code> flag in the <code>cf disable-service-access</code> command.</p>
 
-### Limitations ####
+### Limitations
 
 - You cannot deactivate access to a service plan for an org if the plan is currently available to all orgs. You must deactivate access for all orgs and activate access for a  particular org.
-

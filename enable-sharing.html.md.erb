@@ -40,7 +40,7 @@ An example catalog is shown below:
 
 When a service instance is created in one space and shared into another, developers can bind their apps to the service instance from both spaces.
 
-You may want to have the service broker return credentials with different permissions depending on which space an app is bound from.
+You might want to have the service broker return credentials with different permissions depending on which space an app is bound from.
 For example, a messaging service may permit writes from the originating space and only reads from any spaces that the service is shared into.
 
 To determine whether the space of the app is the same as the originating space of the service instance, the service broker can compare the `context.space_guid` and `bind_resource.space_guid` fields in the binding request.

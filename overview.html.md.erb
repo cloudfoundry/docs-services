@@ -3,7 +3,7 @@ title: Services in Cloud Foundry
 owner: Core Services
 ---
 
-Here you will learn about the services in <%= vars.app_runtime_first %>.
+Learn about the services in <%= vars.app_runtime_first %>.
 
 ## <a id='instances'></a> Services and service instances
 
@@ -44,7 +44,11 @@ Although "gateway" still appears in old code, the term "broker" is used in conve
 Service brokers advertise a catalog of service offerings and service plans, as well as interpreting calls for provision, bind, unbind, and deprovision.
 What a broker does with each call can vary between services. In general, 'provision' reserves resources on a service and 'bind' delivers information to an app necessary for accessing the resource. The reserved resource is called a _service instance_. What a service instance represents can vary by service. It could be a single database on a multi-tenant server, a dedicated cluster, or even just an account on a web app.
 
-<p><img src="images/managed-services.png" alt="Diagram showing how services interact with the Cloud Foundry. The diagram shows the following components: 'Service Broker', 'cloud controller', 'App environment', and 'service instances'."/>
+![alt-text="Diagram showing how
+services interact with the Cloud Foundry. The diagram shows the following
+components: 'Service Broker', 'cloud controller', 'App environment', and
+'service instances'.""](./images/managed-services.png)
+
 <a href="images/managed-services.png" target="_blank">View a larger version of this image.</a></p>
 
 

@@ -83,7 +83,9 @@ $ curl api.example.com/info
 "allow_debug":true}
 ```
 
-<p class='note'>To activate service dashboards to support SSO for service instances created from different <%= vars.app_runtime_abbr %> instances, the /v2/info url is sent to service brokers in the <code>X-Api-Info-Location</code> header of every API call. A service dashboard can discover this URL from the broker, which activates the dashboard to contact the appropriate UAA for a particular service instance. Note, that although the Cloud Foundry API (CAPI) V2 is now deprecated, the Cloud Controller still communicates its /v2/info URL through this header. /v2/info is the sole CAPI V2 endpoint that continues to be served even where a Cloud Controller has been configured, through the CAPI bosh release, to deactivate the V2 API</p>
+<p> To activate service dashboards to support SSO for service instances created from different <%= vars.app_runtime_abbr %> instances, the /v2/info url is sent to
+service brokers in the <code>X-Api-Info-Location</code> header of every API call. A service dashboard can discover this URL from the broker, which activates the dashboard
+to contact the appropriate UAA for a particular service instance. Note, that although the Cloud Foundry API (CAPI) V2 is now deprecated, the Cloud Controller still communicates its /v2/info URL through this header. /v2/info is the sole CAPI V2 endpoint that continues to be served even where a Cloud Controller has been configured, through the CAPI bosh release, to deactivate the V2 API</p>
 
 A service dashboard must implement the OAuth Authorization Code Grant type ([UAA documentation](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC documentation](http://tools.ietf.org/html/rfc6749#section-4.1)).
 

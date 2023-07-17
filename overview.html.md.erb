@@ -144,9 +144,10 @@ For more information about running cf CLI tasks, see
 [Running Tasks](../devguide/using-tasks.html).
 <% end %>
 
-<p class="note"><strong>Note:</strong> To run tasks with the cf CLI, you must install cf CLI v6.23.0 or later. For information about downloading, installing, and uninstalling the cf CLI, see <%= vars.cli_install_link %>.</p>
+<p> To run tasks with the cf CLI, you must install cf CLI v6.23.0 or later. For information about downloading, installing, and uninstalling
+the cf CLI, see <%= vars.cli_install_link %>.</p>
 
-To perform a database schema migration with the cf CLI:
+To run a database schema migration with the cf CLI:
 
 1. Push the app:
 
@@ -154,9 +155,10 @@ To perform a database schema migration with the cf CLI:
 
     Where `APP-NAME` is the name of the app.
 
-    <p class="note"><strong>Note:</strong> To run a task without starting the app, push the app with <code>cf push -i 0</code> and then run the task. You can run the app later by scaling up its instance count.</p>
+    <p> To run a task without starting the app, you can push the app with <code>cf push -i 0</code> and then run the task. You can run the app later
+    by scaling up the instance count.</p>
 
-1. Perform a database schema migration as a task on the app:
+1. Run database schema migration as a task on the app:
 
     <pre class="terminal">
     $ cf run-task APP-NAME --command "bin/rails db:migrate" --name TASK-NAME

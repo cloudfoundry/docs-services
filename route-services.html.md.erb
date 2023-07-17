@@ -14,8 +14,7 @@ For information about consuming these services, see
 <% end %>
 
 <% if vars.platform_code == 'CF' %>
-<p class="note">
-  <strong>Note</strong>&#58; Route services require Diego. Your deployment must use the Diego architecture or you must enable Diego for your app.
+<p> Route services require Diego. Your deployment must use the Diego architecture or you must enable Diego for your app.
 </p>
 <% end %>
 
@@ -31,8 +30,7 @@ offer these services with a familiar, automated,
 self-service, and on-demand user experience.
 
 <% if vars.platform_code != 'CF' %>
-<p class="note">
-  <strong>Note:</strong> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
+<p> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
   You can also manage route services using Apps Manager.
   For more information, see the
   <% if vars.guide_name == 'Tile Developer' %>
@@ -220,8 +218,7 @@ properties
     route_services_secret: YOUR-SECRET-PASSPHRASE
 ```
 
-<p class="note">
-  <strong>Note:</strong> The <code>route_services_secret</code> property can
+<p> The <code>route_services_secret</code> property can
   be a robust passphrase.
   For more information, see the
   <a href="https://github.com/cloudfoundry-incubator/routing-release/blob/master/jobs/gorouter/spec">Gorouter spec</a>
@@ -316,7 +313,7 @@ route service but to the app. The headers must NOT be sent in the
 HTTP response to the GoRouter, only in the new HTTP request to the
 GoRouter.
 
-<p class="note"><strong>Note:</strong> The <code>X-CF-Proxy-Signature</code> header is
+<p> The <code>X-CF-Proxy-Signature</code> header is
 an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
 token can bypass the route service. Do not share your your <code>X-CF-Proxy-Signature</code>
 token with anyone.

@@ -3,7 +3,7 @@ title: Offering route services
 owner: Core Services
 ---
 
-This topic tells you about how to offer a service to a <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) services
+You can offer a service to a <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) services
 marketplace.
 
 For information about consuming these services, see
@@ -21,7 +21,9 @@ For information about consuming these services, see
 <%= vars.app_runtime_abbr %> app developers might want to apply
 transformation or processing to requests before they reach an
 app. Common examples of use cases include authentication, rate
-limiting, and caching services. Route services are a kind of
+limiting, and caching services.
+
+Route services are a kind of
 Marketplace service that you can use to apply various
 transformations to app requests by binding an app's route to a service
 instance. Through integrations with service brokers and, optionally,
@@ -47,9 +49,9 @@ self-service, and on-demand user experience.
 <%= vars.app_runtime_abbr %> supports the following models for
 route services:
 
-* [Fully-brokered services](#fully-brokered)
-* [Static, brokered services](#static-brokered)
-* [User-provided services](#user-provided)
+* [Fully-brokered services](#fully-brokered).
+* [Static, brokered services](#static-brokered).
+* [User-provided services](#user-provided).
 
 In each model, you configure a route service to process traffic
 addressed to an app.
@@ -59,8 +61,9 @@ addressed to an app.
 In the fully-brokered service model, the <%= vars.app_runtime_abbr %>
 router receives all traffic to apps in the deployment before any
 processing by the route service. You can bind a route service
-to any app, and if an app is bound to a route service, the <%= vars.app_runtime_abbr %> router sends its traffic to the
-service. After the route service processes requests, it sends them
+to any app, and if an app is bound to a route service, the <%= vars.app_runtime_abbr %> router sends
+the traffic to the
+service. After the route service processes requests, it sends it
 back to the load balancer in front of the <%= vars.app_runtime_abbr %>
 router. The second time through, the <%= vars.app_runtime_abbr %>
 router recognizes that the route service has already handled them, and
@@ -68,11 +71,16 @@ forwards them directly to app instances.
 
 ![alt-text="Fully brokered service model"](./images/route-services-fully-brokered.png)
 
-The route service can run inside or outside of <%= vars.app_runtime_abbr %>, so long as it fulfills the [Service Instance
+The route service can run inside or outside of <%= vars.app_runtime_abbr %>, as long as it
+fulfills the [Service Instance
 Responsibilities](#service-instance-responsibilities) to integrate it
-with the <%= vars.app_runtime_abbr %> router. A service broker
+with the <%= vars.app_runtime_abbr %> router.
+
+A service broker
 publishes the route service to the <%= vars.app_runtime_abbr %>
-marketplace, and makes it available to developers. You can then
+marketplace, and makes it available to developers.
+
+You can then
 create an instance of the service and bind it to your apps with the
 following commands:
 
@@ -111,10 +119,12 @@ route service processes traffic to specific apps.
 
 In the static brokered service model, an operator installs a static
 routing service, which might be a piece of hardware, in front of the
-load balancer. The routing service runs outside of <%= vars.app_runtime_abbr %> and receives traffic to all apps running in
+load balancer. The routing service runs outside of <%= vars.app_runtime_abbr %> and receives traffic
+to all apps running in
 the <%= vars.app_runtime_abbr %> deployment. The service provider
-creates a service broker to publish the service to the <%= vars.app_runtime_abbr %> marketplace. As with a fully-brokered
-service, a developer can use the service by instantiating it with `cf
+creates a service broker to publish the service to the <%= vars.app_runtime_abbr %> marketplace.
+As with a fully-brokered
+service, you can use the service by instantiating it with `cf
 create-service` and binding it to an app with `cf bind-route-service`.
 
 ![alt-text="Static brokered service model."](./images/route-services-static-brokered.png)
@@ -151,8 +161,11 @@ also needs to be reachable by an outbound connection from the <%= vars.app_runti
 
 This model is identical to the fully brokered service model, except
 without the broker. You can configure the service manually, outside
-of <%= vars.app_runtime_abbr %>. You can then create a user provided
-service instance and bind it to your app with the following commands,that supply the URL of their route service:
+of <%= vars.app_runtime_abbr %>.
+
+You can then create a user provided
+service instance and bind it to your app with the following commands,that supply the URL of their route
+service:
 
 ```console
 cf create-user-provided-service SERVICE-INSTANCE -r ROUTE-SERVICE-URL
@@ -206,7 +219,7 @@ responsibilities summarized in the following table:
 
 ## <a id='enabling-route-services-in-cloudfoundry'></a>Enabling route services in Cloud Foundry
 
-To begin support for route services in a Cloud Foundry deployment, the operator
+To begin support for route services in a Cloud Foundry deployment, you
 must provide a passphrase used by the Gorouter to encrypt a header that is sent with
 the request to the route service.
 The Gorouter uses this header to validate the request sent by the route service to the app route.
@@ -219,8 +232,9 @@ properties
 ```
 
 <p> The <code>route_services_secret</code> property can
-  be a robust passphrase.
-  For more information, see the
+  be a robust passphrase.</p>
+
+  <p>For more information, see the
   <a href="https://github.com/cloudfoundry-incubator/routing-release/blob/master/jobs/gorouter/spec">Gorouter spec</a>
   in the cf-release repository on GitHub.
 </p>

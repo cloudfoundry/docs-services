@@ -1,9 +1,9 @@
 ---
-title: Service Instance sharing in Cloud Foundry
+title: Service Instance sharing
 owner: Core Services
 ---
 
-You can allow instances of your services to be shared across spaces and orgs within Cloud Foundry.
+You can allow instances of your services to be shared across spaces and orgs within TAS for VMs.
 This allows apps running in different spaces and orgs to use the same service instance.
 
 If you have Space Developer permissions in the space where the service instance was created, you are responsible
@@ -11,7 +11,7 @@ for sharing, unsharing, updating, and deleting the service instance.
 
 For more information about the developer and administrator tasks related to service instance sharing, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Sharing Service Instances](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/<%= vars.current_major_version %>/tas-for-vms/services-sharing-instances.html).
+[Sharing Service Instances](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/4.0/tas-for-vms/services-sharing-instances.html).
 <% else %>
 [Sharing Service Instances](../devguide/services/sharing-instances.html).
 <% end %>
@@ -24,7 +24,7 @@ This allows service instances, of any service plan, to be shared across orgs and
 The `"shareable"` flag must be set to `true` in the service-level metadata to activate service
 instance sharing. If the flag is set to `false` or is absent, sharing is deactivated.
 
-An example catalog is shown below:
+This is an example catalog:
 
 ```
 {

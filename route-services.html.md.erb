@@ -523,13 +523,13 @@ For increased security, follow these recommendations:
   encrypted or not. Set the `router.sanitize_forwarded_proto: true`
   manifest property for the Gorouter.
 
-<% if vars.platform_code == 'CF' %>
+<% if vars.platform_code == "CF" %>
   For more information about
   securing traffic into <%= vars.app_runtime_abbr %>, see [Securing
   Traffic into <%= vars.app_runtime_abbr %>](../adminguide/securing-traffic.html).
 <% end %>
 
-<% if vars.platform_code == 'PCF' %>
+<% if vars.platform_code == "PCF" %>
   For more information about
   securing traffic into <%= vars.app_runtime_abbr %>, see [Securing
   Traffic into <%= vars.app_runtime_abbr %>](../adminguide/securing-traffic.html).

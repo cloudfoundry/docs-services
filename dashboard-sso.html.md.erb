@@ -91,7 +91,7 @@ $ curl api.example.com/info
 service brokers in the <code>X-Api-Info-Location</code> header of every API call. A service dashboard can discover this URL from the broker, which activates the dashboard
 to contact the appropriate UAA for a particular service instance. Although the Cloud Foundry API (CAPI) V2 is now deprecated, the Cloud Controller still communicates its /v2/info URL through this header. /v2/info is the sole CAPI V2 endpoint that continues to be served even where a Cloud Controller has been configured, through the CAPI bosh release, to deactivate the V2 API</p>
 
-A service dashboard must implement the OAuth Authorization Code Grant type ([UAA documentation](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC documentation](http://tools.ietf.org/html/rfc6749#section-4.1)).
+A service dashboard must implement the OAuth Authorization Code Grant type [UAA documentation](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC documentation](http://tools.ietf.org/html/rfc6749#section-4.1).
 
 1. When you visit the service dashboard at the value of `dashboard_url`, the dashboard redirects you to a browser for the Authorization Endpoint and includes `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and a list of requested scopes.
 
@@ -170,7 +170,9 @@ Dashboards with extended capabilities might need to request the following additi
 
 The [MySQL Service Broker][example-broker] is an example of a broker that implements a SSO dashboard.
 
-The login flow is implemented using the [OmniAuth library](https://github.com/intridea/omniauth) and a custom [UAA OmniAuth Strategy](https://github.com/cloudfoundry/omniauth-uaa-oauth2). See the [OmniAuth wiki page](https://github.com/intridea/omniauth/wiki/Strategy-Contribution-Guide) for instructions on how to create your own strategy.
+The login flow is implemented using the [OmniAuth library](https://github.com/intridea/omniauth) and a custom [UAA OmniAuth Strategy](https://github.com/cloudfoundry/omniauth-uaa-oauth2).
+
+See the [OmniAuth wiki page](https://github.com/intridea/omniauth/wiki/Strategy-Contribution-Guide) for instructions on how to create your own strategy.
 
 The UAA OmniAuth strategy is used to get an authorization code.
 

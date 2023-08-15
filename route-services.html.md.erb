@@ -4,7 +4,7 @@ owner: Core Services
 ---
 
 You can offer a service to a <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) services
-marketplace.
+Marketplace.
 
 For information about consuming these services, see
 <% if vars.guide_name == 'Tile Developer' %>
@@ -14,8 +14,7 @@ For information about consuming these services, see
 <% end %>
 
 <% if vars.platform_code == 'CF' %>
-<p class="note">
-  <strong>Note</strong>&#58; Route services require Diego. Your deployment must use the Diego architecture or you must enable Diego for your app.
+<p> Route services require Diego. Your deployment must use the Diego architecture or you must enable Diego for your app.
 </p>
 <% end %>
 
@@ -33,8 +32,7 @@ offer these services to developers with a familiar, automated,
 self-service, and on-demand user experience.
 
 <% if vars.platform_code != 'CF' && vars.guide_name == 'Tile Developer' %>
-<p class="note">
-  <strong>Note:</strong> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
+<p> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
   You can also manage route services using Apps Manager.
   For more information, see the
   <a href="https://docs.vmware.com/en/Tile-Developer-Guide/2.10/tile-dev-guide/route-services.html">Route Services</a>
@@ -43,8 +41,7 @@ self-service, and on-demand user experience.
 <% end %>
 
 <% if vars.platform_code != 'CF' && vars.guide_name != 'Tile Developer' %>
-<p class="note">
-  <strong>Note:</strong> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
+<p> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
   You can also manage route services using Apps Manager.
   For more information, see the
   <a href="../console/manage-apps.html#manage-route-services">Manage Route Services</a>
@@ -204,7 +201,7 @@ cf bind-route-service DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME]
 
 ### <a name="architecture-comparison"></a> Architecture comparison
 
-The models above require the broker and service instance
+The previous models require the broker and service instance
 responsibilities summarized in the following table:
 
 <table id='architecture-comparison' border="1" class="nice" >
@@ -297,8 +294,6 @@ well as the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers used
 by the router to validate that the route-service sent the
 request. These headers are described in the [Headers](#headers) section, below.
 
-
-
 ### <a name='service-instance-responsibilities'></a> Service instance responsibilities
 
 The route service must handle requests by either:
@@ -341,7 +336,7 @@ route service but to the app. The headers should NOT be sent in the
 HTTP reponse to the GoRouter, only in the new HTTP request to the
 GoRouter.
 
-<p class="note"><strong>Note:</strong> The <code>X-CF-Proxy-Signature</code> header is
+<p> The <code>X-CF-Proxy-Signature</code> header is
 an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
 token can bypass the route service. Treat this token as a secret that
 cannot be shared with anyone.
@@ -421,7 +416,7 @@ For more information about bind requests, see the
 - [Logging Route
   Service](https://github.com/cloudfoundry-samples/logging-route-service):
   This route service can be pushed as an app to <%= vars.app_runtime_abbr %>. It fulfills the service instance
-  responsibilities above and logs requests received and sent. It can
+  responsibilities noted previously and logs requests received and sent. It can
   be used to see the route service integration in action by tailing
   its logs.
 
@@ -500,7 +495,8 @@ that the request is forwarded to it by running:
 ## <a name='security-considerations'></a> Security considerations
 
 The contract between route services and the Gorouter, applicable for
-fully-brokered and user-provided models, enables a <%= vars.app_runtime_abbr %> operator to suggest whether or not requests
+fully brokered and user-provided models, activates a <%= vars.app_runtime_abbr %> operator to suggest
+whether or not requests
 forwarded from the route service to a load balancer are encrypted. The
 <%= vars.app_runtime_abbr %> operator makes this suggestion by setting
 the `router.route_services_recommend_https` manifest property.

@@ -4,7 +4,7 @@ owner: Core Services
 ---
 
 You can offer a service to a <%= vars.app_runtime_full %> (<%= vars.app_runtime_abbr %>) services
-marketplace.
+Marketplace.
 
 For information about consuming these services, see <%= vars.route_services_link %>.
 
@@ -423,7 +423,8 @@ that the request is forwarded to it by running:
 ## <a name='security-considerations'></a> Security considerations
 
 The contract between route services and the Gorouter, applicable for
-fully brokered and user-provided models, activates a <%= vars.app_runtime_abbr %> operator to suggest whether or not requests
+fully brokered and user-provided models, activates a <%= vars.app_runtime_abbr %> operator to suggest
+whether or not requests
 forwarded from the route service to a load balancer are encrypted. The
 <%= vars.app_runtime_abbr %> operator makes this suggestion by setting
 the `router.route_services_recommend_https` manifest property.

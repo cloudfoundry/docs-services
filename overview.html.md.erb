@@ -15,11 +15,11 @@ For a service to be available in the Marketplace, an operator must integrate the
 
 <% if vars.guide_name == 'Tile Developer' %>
 For more information about provisioning service instances and other life cycle operations, see
-[Managing Service Instances](https://docs.pivotal.io/application-service/3-0/devguide/services/managing-services.html).
+[Managing Service Instances]().
 
 <%= vars.app_runtime_abbr %> enables users to use services that are not available
 in the Marketplace using user-provided service instances (UPSI).
-For more information, see [User-Provided Service Instances](https://docs.pivotal.io/application-service/3-0/devguide/services/user-provided.html).
+For more information, see [User-Provided Service Instances](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/services-user-provided.html).
 <% else %>
 For more information about provisioning service instances and other life cycle operations, see
 [Managing Service Instances](../devguide/services/managing-services.html).
@@ -56,7 +56,7 @@ What a broker does with each call can vary between services. In general, 'provis
 Service instance credentials can be delivered to apps running on
 <%= vars.app_runtime_abbr %> in an environment variable. For more information, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Delivering Service Credentials to an App](https://docs.pivotal.io/application-service/3-0/devguide/services/application-binding.html).
+[Delivering Service Credentials to an App](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/services-application-binding.html).
 <% else %>
 [Delivering Service Credentials to an App](../devguide/services/application-binding.html).
 <% end %>
@@ -69,8 +69,8 @@ Credentials managed manually are known as service keys. Use service keys when yo
 
 <% if vars.guide_name == 'Tile Developer' %>
 For more information about creating a user-provided service instance with service keys,
-see the [User-Provided Service Instances](https://docs.pivotal.io/application-service/3-0/devguide/services/user-provided.html) topic.
-For more information about service keys, see the [Managing Service Keys](https://docs.pivotal.io/application-service/3-0/devguide/services/service-keys.html) topic.
+see [User-Provided Service Instances](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/services-user-provided.html).
+For more information about service keys, see [Managing Service Keys](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/services-service-keys.html).
 <% else %>
 For more information about creating a user-provided service instance with service keys,
 see the [User-Provided Service Instances](../devguide/services/user-provided.html) topic.
@@ -106,7 +106,7 @@ In your external service configuration, you must do one of the following:
 
 To learn how your app logs can be streamed to third-party log management services, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Streaming App Logs to Log Management Services](https://docs.pivotal.io/application-service/3-0/devguide/services/log-management.html).
+[Streaming App Logs to Log Management Services](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/services-log-management.html).
 <% else %>
 [Streaming App Logs to Log Management Services](../devguide/services/log-management.html).
 <% end %>
@@ -115,7 +115,7 @@ User provided service instances can be used to drain app logs to a service not a
 This is also known as setting up a syslog drain.
 For guidance on configuring some third party log management services, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Service-Specific Instructions for Streaming App Logs](https://docs.pivotal.io/application-service/3-0/devguide/services/log-management-thirdparty-svc.html).
+[Service-Specific Instructions for Streaming App Logs](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/services-log-management-thirdparty-svc.html).
 <% else %>
 [Service-Specific Instructions for Streaming App Logs](../devguide/services/log-management-thirdparty-svc.html).
 <% end %>
@@ -126,7 +126,7 @@ For guidance on configuring some third party log management services, see
 To learn how Marketplace services (and user-provided service instances) can be
 used to perform preprocessing on app requests, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Managing App Requests with Route Services](https://docs.pivotal.io/application-service/3-0/devguide/services/route-binding.html).
+[Managing App Requests with Route Services](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/services-route-binding.html).
 <% else %>
 [Managing App Requests with Route Services](../devguide/services/route-binding.html).
 <% end %>
@@ -137,7 +137,7 @@ If your app relies on a relational database, you must apply schema changes perio
 
 For more information about running cf CLI tasks, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Running Tasks](https://docs.pivotal.io/application-service/3-0/devguide/using-tasks.html).
+[Running Tasks](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/3.0/tas-for-vms/using-tasks.html).
 <% else %>
 [Running Tasks](../devguide/using-tasks.html).
 <% end %>

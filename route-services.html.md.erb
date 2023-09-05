@@ -221,60 +221,6 @@ responsibilities summarized in the following table:
   </tr>
 </table>
 
-<% if vars.platform_code == 'CF' %>
-
-## <a id='enabling-route-services-in-cloudfoundry'></a>Enabling route services in Cloud Foundry
-
-To begin support for route services in a Cloud Foundry deployment, you
-must provide a passphrase used by the Gorouter to encrypt a header that is sent with
-the request to the route service.
-The Gorouter uses this header to validate the request sent by the route service to the app route.
-The passphrase is configured in the cf-release manifest.
-
-```
-properties
-  router:
-    route_services_secret: YOUR-SECRET-PASSPHRASE
-```
-
-<p> The <code>route_services_secret</code> property can
-  be a robust passphrase.</p>
-
-  <p>For more information, see the
-  <a href="https://github.com/cloudfoundry-incubator/routing-release/blob/master/jobs/gorouter/spec">Gorouter spec</a>
-  in the cf-release repository on GitHub.
-</p>
-
-Route service instances should send requests to the value of <code>x-cf-forwarded-url</code>, obeying the scheme.
-The scheme is <code>https</code> by default.
-For environments that do not support TLS termination, this property can be set to false.
-
-```
-properties:
-  router:
-    route_services_recommend_https: true
-```
-
-The Gorouter only forwards requests to route services over SSL.
-By default, certificates provided by route services must be signed by a trusted CA.
-If they are not, the Gorouter rejects the request.
-In development environments, this concern may be unreasonable.
-To disable SSL certificate validation, modify the following property:
-
-```
-properties:
-  router:
-    ssl_skip_validation: true
-```
-
-<% else %>
-
-## <a id='enabling-route-services'></a>Enabling route services in <%= vars.app_runtime_abbr %>
-
-You configure Route Services for your deployment in the <%= vars.app_runtime_abbr %> tile, in the **Networking** pane.
-
-<% end %>
-
 ## <a name='service-instance'></a> Service instance
 
 The following applies only when a broker returns `route_service_url`

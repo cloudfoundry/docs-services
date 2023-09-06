@@ -78,7 +78,7 @@ forwards them directly to app instances.
 
 The route service can run inside or outside of <%= vars.app_runtime_abbr %>, as long as it
 fulfills the [Service Instance
-Responsibilities](#service-instance-responsibilities) to integrate it
+responsibilities](#service-instance-responsibilities) to integrate it
 with the <%= vars.app_runtime_abbr %> router.
 
 A service broker
@@ -159,7 +159,7 @@ marketplace by a broker, a developer can still bind it to their app as
 a user-provided service. The service can run anywhere, either inside
 or outside of <%= vars.app_runtime_abbr %>, but it must fulfill the
 integration requirements described in [Service Instance
-Responsibilities](#service-instance-responsibilities). The service
+responsibilities](#service-instance-responsibilities). The service
 also needs to be reachable by an outbound connection from the <%= vars.app_runtime_abbr %> router.
 
 This model is identical to the fully brokered service model, except
@@ -226,7 +226,7 @@ responsibilities summarized in the following table:
 
 ## <a name='service-instance'></a> Service instance
 
-The following applies only when a broker returns `route_service_url`
+The following information applies only when a broker returns `route_service_url`
 in the bind response.
 
 Binding a service instance to a route associates the

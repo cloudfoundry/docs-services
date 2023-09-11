@@ -227,7 +227,7 @@ responsibilities summarized in the following table:
 ## <a name='service-instance'></a> Service instance
 
 The following information applies only when a broker returns `route_service_url`
-in the bind response.
+in a bind response.
 
 Binding a service instance to a route associates the
 `route_service_url` with the route in the <%= vars.app_runtime_abbr %>
@@ -282,11 +282,10 @@ route service but to the app. The headers should NOT be sent in the
 HTTP reponse to the GoRouter, only in the new HTTP request to the
 GoRouter.
 
-<p> The <code>X-CF-Proxy-Signature</code> header is
+The <code>X-CF-Proxy-Signature</code> header is
 an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
-token can bypass the route service. Treat this token as a secret that
-cannot be shared with anyone.
-</p>
+token can bypass the route service. Do not share your your <code>X-CF-Proxy-Signature</code>
+token with anyone.
 
 CF-hosted Route Services cannot be chained: If the route service
 forwards the request to a URL which resolves to a route for a
@@ -372,9 +371,8 @@ For more information about bind requests, see the
   app that provides rate limiting to control the rate of traffic to an
   app.
 
-- [Various Spring Boot
+* [Various Spring Boot]
   examples](https://github.com/in28minutes/spring-boot-examples).
-
 
 ## <a name='tutorial'></a> Tutorial
 
@@ -449,8 +447,7 @@ the `router.route_services_recommend_https` manifest property.
 
 This suggestion does not allow the platform to guarantee that a route
 service obeys the scheme of the `X-Forwarded-Url` header. If a route
-service ignores the scheme and downgrades the request to plain text, a
-malicious actor can intercept the request and use or modify the data
+service ignores the scheme and downgrades the request to plain text, the requester can intercept, and use or edit the data
 within it.
 
 For increased security, follow these recommendations:

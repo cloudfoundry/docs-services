@@ -88,11 +88,10 @@ $ curl api.example.com/info
 "allow_debug":true}
 ```
 
-<p> To activate service dashboards to support SSO for service instances created from different <%= vars.app_runtime_abbr %> instances, the /v2/info url is sent to
-service brokers in the <code>X-Api-Info-Location</code> header of every API call. A service dashboard can discover this URL from the broker, which activates the dashboard
-to contact the appropriate UAA for a particular service instance. Although the Cloud Foundry API (CAPI) V2 is now deprecated, the Cloud Controller still communicates its /v2/info URL through this header. /v2/info is the sole CAPI V2 endpoint that continues to be served even where a Cloud Controller has been configured, through the CAPI bosh release, to deactivate the V2 API</p>
+To activate service dashboards to support SSO for service instances created from different <%= vars.app_runtime_abbr %> instances, the /v2/info url is sent to service brokers in the <code>X-Api-Info-Location</code> header of every API call.
 
-A service dashboard must implement the OAuth Authorization Code Grant type [UAA documentation](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC documentation](http://tools.ietf.org/html/rfc6749#section-4.1).
+A service dashboard can discover this URL from the broker, which activates the dashboard
+to contact the appropriate UAA for a particular service instance. Although the Cloud Foundry API (CAPI) V2 is now deprecated, the Cloud Controller still communicates its /v2/info URL through this header. /v2/info is the sole CAPI V2 endpoint that continues to be served even where a Cloud Controller has been configured, through the CAPI bosh release, to deactivate the V2 API</p>A service dashboard must implement the OAuth Authorization Code Grant type [UAA documentation](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant), [RFC documentation](http://tools.ietf.org/html/rfc6749#section-4.1).
 
 1. When you visit the service dashboard at the value of `dashboard_url`, the dashboard redirects you to a browser for the Authorization Endpoint and includes `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and a list of requested scopes.
 
@@ -192,6 +191,6 @@ For more information, see [Auth Controller](https://github.com/cloudfoundry/cf-m
 
 * [OAuth](http://oauth.net/2/)
 * [Example broker with SSO implementation](https://github.com/cloudfoundry/cf-mysql-broker)
-* [Cloud Controller API docs](https://v3-apidocs.cloudfoundry.org/version/3.137.0/index.html)
+* [Cloud Controller API docs](https://v3-apidocs.cloudfoundry.org/version/3.147.0/#introduction)
 * [User Account and Authentication (UAA) Service APIs](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst)
 * [Example-broker](https://github.com/cloudfoundry/cf-mysql-broker)

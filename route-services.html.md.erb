@@ -321,7 +321,7 @@ route service but to the app. The headers should NOT be sent in the
 HTTP reponse to the GoRouter, only in the new HTTP request to the
 GoRouter.
 
-<p class="note"><strong>Note:</strong> The <code>X-CF-Proxy-Signature</code> header is
+<p> The <code>X-CF-Proxy-Signature</code> header is
 an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
 token can bypass the route service. Treat this token as a secret that
 cannot be shared with anyone.
@@ -413,15 +413,13 @@ For more information about bind requests, see the
   app that provides rate limiting to control the rate of traffic to an
   app.
 
-- [Various Spring Boot
-  examples](https://github.com/in28minutes/spring-boot-examples).
-
+* [Spring Boot examples]
+  (https://github.com/in28minutes/spring-boot-examples).
 
 ## <a name='tutorial'></a> Tutorial
 
-The following instructions show how to use the [Logging Route
-Service](https://github.com/cloudfoundry-samples/logging-route-service)
-described in [Example Route Services](#examples) to verify that when a
+The following instructions show how to use the Logging Route
+Service described in [Route Services examples](#examples) to verify that when a
 route service is bound to a route, requests for that route are proxied
 to the route service.
 

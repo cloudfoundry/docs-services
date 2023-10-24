@@ -31,7 +31,18 @@ with the <%= vars.app_runtime_abbr %> routing tier, providers can
 offer these services with a familiar, automated,
 self-service, and on-demand user experience.
 
-<%= vars.route_services_apps_manager %>
+<% if vars.platform_code != 'CF' %>
+<p> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
+  You can also manage route services using Apps Manager.
+  For more information, see the
+  <% if vars.guide_name == 'Tile Developer' %>
+  <a href="https://docs.vmware.com/en/Tile-Developer-Guide/3.0/tile-dev-guide/route-services.html">Route Services</a>
+  <% else %>
+  <a href="../console/manage-apps.html#manage-route-services">Manage Route Services</a>
+  <% end %>
+  section of the <em>Managing Apps and Service Instances Using Apps Manager</em> topic.
+</p>
+<% end %>
 
 ## <a name='architecture'></a> Architecture
 

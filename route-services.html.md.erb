@@ -201,12 +201,13 @@ cf bind-route-service DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME]
 The models above require the broker and service instance
 responsibilities summarized in the following table:
 
-<table id='architecture-comparison' border="1" class="nice" >
+<table class=“table”>
+<thead>
   <tr>
     <th>Route Services Architecture</th>
     <th>Fulfills <%= vars.app_runtime_abbr %> <a href="#service-instance-responsibilities">Service Instance Responsibilities</a></th>
     <th>Fulfills <%= vars.app_runtime_abbr %> <a href="#broker-responsibilities">Broker Responsibilities</a></th>
-  </tr><tr>
+  </tr></thead><tr>
     <td>Fully-Brokered</td>
     <td>Yes</td>
     <td>Yes</td>

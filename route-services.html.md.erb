@@ -14,9 +14,8 @@ For information about consuming these services, see
 <% end %>
 
 <% if vars.platform_code == 'CF' %>
-<p> Route services require Diego.
+Route services require Diego.
 Your deployment must use the Diego architecture or you must enable Diego for your app.
-</p>
 <% end %>
 
 <%= vars.app_runtime_abbr %> app developers might want to apply
@@ -71,7 +70,7 @@ router. The second time through, the <%= vars.app_runtime_abbr %>
 router recognizes that the route service has already handled them, and
 forwards them directly to app instances.
 
-![Fully brokered](images/route-services-fully-brokered.png)
+![alt-text=""](images/route-services-fully-brokered.png)
 
 The route service can run inside or outside of <%= vars.app_runtime_abbr %>, as long as it
 fulfills the [Service Instance
@@ -129,7 +128,7 @@ As with a fully-brokered
 service, you can use the service by instantiating it with `cf
 create-service` and binding it to an app with `cf bind-route-service`.
 
-![Static, brokered](images/route-services-static-brokered.png)
+![alt-text=""](images/route-services-static-brokered.png)
 
 In this model, you configure route services on an app-by-app
 basis. When you bind a service to an app, the service broker directs
@@ -203,19 +202,19 @@ responsibilities summarized in the following table:
 
 <table id='architecture-comparison' border="1" class="nice" >
   <tr>
-    <th>Route Services Architecture</th>
-    <th>Fulfills <%= vars.app_runtime_abbr %> <a href="#service-instance-responsibilities">Service Instance Responsibilities</a></th>
-    <th>Fulfills <%= vars.app_runtime_abbr %> <a href="#broker-responsibilities">Broker Responsibilities</a></th>
+    <th>Route Services architecture</th>
+    <th>Fulfills <%= vars.app_runtime_abbr %> <a href="#service-instance-responsibilities">service instance responsibilities</a></th>
+    <th>Fulfills <%= vars.app_runtime_abbr %> <a href="#broker-responsibilities">broker responsibilities</a></th>
   </tr><tr>
-    <td>Fully-Brokered</td>
+    <td>Fully-brokered</td>
     <td>Yes</td>
     <td>Yes</td>
   </tr><tr>
-    <td>Static Brokered</td>
+    <td>Static-brokered</td>
     <td>No</td>
     <td>Yes</td>
   </tr><tr>
-    <td>User-Provided</td>
+    <td>User-provided</td>
     <td>Yes</td>
     <td>No</td>
   </tr>
@@ -236,8 +235,6 @@ containing the originally requested URL, as
 well as the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers used
 by the router to validate that the route-service sent the
 request. These headers are described in the [Headers](#headers) section, below.
-
-
 
 ### <a name='service-instance-responsibilities'></a> Service instance responsibilities
 

@@ -178,11 +178,13 @@ When <%= vars.platform_name %> fetches a catalog from a broker, and compares the
 broker's id for services and plans with the `unique_id` values for services and
 plans in the Cloud Controller database.
 
-<table>
+<table class=“table”>
+<thead>
   <tr>
     <th>Event</th>
     <th>Action</th>
   </tr>
+  </thead>
    <tr>
     <td>The catalog fails to load or validate.</td>
     <td><%= vars.platform_name %> returns a meaningful error that the broker could not be reached or the catalog was not valid.</td>

@@ -369,8 +369,7 @@ For more information about bind requests, see the
   app that provides rate limiting to control the rate of traffic to an
   app.
 
-* [Spring Boot examples]
-  (https://github.com/in28minutes/spring-boot-examples).
+* [Spring Boot examples](https://github.com/in28minutes/spring-boot-examples).
 
 ## <a name='tutorial'></a> Tutorial
 
@@ -399,9 +398,9 @@ to use `https` for the scheme.
 
 Run:
 
-    ```console
-    cf create-user-provided-service mylogger -r https://logger.cf.example.com
-    ```
+```console
+cf create-user-provided-service mylogger -r https://logger.cf.example.com
+```
 
 1. Push a sample app such as [Spring
 Music](https://github.com/cloudfoundry-samples/spring-music). By
@@ -409,9 +408,9 @@ default, this creates a route `spring-music.cf.example.com`.
 
 Run:
 
-    ```
-    cf push spring-music
-    ```
+```
+cf push spring-music
+```
 
 1. Bind the user provided service instance to the route of your sample
 app. The `bind-route-service` command takes a route and a service
@@ -422,9 +421,9 @@ The route is specified in the following example by domain
 
 Run:
 
-    ```console
-    cf bind-route-service cf.example.com mylogger --hostname spring-music
-    ```
+```console
+cf bind-route-service cf.example.com mylogger --hostname spring-music
+```
 
 1. Tail the logs for your route service by running:
 

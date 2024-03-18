@@ -74,7 +74,7 @@ router. The second time through, the <%= vars.app_runtime_abbr %>
 router recognizes that the route service has already handled them, and
 forwards them directly to app instances.
 
-![alt-text="Fully brokered service model"](./images/route-services-fully-brokered.png)
+![Fully brokered service model](./images/route-services-fully-brokered.png)
 
 The route service can run inside or outside of <%= vars.app_runtime_abbr %>, as long as it
 fulfills the [Service Instance
@@ -132,7 +132,7 @@ As with a fully-brokered
 service, you can use the service by instantiating it with `cf
 create-service` and binding it to an app with `cf bind-route-service`.
 
-![alt-text="Static brokered service model."](./images/route-services-static-brokered.png)
+![Static brokered service model.](./images/route-services-static-brokered.png)
 
 In this model, you configure route services on an app-by-app
 basis. When you bind a service to an app, the service broker directs
@@ -163,7 +163,7 @@ integration requirements described in [Service Instance
 responsibilities](#service-instance-responsibilities). The service
 also needs to be reachable by an outbound connection from the <%= vars.app_runtime_abbr %> router.
 
-![alt-text="Bound to your app as user provided service."](./images/route-services-user-provided.png)
+![Bound to your app as user provided service.](./images/route-services-user-provided.png)
 
 This model is identical to the fully brokered service model, except
 without the broker. You can configure the service manually, outside

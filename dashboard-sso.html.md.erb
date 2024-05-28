@@ -98,6 +98,8 @@ A service dashboard must implement the OAuth Authorization Code Grant type. See:
 * [UAA documentation](https://github.com/cloudfoundry/uaa/blob/master/docs/UAA-APIs.rst#authorization-code-grant)
 * [RFC documentation](http://tools.ietf.org/html/rfc6749#section-4.1)
 
+Here are the steps:
+
 1. When you visit the service dashboard at the value of `dashboard_url`, the dashboard redirects you to a browser for the Authorization Endpoint and includes `client_id`, a `redirect_uri` (callback URL with domain matching the value of `dashboard_client.redirect_uri`), and a list of requested scopes.
 
     Scopes are permissions that are included in the token for a dashboard client that are received from UAA. Cloud Controller uses scopes to enforce access. A client must request the minimum scopes it requires. The minimum scopes required for this workflow are:

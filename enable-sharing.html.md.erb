@@ -11,7 +11,7 @@ for sharing, unsharing, updating, and deleting the service instance.
 
 For more information about the developer and administrator tasks related to service instance sharing, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Sharing Service Instances](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/<%= vars.current_major_version %>/tas-for-vms/services-sharing-instances.html).
+[Sharing Service Instances](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/<%= vars.current_major_tas_version %>/tas-for-vms/services-sharing-instances.html).
 <% else %>
 [Sharing Service Instances](../devguide/services/sharing-instances.html).
 <% end %>
@@ -20,7 +20,7 @@ For more information about the developer and administrator tasks related to serv
 
 Service brokers must explicitly activate service instance sharing by setting a flag in their service-level
 metadata object.
-This allows service instances, of any service plan, to be shared across orgs and spaces.
+This allows service instances of any service plan to be shared across orgs and spaces.
 The `"shareable"` flag must be set to `true` in the service-level metadata to activate service
 instance sharing. If the flag is set to `false` or is absent, sharing is deactivated.
 
@@ -58,7 +58,7 @@ and `bind_resource.space_guid` represents the space of the app involved in the b
 You must consider the following before enabling service instance sharing:
 
 <% if vars.guide_name == 'Tile Developer' %>
-* [Service keys](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/<%= vars.current_major_version %>/tas-for-vms/services-service-keys.html)
+* [Service keys](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/<%= vars.current_major_tas_version %>/tas-for-vms/services-service-keys.html)
 <% else %>
 * [Service keys](../devguide/services/service-keys.html)
 <% end %>
@@ -76,7 +76,7 @@ originating space and only reads from any shared spaces.
 For more information,
 see [Binding Permissions Based on Instance Sharing](#binding-permissions).
 
-* You can generate unique credentials for each binding. This makes sure that
+* You can generate unique credentials for each binding. This ensures that
 developers can unshare a service instance at any time. Unsharing an instance
 deletes any service bindings and revokes access for those credentials.
 Unsharing an instance prevents unauthorized

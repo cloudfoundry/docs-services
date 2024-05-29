@@ -8,9 +8,9 @@ Marketplace.
 
 For information about consuming these services, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Route Services](https://docs.vmware.com/en/Tile-Developer-Guide/3.0/tile-dev-guide/route-services.html).
+[Managing apps and services using Apps Manager](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/manage-apps.html).
 <% else %>
-[Manage App Requests with Route Services](../devguide/services/route-binding.html).
+[Managing App Requests with Route Services](../devguide/services/route-binding.html).
 <% end %>
 
 <% if vars.platform_code == 'CF' %>
@@ -20,7 +20,7 @@ For information about consuming these services, see
 
 <%= vars.app_runtime_abbr %> app developers might want to apply
 transformation or processing to requests before they reach an
-app. Common examples of use cases include authentication, rate
+app. Common use cases include authentication, rate
 limiting, and caching services.
 
 Route services are a kind of
@@ -35,8 +35,8 @@ self-service, and on-demand user experience.
 <p> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
   You can also manage route services using Apps Manager.
   For more information, see the
-  <a href="https://docs.vmware.com/en/Tile-Developer-Guide/3.0/tile-dev-guide/route-services.html">Route Services</a>
-  section of the <em>Managing Apps and Service Instances Using Apps Manager</em> topic.
+  <a href="https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/manage-apps.html">Route Services</a>
+  section of the <em>Managing Apps and Service Instances using Apps Manager</em> topic.
 </p>
 <% end %>
 
@@ -52,11 +52,11 @@ self-service, and on-demand user experience.
 ## <a name='architecture'></a> Architecture
 
 <%= vars.app_runtime_abbr %> supports the following models for
-route services:
+route services, each of which is described in this topic:
 
-* [Fully-brokered services](#fully-brokered).
-* [Static, brokered services](#static-brokered).
-* [User-provided services](#user-provided).
+* [Fully-brokered services](#fully-brokered)
+* [Static, brokered services](#static-brokered)
+* [User-provided services](#user-provided)
 
 In each model, you configure a route service to process traffic
 addressed to an app.
@@ -91,15 +91,13 @@ following commands:
 
 ```console
 cf create-service BROKER-SERVICE-PLAN SERVICE-INSTANCE
-```
 
-```console
 cf bind-route-service YOUR-APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME] [--path PATH]
 ```
 
 You can configure the service either through the service provider web interface or by passing
 <% if vars.guide_name == 'Tile Developer' %>
-[arbitrary parameters](https://docs.vmware.com/en/Tile-Developer-Guide/3.0/tile-dev-guide/managed-index.html)
+[arbitrary parameters](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/6.0/tas-for-vms/services-managing-services.html#arbitrary-parameters)
 <% else %>
 [arbitrary parameters](../devguide/services/managing-services.html#arbitrary-params-create)
 <% end %>
@@ -107,7 +105,7 @@ to their `cf create-service` call through the `-c` flag.
 
 **Advantages:**
 
-* You can can use a Service Broker to dynamically configure how the
+* Developers can use a Service Broker to dynamically configure how the
 route service processes traffic to specific apps.
 
 * Adding route services requires no manual infrastructure
@@ -136,12 +134,12 @@ create-service` and binding it to an app with `cf bind-route-service`.
 
 In this model, you configure route services on an app-by-app
 basis. When you bind a service to an app, the service broker directs
-the routing service to process that app's traffic rather than pass the
+the routing service to process that app's traffic rather than passing the
 requests through unchanged.
 
 **Advantages:**
 
-* You can use a service broker to dynamically configure how the
+* Developers can use a service broker to dynamically configure how the
  route service processes traffic to specific apps.
 
 * Traffic to apps that use the route service takes fewer network hops.
@@ -159,13 +157,12 @@ If a route service is not listed in the <%= vars.app_runtime_abbr %>
 marketplace by a broker, you can still bind it to your app as
 a user provided service. The service can run anywhere, either inside
 or outside of <%= vars.app_runtime_abbr %>, but it must fulfill the
-integration requirements described in [Service Instance
-responsibilities](#service-instance-responsibilities). The service
-also needs to be reachable by an outbound connection from the <%= vars.app_runtime_abbr %> router.
+integration requirements described in [Service Instance responsibilities](#service-instance-responsibilities).
+The service also needs to be reachable by an outbound connection from the <%= vars.app_runtime_abbr %> router.
 
 ![Bound to your app as user provided service.](./images/route-services-user-provided.png)
 
-This model is identical to the fully brokered service model, except
+This model is identical to the fully-brokered service model, except
 without the broker. You can configure the service manually, outside
 of <%= vars.app_runtime_abbr %>.
 
@@ -175,9 +172,7 @@ service:
 
 ```console
 cf create-user-provided-service SERVICE-INSTANCE -r ROUTE-SERVICE-URL
-```
 
-```
 cf bind-route-service DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME]
 ```
 
@@ -205,8 +200,8 @@ responsibilities summarized in the following table:
 <thead>
   <tr>
     <th>Route Services Architecture</th>
-    <th>Fulfills <%= vars.app_runtime_abbr %> <a href="#service-instance-responsibilities">Service Instance Responsibilities</a></th>
-    <th>Fulfills <%= vars.app_runtime_abbr %> <a href="#broker-responsibilities">Broker Responsibilities</a></th>
+    <th>Fulfills <%= vars.app_runtime_abbr %> Service Instance Responsibilities (1)</th>
+    <th>Fulfills <%= vars.app_runtime_abbr %> Broker Responsibilities (2)</th>
   </tr></thead><tr>
     <td>Fully-Brokered</td>
     <td>Yes</td>
@@ -221,6 +216,10 @@ responsibilities summarized in the following table:
     <td>No</td>
   </tr>
 </table>
+1 - See <a href="#service-instance-responsibilities">Service Instance Responsibilities</a>
+
+2 - See <a href="#broker-responsibilities">Broker Responsibilities</a>
+
 
 ## <a name='service-instance'></a> Service instance
 
@@ -244,12 +243,12 @@ The route service must handle requests by either:
 
 * Accepting the request, making a new request to the original
   requested URL, or to another location, and then responding to the
-  original requestor.
-* Rejecting the request by responding with a non `2xx` HTTP status code.
+  original requestor
+* Rejecting the request by responding with a non-`2xx` HTTP status code
 
 When forwarding a request to the originally requested URL, the route
-service must forward the `X-CF-Forwarded-Url`, `X-CF-Proxy-Signature` and
-`X-CF-Proxy-Metadata` headers on the request or it is rejected.
+service must forward the `X-CF-Forwarded-Url`, `X-CF-Proxy-Signature`, and
+`X-CF-Proxy-Metadata` headers on the request. If it doesn't, it is rejected.
 When forwarding a request to a location other than the originally
 requested URL, the route service strips these headers.
 
@@ -292,7 +291,7 @@ a bound route service. Otherwise, the request is rejected as the
 requested URL does not match the one in the forwarded
 `X-CF-Proxy-Signature` header.
 
-##### X-CF-Proxy-Metadata
+#### X-CF-Proxy-Metadata
 
 The `X-CF-Proxy-Metadata` header aids in the encryption and
 description of `X-CF-Proxy-Signature`.

@@ -267,22 +267,17 @@ or to another.
 
 When the Gorouter receives a request with this header, it accepts
 and forwards the request to the app only if the URL of the request
-matches the one associated with the token, if the request was
+matches the one associated with the token, and the request was
 received on time. Otherwise, the request is rejected.
 
 `X-CF-Proxy-Signature` also signals to the Gorouter that a request has
 transited a route service. If this header is present, the Gorouter
-does not forward the request to a route service. The route-service
+does not forward the request to a route service. The route service
 needs to forward these headers in subsequent requests to the orignal
 requested URL, so that it knows not to send the request back to the
 route service but to the app. The headers must NOT be sent in the
 HTTP response to the GoRouter, only in the new HTTP request to the
 GoRouter.
-
-The <code>X-CF-Proxy-Signature</code> header is
-an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
-token can bypass the route service. Do not share your your <code>X-CF-Proxy-Signature</code>
-token with anyone.
 
 CF-hosted Route Services cannot be chained: If the route service
 forwards the request to a URL to resolve a route for a
@@ -290,6 +285,12 @@ different app on <%= vars.app_runtime_abbr %>, the route must not have
 a bound route service. Otherwise, the request is rejected as the
 requested URL does not match the one in the forwarded
 `X-CF-Proxy-Signature` header.
+
+>**Important**
+>The <code>X-CF-Proxy-Signature</code> header is
+>an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
+>token can bypass the route service. Do not share your your <code>X-CF-Proxy-Signature</code>
+>token with anyone.
 
 #### X-CF-Proxy-Metadata
 
@@ -311,15 +312,13 @@ certificate when integrating with a non-production deployment of <%= vars.app_ru
 
 Route services must forward the
 request to the app route within the number of seconds configured by
-the `router.route_service_timeout` property. The
-`router.route_service_timeout` property defaults to 60 seconds.
+the `router.route_service_timeout` property (defaults to 60 seconds).
 
 In addition, all requests must respond in the number of seconds
-configured by the `request_timeout_in_seconds` property. The
-`request_timeout_in_seconds` property default to 900 seconds.
+configured by the `request_timeout_in_seconds` property (defaults to 900 seconds).
 
 Timeouts are configurable for the router using the cf-release BOSH
-deployment manifest. For more information, see the [spec](https://github.com/cloudfoundry-incubator/routing-release/blob/master/jobs/gorouter/spec).
+deployment manifest. For more information, see the [spec](https://github.com/cloudfoundry/routing-release/blob/master/jobs/gorouter/spec).
 
 <% else %>
 
@@ -341,9 +340,9 @@ the service to a route.
 ### <a name='binding'></a> Binding endpoint
 
 When you bind a route to a service instance, <%= vars.app_runtime_abbr %> sends a bind request to the broker, including
-the route address with `bind_resource.route`. A route is an address
+the route address, with `bind_resource.route`. A route is an address
 used by clients to reach apps mapped to the route. The broker might
-return `route_service_url`, containing a URL where <%= vars.app_runtime_abbr %> proxy requests for the route. This URL
+return `route_service_url`, containing a URL where <%= vars.app_runtime_abbr %> proxies requests for the route. This URL
 must have an `https` scheme, or the Cloud Controller rejects the
 binding. `route_service_url` is optional, and not returning this field
 allows a broker to dynamically configure a network component already
@@ -351,19 +350,17 @@ in the request path for the route, requiring no change in the <%= vars.app_runti
 
 For more information about bind requests, see the
 [Binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding) section of the _Open Service Broker API
-(v2.13)_ spec on GitHub.
+(v2.13)_ specification on GitHub.
 
 ## <a name='examples'></a> Route services examples
 
-* [Logging Route
-  Service](https://github.com/cloudfoundry/cf-acceptance-tests/tree/release-candidate/assets/logging-route-service):
+* [Logging Route Service](https://github.com/cloudfoundry/cf-acceptance-tests/tree/release-candidate/assets/logging-route-service):
   This route service can be pushed as an app to <%= vars.app_runtime_abbr %>. It fulfills the service instance
   responsibilities and logs requests received and sent. It can
   be used to see the route service integration in action by tailing
   its logs.
 
-* [Rate Limiting Route
-  Service](https://github.com/cloudfoundry-samples/ratelimit-service):
+* [Rate Limiting Route Service](https://github.com/cloudfoundry-samples/ratelimit-service):
   This example route service is a simple <%= vars.app_runtime_abbr %>
   app that provides rate limiting to control the rate of traffic to an
   app.
@@ -395,34 +392,34 @@ To use the logging route service:
 the logging route service you pushed as `route_service_url`. Make sure
 to use `https` for the scheme.
 
-Run:
+    Run:
 
-```console
-cf create-user-provided-service mylogger -r https://logger.cf.example.com
-```
+    ```console
+    cf create-user-provided-service mylogger -r https://logger.cf.example.com
+    ```
 
 1. Push a sample app such as [Spring
 Music](https://github.com/cloudfoundry-samples/spring-music). By
 default, this creates a route `spring-music.cf.example.com`.
 
-Run:
+    Run:
 
-```
-cf push spring-music
-```
+    ```
+    cf push spring-music
+    ```
 
 1. Bind the user provided service instance to the route of your sample
 app. The `bind-route-service` command takes a route and a service
 instance.
 
-The route is specified in the following example by domain
-`cf.example.com` and hostname `spring-music`.
+    The route is specified in the following example by domain
+    `cf.example.com` and hostname `spring-music`.
 
-Run:
+    Run:
 
-```console
-cf bind-route-service cf.example.com mylogger --hostname spring-music
-```
+    ```console
+    cf bind-route-service cf.example.com mylogger --hostname spring-music
+    ```
 
 1. Tail the logs for your route service by running:
 
@@ -442,7 +439,7 @@ that the request is forwarded to it by running:
 ## <a name='security-considerations'></a> Security considerations
 
 The contract between route services and the Gorouter, applicable for
-fully brokered and user-provided models, activates a <%= vars.app_runtime_abbr %> operator to suggest
+fully-brokered and user-provided models, allows a <%= vars.app_runtime_abbr %> operator to suggest
 whether or not requests
 forwarded from the route service to a load balancer are encrypted. The
 <%= vars.app_runtime_abbr %> operator makes this suggestion by setting
@@ -450,7 +447,7 @@ the `router.route_services_recommend_https` manifest property.
 
 This suggestion does not allow the platform to guarantee that a route
 service obeys the scheme of the `X-Forwarded-Url` header. If a route
-service ignores the scheme and downgrades the request to plain text, the requester can intercept, and use or edit the data
+service ignores the scheme and downgrades the request to plain text, the requester can intercept, and use, or edit the data
 within it.
 
 For increased security, follow these recommendations:
@@ -467,10 +464,14 @@ For increased security, follow these recommendations:
 
 <%= vars.route_services_securing_traffic %>
 
-<p> When a route service is mapped
+When a route service is mapped
 to a route, the Gorouter sanitizes the <code>X-Forwarded-Proto</code>
 header once, even though requests pass through the Gorouter more than
-once.</p>
+once.
+
+For more information about
+securing traffic into <%= vars.app_runtime_abbr %>, see [Securing Traffic into <%= vars.app_runtime_abbr %>](../adminguide/securing-traffic.html).
+
 
 ## <a name='secure-route-services'></a> Recommendations for securing route services
 

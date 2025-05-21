@@ -488,4 +488,12 @@ apps make requests over TLS.
 1. Confirm that route services do not change the value of the
 `X-Forwarded-Proto` header.
 
+## <a name='websocket-route-services'></a> Web socket communications through route services
+
+Web socket communications through route services are supported by default and can be disabled by the following property:
+
+1. Set the `router.route_services.enable_websockets: false` manifest
+property to disable web socket communications. 
+Http status code 503, `StatusServiceUnavailable`, with an error message `Websocket requests are not supported for routes bound to Route Services` will be returned if one tries to establish a web socket connection via a route service.
+
 <% end %>

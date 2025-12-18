@@ -82,9 +82,9 @@ For more information about service keys, see the [Managing Service Keys](../devg
 
 ## <a id='implementation-deployment'></a> Implementation and deployment
 
-How a service is implemented is up to the service provider or developer. <%= vars.app_runtime_abbr %> only requires that the service provider implement the Service Broker API. A broker can be implemented as a separate app, or by adding the required HTTP endpoints to an existing service.
+How a service is implemented is up to the service provider or developer. <%= vars.app_runtime_abbr %> requires only that the service provider implement the Service Broker API. A broker can be implemented as a separate app, or by adding the required HTTP endpoints to an existing service.
 
-Because <%= vars.app_runtime_abbr %> only requires that a service implements the Service Broker API to be available to <%= vars.app_runtime_abbr %> end users, many deployment models are possible. The following are examples of valid deployment models:
+Because <%= vars.app_runtime_abbr %> only requires that a service implement the Service Broker API, many deployment models are possible. The following are examples of valid deployment models:
 
 * Entire service packaged and deployed by BOSH alongside <%= vars.app_runtime_abbr %>
 * Service broker packaged and deployed by BOSH alongside <%= vars.app_runtime_abbr %>, rest of the service deployed and maintained by other means
@@ -92,7 +92,7 @@ Because <%= vars.app_runtime_abbr %> only requires that a service implements the
 * Entire service, including broker, deployed and maintained outside of <%= vars.app_runtime_abbr %> by other means
 
 <p class="note">
-For information about deploying on Tanzu Hub, see 
+Tanzu Platform can be set up to run in a "Services Only" configuration using Service Foundations. For information about deploying on Tanzu Hub, see 
 <a href="https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/tanzu-hub/<%= vars.hub_version_url %>/tnz-hub/foundations-deploy-foundation.html">Deploy a foundation</a>
 in the Tanzu Hub documentation.</p>
 

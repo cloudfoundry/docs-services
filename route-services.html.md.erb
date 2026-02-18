@@ -8,7 +8,7 @@ Marketplace.
 
 For information about consuming these services, see
 <% if vars.guide_name == 'Tile Developer' %>
-[Route Services](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/elastic-application-runtime/6-0/eart/manage-apps.html).
+[Route Services](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/elastic-application-runtime/<%= vars.current_major_version_url %>/eart/manage-apps.html).
 <% else %>
 [Managing App Requests with Route Services](../devguide/services/route-binding.html).
 <% end %>
@@ -35,7 +35,7 @@ self-service, and on-demand user experience.
 <p> The procedures in this topic use the Cloud Foundry Command Line Interface (cf CLI).
   You can also manage route services using Apps Manager.
   For more information, see the
-  <a href="https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/elastic-application-runtime/6-0/eart/manage-apps.html">Route Services</a>
+  <a href="https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/elastic-application-runtime/<%= vars.current_major_version_url %>/eart/manage-apps.html">Route Services</a>
   section of the <em>Managing Apps and Service Instances Using Apps Manager</em> topic.
 </p>
 <% end %>
@@ -97,7 +97,7 @@ cf bind-route-service YOUR-APP-DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME] [--
 
 You can configure the service either through the service provider web interface or by passing
 <% if vars.guide_name == 'Tile Developer' %>
-[arbitrary parameters](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/elastic-application-runtime/6-0/eart/services-managing-services.html#arbitrary-parameters)
+[arbitrary parameters](https://techdocs.broadcom.com/us/en/vmware-tanzu/platform/elastic-application-runtime/<%= vars.current_major_version_url %>/eart/services-managing-services.html#arbitrary-parameters)
 <% else %>
 [arbitrary parameters](../devguide/services/managing-services.html#arbitrary-params-create)
 <% end %>

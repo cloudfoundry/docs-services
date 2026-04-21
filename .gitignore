@@ -16,4 +16,6 @@
 .idea
 /vendor
 .DS_Store
-
+NOTICE.md
+LICENSE.md
+README.md

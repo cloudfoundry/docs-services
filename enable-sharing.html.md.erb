@@ -10,11 +10,7 @@ If you have Space Developer permissions in the space where the service instance 
 for sharing, unsharing, updating, and deleting the service instance.
 
 For more information about the developer and administrator tasks related to service instance sharing, see
-<% if vars.guide_name == 'Tile Developer' %>
-[Sharing Service Instances](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/<%= vars.current_major_tas_version %>/tas-for-vms/services-sharing-instances.html).
-<% else %>
 [Sharing Service Instances](../devguide/services/sharing-instances.html).
-<% end %>
 
 ## <a id="enabling"></a> Enabling service instance sharing
 
@@ -57,11 +53,7 @@ and `bind_resource.space_guid` represents the space of the app involved in the b
 
 You must consider the following before enabling service instance sharing:
 
-<% if vars.guide_name == 'Tile Developer' %>
-* [Service keys](https://docs.vmware.com/en/VMware-Tanzu-Application-Service/<%= vars.current_major_tas_version %>/tas-for-vms/services-service-keys.html)
-<% else %>
 * [Service keys](../devguide/services/service-keys.html)
-<% end %>
 can only be generated if you have access to the space where the service instance was created.
 This verifies that only developers with access to this space have visibility
 into where and how many times the service instance is used. It is not possible

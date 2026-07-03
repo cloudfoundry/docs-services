@@ -26,7 +26,7 @@ authenticate with the broker when making all API calls.
 Your service broker can validate the username and password sent in every
 request; otherwise, anyone could curl your broker to delete service instances. When the broker is registered with an URL having the scheme `https`, Cloud Controller makes all calls to the broker over HTTPS.
 
-As of cf-release 229, CC API 2.47.0, <%= vars.platform_name %> supports two types of brokers: _standard brokers_ and _space-scoped brokers_. A list of their differences follows:
+As of cf-release 229, CC API 2.47.0, <%= vars.app_runtime_abbr %> supports two types of brokers: _standard brokers_ and _space-scoped brokers_. A list of their differences follows:
 
 **Standard Brokers**
 
@@ -59,12 +59,12 @@ See the [Access Control](./access-control.html#enable-access) topic for how to m
 
 ### <a id='multiple-brokers'></a>Multiple brokers, services and plans
 
-Many service brokers can be added to a <%= vars.platform_name %> instance, each offering
+Many service brokers can be added to a <%= vars.app_runtime_abbr %> instance, each offering
 many services and plans.
 Keep the following constraints in mind:
 
 - It is not possible to have multiple brokers with the same name.
-- Prior to Cloud Foundry API (CAPI) v1.71, the service ID and plan IDs of each service advertised by the broker must be unique across <%= vars.platform_name %>.
+- Prior to Cloud Foundry API (CAPI) v1.71, the service ID and plan IDs of each service advertised by the broker must be unique across <%= vars.app_runtime_abbr %>.
 - With CAPI v1.71 or later, the service ID and plan IDs of each service advertised by the broker must be unique only within the broker and can overlap ids defined in other brokers.
 - GUIDs are recommended for the service ID and plan IDs of each service.
 
@@ -107,7 +107,7 @@ $ cf update-service-broker mybrokername someuser somethingsecure <span>https</sp
 
 A service broker can be renamed with the `rename-service-broker`
 command.
-This name is used only by the <%= vars.platform_name %> operator to identify brokers, and
+This name is used only by the <%= vars.app_runtime_abbr %> operator to identify brokers, and
 has no relation to configuration of the broker itself.
 
 <pre class="terminal">
@@ -116,7 +116,7 @@ $ cf rename-service-broker mybrokername mynewbrokername
 
 ## <a id='remove-broker'></a>Removing a broker
 
-When you remove a service broker, all services and plans in the broker's catalog are removed from the <%= vars.platform_name %> Marketplace.
+When you remove a service broker, all services and plans in the broker's catalog are removed from the <%= vars.app_runtime_abbr %> Marketplace.
 
 <pre class="terminal">
 $ cf delete-service-broker mybrokername
@@ -124,12 +124,12 @@ $ cf delete-service-broker mybrokername
 
 When you attempt to remove a service broker it can fail if there are service instances for any service plan in its catalog. When you are planning to shut down or
 delete a broker, make sure to remove all service instances first. Failure to do so
-leaves <a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#orphans">orphaned service instances</a> in the <%= vars.platform_name %> database. If a
+leaves <a href="https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#orphans">orphaned service instances</a> in the <%= vars.app_runtime_abbr %> database. If a
 service broker has been shut down without first deleting service instances, you can remove the instances with the CLI, see <a href="#purge-service">Purge a Service</a>.
 
 ### <a id='purge-service'></a>Purging a service
 
-If a service broker has been shut down or removed without first deleting service instances from <%= vars.platform_name %>, you can be unable to remove the service broker or its services and plans from the Marketplace. In development environments, broker authors often destroy their broker deployments and need a way to clean up the Cloud Controller database.
+If a service broker has been shut down or removed without first deleting service instances from <%= vars.app_runtime_abbr %>, you can be unable to remove the service broker or its services and plans from the Marketplace. In development environments, broker authors often destroy their broker deployments and need a way to clean up the Cloud Controller database.
 
 The following command deletes a service offering, all of its plans, and all associated service instances and bindings from the Cloud Controller database, without making any API calls to a service broker. Once all services for a broker have been purged, the broker can be removed normally.
 
@@ -137,14 +137,14 @@ The following command deletes a service offering, all of its plans, and all asso
 $ cf purge-service-offering service-test
 Warning: This operation assumes that the service broker responsible for this
 service offering is no longer available, and all service instances have been
-deleted, leaving orphan records in <%= vars.platform_name %>'s database. All knowledge of
-the service can be removed from <%= vars.platform_name %>, including service instances and
+deleted, leaving orphan records in <%= vars.app_runtime_abbr %>'s database. All knowledge of
+the service can be removed from <%= vars.app_runtime_abbr %>, including service instances and
 service bindings. No attempt is made to contact the service broker; running
 this command without destroying the service broker causes orphan service
 instances. After running this command you might want to run either
 delete-service-auth-token or delete-service-broker to complete the cleanup.
 
-Really purge service offering service-test from <%= vars.platform_name %>? y
+Really purge service offering service-test from <%= vars.app_runtime_abbr %>? y
 OK
 </pre>
 
@@ -159,9 +159,9 @@ WARNING: This operation assumes that the service broker responsible for this
 service instance is no longer available or is not responding with a 200 or 410,
 and the service instance has been deleted, leaving orphan records in Cloud
 Foundry's database. All knowledge of the service instance is removed from
-<%= vars.platform_name %>, including service bindings and service keys.
+<%= vars.app_runtime_abbr %>, including service bindings and service keys.
 
-Really purge service instance mysql-dev from <%= vars.platform_name %>?> y
+Really purge service instance mysql-dev from <%= vars.app_runtime_abbr %>?> y
 Purging service mysql-dev...
 OK
 </pre>
@@ -173,7 +173,7 @@ the <code>-b BROKER</code> flag in the <code>cf purge-service-instance</code> co
 
 ## <a id='catalog-validation'></a> Catalog validation behaviors
 
-When <%= vars.platform_name %> fetches a catalog from a broker, and compares the
+When <%= vars.app_runtime_abbr %> fetches a catalog from a broker, and compares the
 broker's id for services and plans with the `unique_id` values for services and
 plans in the Cloud Controller database.
 
@@ -186,7 +186,7 @@ plans in the Cloud Controller database.
   </thead>
    <tr>
     <td>The catalog fails to load or validate.</td>
-    <td><%= vars.platform_name %> returns a meaningful error that the broker could not be reached or the catalog was not valid.</td>
+    <td><%= vars.app_runtime_abbr %> returns a meaningful error that the broker could not be reached or the catalog was not valid.</td>
   </tr>
   <tr>
     <td>A service or plan in the broker catalog has an ID that is not present among the <code>unique_id</code> values in the marketplace database.</td>

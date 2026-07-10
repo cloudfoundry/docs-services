@@ -60,6 +60,7 @@ its [catalog endpoint](https://github.com/openservicebrokerapi/servicebroker/blo
     ```
 
     The <code>dashboard_client</code> line is a hash containing three lines:
+    
     <ul>
       <li><code>id</code> is the unique identifier for the OAuth client that creates your service dashboard on the token server (UAA), and is used by your dashboard to authenticate with the token server (UAA). If the client id is already taken, <%= vars.app_runtime_abbr %> returns an error when registering or updating the broker.</li>
       <li><code>secret</code> is the shared secret your dashboard uses to authenticate with the token server (UAA).</li>

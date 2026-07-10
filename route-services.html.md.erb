@@ -259,11 +259,13 @@ a bound route service. Otherwise, the request is rejected as the
 requested URL does not match the one in the forwarded
 `X-CF-Proxy-Signature` header.
 
->**Important**
->The <code>X-CF-Proxy-Signature</code> header is
->an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
->token can bypass the route service. Do not share your your <code>X-CF-Proxy-Signature</code>
->token with anyone.
+<p class="note important">
+<span class="note__title"><strong>Important</strong></span>
+The <code>X-CF-Proxy-Signature</code> header is
+an <strong>access token</strong>. Anyone possessing your <code>X-CF-Proxy-Signature</code>
+token can bypass the route service. Do not share your <code>X-CF-Proxy-Signature</code>
+token with anyone.
+</p>
 
 #### X-CF-Proxy-Metadata
 

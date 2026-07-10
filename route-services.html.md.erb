@@ -26,7 +26,7 @@ with the <%= vars.app_runtime_abbr %> routing tier, providers can
 offer these services with a familiar, automated,
 self-service, and on-demand user experience.
 
-## <a name='architecture'></a> Architecture
+## <a id='architecture'></a> Architecture
 
 <%= vars.app_runtime_abbr %> supports the following models for
 route services, each of which is described in this topic:
@@ -38,7 +38,7 @@ route services, each of which is described in this topic:
 In each model, you configure a route service to process traffic
 addressed to an app.
 
-### <a name="fully-brokered"></a> Fully-brokered service
+### <a id="fully-brokered"></a> Fully-brokered service
 
 In the fully-brokered service model, the <%= vars.app_runtime_abbr %>
 router receives all traffic to apps in the deployment before any
@@ -91,7 +91,7 @@ route service processes traffic to specific apps.
 * Traffic to apps that use the route service makes additional network
   hops, as compared to the static model.
 
-### <a name="static-brokered"></a> Static, brokered service
+### <a id="static-brokered"></a> Static, brokered service
 
 In the static brokered service model, an operator installs a static
 routing service, which might be a piece of hardware, in front of the
@@ -124,7 +124,7 @@ requests through unchanged.
   network hops. Requests for all apps hosted by the deployment pass
   through the route service component.
 
-### <a name="user-provided"></a> User-provided service
+### <a id="user-provided"></a> User-provided service
 
 If a route service is not listed in the <%= vars.app_runtime_abbr %>
 marketplace by a broker, you can still bind it to your app as
@@ -164,7 +164,7 @@ cf bind-route-service DOMAIN SERVICE-INSTANCE [--hostname HOSTNAME]
 * Traffic to apps that use the route service makes additional network
   hops, as compared to the static model.
 
-### <a name="architecture-comparison"></a> Architecture comparison
+### <a id="architecture-comparison"></a> Architecture comparison
 
 The previous models require the broker and service instance
 responsibilities summarized in the following table:
@@ -194,7 +194,7 @@ responsibilities summarized in the following table:
 2 - See <a href="#broker-responsibilities">Broker Responsibilities</a>
 
 
-## <a name='service-instance'></a> Service instance
+## <a id='service-instance'></a> Service instance
 
 The following information applies only when a broker returns `route_service_url`
 in a bind response.
@@ -210,7 +210,7 @@ well as the `X-CF-Proxy-Signature` and `X-CF-Proxy-Metadata` headers used
 by the router to validate that the route-service sent the
 request. These headers are described in the [Headers](#headers) section.
 
-### <a name='service-instance-responsibilities'></a> Service instance responsibilities
+### <a id='service-instance-responsibilities'></a> Service instance responsibilities
 
 The route service must handle requests by either:
 
@@ -225,7 +225,7 @@ service must forward the `X-CF-Forwarded-Url`, `X-CF-Proxy-Signature`, and
 When forwarding a request to a location other than the originally
 requested URL, the route service strips these headers.
 
-### <a name='headers'></a> Headers
+### <a id='headers'></a> Headers
 
 The following HTTP headers are added by the Gorouter to requests
 forwarded to route services.
@@ -272,7 +272,7 @@ token with anyone.
 The `X-CF-Proxy-Metadata` header aids in the encryption and
 description of `X-CF-Proxy-Signature`.
 
-### <a name='ssl-certs'></a> SSL certificates
+### <a id='ssl-certs'></a> SSL certificates
 
 When <%= vars.app_runtime_abbr %> is deployed in a development
 environment, certificates hosted by the load balancer are self-signed,
@@ -281,7 +281,7 @@ service finishes processing an inbound request and makes a call to the
 value of `X-CF-Forwarded-Url`, be prepared to accept the self-signed
 certificate when integrating with a non-production deployment of <%= vars.app_runtime_abbr %>.
 
-### <a name='timeouts'></a> Timeouts
+### <a id='timeouts'></a> Timeouts
 
 <% if vars.platform_code == 'CF' %>
 
@@ -304,15 +304,15 @@ In addition, all requests must respond in 900 seconds.
 
 <% end %>
 
-## <a name='broker-responsibilities'></a> Broker responsibilities
+## <a id='broker-responsibilities'></a> Broker responsibilities
 
-### <a name='catalog'></a> Catalog endpoint
+### <a id='catalog'></a> Catalog endpoint
 
 Brokers must include `requires: ["route_forwarding"]` for a service in
 the catalog endpoint. If this is not present, <%= vars.app_runtime_abbr %> does not permit users to bind an instance of
 the service to a route.
 
-### <a name='binding'></a> Binding endpoint
+### <a id='binding'></a> Binding endpoint
 
 When you bind a route to a service instance, <%= vars.app_runtime_abbr %> sends a bind request to the broker, including
 the route address, with `bind_resource.route`. A route is an address
@@ -327,7 +327,7 @@ For more information about bind requests, see the
 [Binding](https://github.com/openservicebrokerapi/servicebroker/blob/v2.13/spec.md#binding) section of the _Open Service Broker API
 (v2.13)_ specification on GitHub.
 
-## <a name='examples'></a> Route services examples
+## <a id='examples'></a> Route services examples
 
 * [Logging Route Service](https://github.com/cloudfoundry/cf-acceptance-tests/tree/release-candidate/assets/logging-route-service):
   This route service can be pushed as an app to <%= vars.app_runtime_abbr %>. It fulfills the service instance
@@ -342,7 +342,7 @@ For more information about bind requests, see the
 
 * [Spring Boot examples](https://github.com/in28minutes/spring-boot-examples).
 
-## <a name='tutorial'></a> Tutorial
+## <a id='tutorial'></a> Tutorial
 
 The following instructions show how to use the Logging Route
 Service described in [Route Services examples](#examples) to verify that when a
@@ -408,7 +408,7 @@ that the request is forwarded to it by running:
 
 <% if vars.platform_code == 'CF' %>
 
-## <a name='security-considerations'></a> Security considerations
+## <a id='security-considerations'></a> Security considerations
 
 The contract between route services and the Gorouter, applicable for
 fully-brokered and user-provided models, allows a <%= vars.app_runtime_abbr %> operator to suggest
@@ -443,7 +443,7 @@ For more information about
 securing traffic into <%= vars.app_runtime_abbr %>, see [Securing Traffic into <%= vars.app_runtime_abbr %>](../adminguide/securing-traffic.html).
 
 
-## <a name='secure-route-services'></a> Recommendations for securing route services
+## <a id='secure-route-services'></a> Recommendations for securing route services
 
 To best secure communications through route services, <%= vars.app_runtime_abbr %> operators:
 
@@ -460,7 +460,7 @@ apps make requests over TLS.
 1. Confirm that route services do not change the value of the
 `X-Forwarded-Proto` header.
 
-## <a name='websocket-route-services'></a> Web socket communications through route services
+## <a id='websocket-route-services'></a> Web socket communications through route services
 
 Web socket communications through route services are supported by default and can be disabled by the following property:
 

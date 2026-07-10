@@ -21,7 +21,7 @@ If the broker does not include `requires: syslog_drain`, and the bind request re
 
     `"syslog_drain_url": "syslog://logs.example.com:1234"`
 
-## How does it work?
+## <a id="how-it-works"></a> How does it work?
 
 1. Service broker returns a value for `syslog_drain_url` in response to bind.
 1. Loggregator periodically polls an internal Cloud Controller endpoint for updates.

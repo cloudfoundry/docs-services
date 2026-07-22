@@ -9,9 +9,7 @@ Marketplace.
 For information about consuming these services, see
 [Managing App Requests with Route Services](../devguide/services/route-binding.html).
 
-<% if vars.platform_code == 'CF' %>
 Route services require Diego. Your deployment must use the Diego architecture or you must enable Diego for your app.
-<% end %>
 
 <%= vars.app_runtime_abbr %> app developers might want to apply
 transformation or processing to requests before they reach an
@@ -283,8 +281,6 @@ certificate when integrating with a non-production deployment of <%= vars.app_ru
 
 ### <a id='timeouts'></a> Timeouts
 
-<% if vars.platform_code == 'CF' %>
-
 Route services must forward the
 request to the app route within the number of seconds configured by
 the `router.route_service_timeout` property (defaults to 60 seconds).
@@ -294,15 +290,6 @@ configured by the `request_timeout_in_seconds` property (defaults to 900 seconds
 
 Timeouts are configurable for the router using the cf-release BOSH
 deployment manifest. For more information, see the [spec](https://github.com/cloudfoundry/routing-release/blob/master/jobs/gorouter/spec).
-
-<% else %>
-
-Route services must forward the request to the app route
-within 60 seconds.
-
-In addition, all requests must respond in 900 seconds.
-
-<% end %>
 
 ## <a id='broker-responsibilities'></a> Broker responsibilities
 
@@ -406,8 +393,6 @@ that the request is forwarded to it by running:
     curl spring-music.cf.example.com
     ```
 
-<% if vars.platform_code == 'CF' %>
-
 ## <a id='security-considerations'></a> Security considerations
 
 The contract between route services and the Gorouter, applicable for
@@ -467,5 +452,3 @@ Web socket communications through route services are supported by default and ca
 1. Set the `router.route_services.enable_websockets: false` manifest
 property to disable web socket communications. 
 Http status code 503, `StatusServiceUnavailable`, with an error message `Websocket requests are not supported for routes bound to Route Services` will be returned if one tries to establish a web socket connection via a route service.
-
-<% end %>

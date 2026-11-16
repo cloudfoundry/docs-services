@@ -221,7 +221,9 @@ When forwarding a request to the originally requested URL, the route
 service must forward the `X-CF-Forwarded-Url`, `X-CF-Proxy-Signature`, and
 `X-CF-Proxy-Metadata` headers on the request. If it doesn't, it is rejected.
 When forwarding a request to a location other than the originally
-requested URL, the route service strips these headers.
+requested URL, the route service must strip these headers. Otherwise,
+the Gorouter rejects the request with 403, because the signature does
+not match the originally requested URL.
 
 ### <a id='headers'></a> Headers
 
